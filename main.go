@@ -13,6 +13,10 @@ import (
 var assets embed.FS
 
 func main() {
+	if !acquireSingleInstance() {
+		return
+	}
+
 	app := NewApp()
 
 	err := wails.Run(&options.App{
