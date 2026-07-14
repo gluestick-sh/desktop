@@ -13,7 +13,7 @@
   "info": {
     "companyName": "Gluestick",
     "productName": "Gluestick Desktop Free",
-    "productVersion": "0.1.1",
+    "productVersion": "0.1.4",
     "copyright": "Copyright 2026 Glue Team",
     "comments": "Desktop GUI for the Glue package manager"
   }

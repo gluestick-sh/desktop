@@ -1,5 +1,5 @@
 ; Gluestick Desktop installer (NSIS)
-;   makensis /DPAYLOAD_VERSION=0.1.1 /DPAYLOAD_ARCH=amd64 GluestickDesktop.nsi
+;   makensis /DPAYLOAD_VERSION=0.1.4 /DPAYLOAD_ARCH=amd64 GluestickDesktop.nsi
 ;
 ; Desktop is a self-contained GUI app: it creates ~/.glue and installs its
 ; runtime dependencies (7-Zip, Git, ...) on first use. This installer only
