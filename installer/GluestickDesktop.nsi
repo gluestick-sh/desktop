@@ -8,6 +8,7 @@
 !include "MUI2.nsh"
 !include "LogicLib.nsh"
 !include "FileFunc.nsh"
+!include "x64.nsh"
 
 !ifndef PAYLOAD_VERSION
   !define PAYLOAD_VERSION "0.0.0-dev"
@@ -51,14 +52,15 @@ Function .onInit
     StrCpy $INSTDIR $0
   ${EndIf}
 
+  ; Reliably detect the native OS architecture. IsNativeARM64 uses
+  ; IsWow64Process2/GetNativeSystemInfo, so it works even though this
+  ; installer runs as a 32-bit x86 process under emulation on ARM64 Windows
+  ; (where PROCESSOR_ARCHITECTURE/PROCESSOR_ARCHITEW6432 are unreliable).
   StrCmp "${PAYLOAD_ARCH}" "arm64" 0 archOk
-    nsExec::ExecToStack 'powershell.exe -NoProfile -Command "if ($$env:PROCESSOR_ARCHITECTURE -match ''ARM64'' -or $$env:PROCESSOR_ARCHITEW6432 -match ''ARM64'') { exit 0 } else { exit 1 }"'
-    Pop $0
-    Pop $1
-    IntCmp $0 0 archOk arm64Bad arm64Bad
-arm64Bad:
-    MessageBox MB_OK|MB_ICONSTOP "GluestickDesktopSetup-${PAYLOAD_ARCH}.exe requires Windows on ARM64."
-    Abort
+    ${IfNot} ${IsNativeARM64}
+      MessageBox MB_OK|MB_ICONSTOP "GluestickDesktopSetup-${PAYLOAD_ARCH}.exe requires Windows on ARM64."
+      Abort
+    ${EndIf}
 archOk:
 FunctionEnd
 
