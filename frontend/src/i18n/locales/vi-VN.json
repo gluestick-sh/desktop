@@ -352,8 +352,10 @@
     "doctor": "Kiểm tra môi trường…",
     "githubProxy": "Cài đặt proxy GitHub…",
     "downloadWorkers": "Tải tệp",
-    "bucketCheckInterval": "Bucket khoảng thời gian kiểm tra",
-    "bucketCheckIntervalMin": "{{n}} phút",
+    "bucketSync": "Bucket sync",
+    "bucketSyncIntervalMin": "{{n}} phút",
+    "bucketSyncAuto": "Tự động",
+    "bucketSyncManual": "Thủ công",
     "language": "Ngôn ngữ",
     "localeEn": "Tiếng Anh",
     "localeZh": "简体中文",
@@ -430,6 +432,7 @@
     "statusHasUpdates": "Cập nhật có sẵn",
     "statusSynced": "Cập nhật",
     "updatesFoundBanner": "{{count}} nhóm có bản cập nhật: {{names}}. Mở tab Buckets để cập nhật.",
+    "autoSyncStarted": "Đang đồng bộ {{count}} bucket có cập nhật: {{names}}",
     "statusSyncedStale": "Cập nhật (được lưu trong bộ nhớ đệm)",
     "statusUnchecked": "Chưa được kiểm tra",
     "commitCurrentRemote": "{{local}} hiện tại\nTừ xa {{remote}}",
@@ -668,8 +671,11 @@
       "loadFailed": "Không tải được cấu hình: {{error}}",
       "saveFailed": "Lưu thất bại: {{error}}"
     },
-    "bucketCheckIntervalSaved": "Bucket khoảng thời gian kiểm tra được đặt thành {{n}} phút",
-    "bucketCheckIntervalSaveFailed": "Không lưu được khoảng thời gian kiểm tra nhóm: {{error}}"
+    "bucketSyncIntervalSaved": "Bucket khoảng thời gian kiểm tra được đặt thành {{n}} phút",
+    "bucketSyncIntervalSaveFailed": "Không lưu được khoảng thời gian kiểm tra nhóm: {{error}}",
+    "bucketSyncModeAutoSaved": "Đồng bộ bucket đặt thành tự động (đồng bộ ngay sau khi kiểm tra)",
+    "bucketSyncModeManualSaved": "Đồng bộ bucket đặt thành thủ công (chỉ kiểm tra định kỳ)",
+    "bucketSyncModeSaveFailed": "Không lưu được chế độ đồng bộ bucket: {{error}}"
   },
   "about": {
     "title": "Về",

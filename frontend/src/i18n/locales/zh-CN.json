@@ -352,8 +352,10 @@
     "doctor": "环境诊断…",
     "githubProxy": "GitHub 代理设置…",
     "downloadWorkers": "文件下载",
-    "bucketCheckInterval": "仓库检测间隔",
-    "bucketCheckIntervalMin": "{{n}} 分钟",
+    "bucketSync": "仓库同步",
+    "bucketSyncIntervalMin": "{{n}} 分钟",
+    "bucketSyncAuto": "自动",
+    "bucketSyncManual": "手动",
     "language": "语言",
     "localeEn": "English",
     "localeZh": "简体中文",
@@ -430,6 +432,7 @@
     "statusHasUpdates": "有更新",
     "statusSynced": "已同步",
     "updatesFoundBanner": "发现 {{count}} 个仓库有更新：{{names}}。请前往仓库页面更新。",
+    "autoSyncStarted": "发现 {{count}} 个仓库有更新，正在自动同步：{{names}}",
     "statusSyncedStale": "已同步（缓存）",
     "statusUnchecked": "未检查",
     "commitCurrentRemote": "当前 {{local}}\n远端 {{remote}}",
@@ -668,8 +671,11 @@
       "loadFailed": "加载配置失败: {{error}}",
       "saveFailed": "保存失败: {{error}}"
     },
-    "bucketCheckIntervalSaved": "仓库检测间隔已设为 {{n}} 分钟",
-    "bucketCheckIntervalSaveFailed": "保存仓库检测间隔失败：{{error}}"
+    "bucketSyncIntervalSaved": "仓库检测间隔已设为 {{n}} 分钟",
+    "bucketSyncIntervalSaveFailed": "保存仓库检测间隔失败：{{error}}",
+    "bucketSyncModeAutoSaved": "仓库同步已设为自动（检测完成后立即同步）",
+    "bucketSyncModeManualSaved": "仓库同步已设为手动（定期检测，需自行同步）",
+    "bucketSyncModeSaveFailed": "保存仓库同步模式失败：{{error}}"
   },
   "about": {
     "title": "关于",

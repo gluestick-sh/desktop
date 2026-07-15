@@ -4,11 +4,12 @@ import (
 	"github.com/gluestick-sh/core/config"
 )
 
-// BucketCheckIntervalConfig background bucket update-check interval exposed to the frontend.
-type BucketCheckIntervalConfig struct {
-	Minutes    int    `json:"minutes"`
-	ConfigPath string `json:"configPath"`
-	Options    []int  `json:"options"`
+// BucketSyncConfig exposes background bucket check interval and sync mode to the frontend.
+type BucketSyncConfig struct {
+	Minutes         int    `json:"minutes"`
+	Mode            string `json:"mode"`
+	ConfigPath      string `json:"configPath"`
+	IntervalOptions []int  `json:"intervalOptions"`
 }
 
 func bucketCheckIntervalMinutesFromConfig(root string) int {
@@ -22,16 +23,28 @@ func bucketCheckIntervalMinutesFromConfig(root string) int {
 	return minutes
 }
 
-// GetBucketCheckInterval reads bucket_check_interval_minutes from config.json (default 15).
-func (a *App) GetBucketCheckInterval() (*BucketCheckIntervalConfig, error) {
+func bucketSyncModeFromConfig(root string) string {
+	mode := config.DefaultBucketSyncMode
+	if root == "" {
+		return mode
+	}
+	if m, ok, err := config.ReadConfigBucketSyncMode(root); err == nil && ok {
+		mode = m
+	}
+	return mode
+}
+
+// GetBucketSyncConfig reads bucket sync settings from config.json.
+func (a *App) GetBucketSyncConfig() (*BucketSyncConfig, error) {
 	root := a.glueRootDir()
 	if root == "" {
 		return nil, errGlueRootUnavailable()
 	}
-	return &BucketCheckIntervalConfig{
-		Minutes:    bucketCheckIntervalMinutesFromConfig(root),
-		ConfigPath: config.ConfigPath(root),
-		Options:    append([]int(nil), config.AllowedBucketCheckIntervals...),
+	return &BucketSyncConfig{
+		Minutes:         bucketCheckIntervalMinutesFromConfig(root),
+		Mode:            bucketSyncModeFromConfig(root),
+		ConfigPath:      config.ConfigPath(root),
+		IntervalOptions: append([]int(nil), config.AllowedBucketCheckIntervals...),
 	}, nil
 }
 
@@ -46,5 +59,18 @@ func (a *App) SetBucketCheckInterval(minutes int) error {
 		return err
 	}
 	a.wakeBucketCheckScheduler()
+	return nil
+}
+
+// SetBucketSyncMode saves bucket_sync_mode (auto|manual) to config.json.
+func (a *App) SetBucketSyncMode(mode string) error {
+	root := a.glueRootDir()
+	if root == "" {
+		return errGlueRootUnavailable()
+	}
+	mode = config.NormalizeBucketSyncMode(mode)
+	if err := config.WriteConfigBucketSyncMode(root, mode); err != nil {
+		return err
+	}
 	return nil
 }

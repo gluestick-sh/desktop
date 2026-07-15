@@ -6,8 +6,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/wailsapp/wails/v2/pkg/runtime"
 	"github.com/gluestick-sh/core/bucket"
+	"github.com/gluestick-sh/core/config"
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 const bucketCheckMaxAttempts = 3
@@ -118,9 +119,19 @@ func (a *App) runBucketUpdateCheck() {
 
 	a.recordBucketCheckActivity(withUpdates, updateNames, "success", "")
 
+	autoSyncStarted := false
+	if withUpdates > 0 && bucketSyncModeFromConfig(a.glueRootDir()) == config.BucketSyncModeAuto {
+		if err := a.UpdateBuckets([]string{}); err != nil {
+			runtime.LogWarning(a.ctx, fmt.Sprintf("auto bucket sync: %v", err))
+		} else {
+			autoSyncStarted = true
+		}
+	}
+
 	runtime.EventsEmit(a.ctx, "bucket:update-check:done", map[string]interface{}{
 		"withUpdates": withUpdates,
 		"names":       updateNames,
+		"autoSync":    autoSyncStarted,
 	})
 }
 

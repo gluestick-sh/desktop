@@ -352,8 +352,10 @@
     "doctor": "環境診斷…",
     "githubProxy": "GitHub 代理設置…",
     "downloadWorkers": "檔案下載",
-    "bucketCheckInterval": "Bucket 檢測間隔",
-    "bucketCheckIntervalMin": "{{n}} 分鐘",
+    "bucketSync": "Bucket 同步",
+    "bucketSyncIntervalMin": "{{n}} 分鐘",
+    "bucketSyncAuto": "自動",
+    "bucketSyncManual": "手動",
     "language": "語言",
     "localeEn": "English",
     "localeZh": "簡體中文",
@@ -430,6 +432,7 @@
     "statusHasUpdates": "有更新",
     "statusSynced": "已同步",
     "updatesFoundBanner": "發現 {{count}} 個 Bucket 有更新：{{names}}。請前往 Bucket 頁面更新。",
+    "autoSyncStarted": "發現 {{count}} 個 Bucket 有更新，正在自動同步：{{names}}",
     "statusSyncedStale": "已同步（緩存）",
     "statusUnchecked": "未檢查",
     "commitCurrentRemote": "當前 {{local}}\n遠端 {{remote}}",
@@ -668,8 +671,11 @@
       "loadFailed": "載入設定失敗: {{error}}",
       "saveFailed": "儲存失敗: {{error}}"
     },
-    "bucketCheckIntervalSaved": "Bucket 檢測間隔已設為 {{n}} 分鐘",
-    "bucketCheckIntervalSaveFailed": "保存 Bucket 檢測間隔失敗：{{error}}"
+    "bucketSyncIntervalSaved": "Bucket 檢測間隔已設為 {{n}} 分鐘",
+    "bucketSyncIntervalSaveFailed": "保存 Bucket 檢測間隔失敗：{{error}}",
+    "bucketSyncModeAutoSaved": "Bucket 同步已設為自動（檢測完成後立即同步）",
+    "bucketSyncModeManualSaved": "Bucket 同步已設為手動（定期檢測，需自行同步）",
+    "bucketSyncModeSaveFailed": "保存 Bucket 同步模式失敗：{{error}}"
   },
   "about": {
     "title": "關於",

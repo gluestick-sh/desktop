@@ -352,8 +352,10 @@
     "doctor": "環境チェック…",
     "githubProxy": "GitHub プロキシ設定…",
     "downloadWorkers": "ファイルダウンロード",
-    "bucketCheckInterval": "Bucket チェック間隔",
-    "bucketCheckIntervalMin": "{{n}}分",
+    "bucketSync": "Bucket 同期",
+    "bucketSyncIntervalMin": "{{n}}分",
+    "bucketSyncAuto": "自動",
+    "bucketSyncManual": "手動",
     "language": "言語",
     "localeEn": "英語",
     "localeZh": "简体中文",
@@ -430,6 +432,7 @@
     "statusHasUpdates": "利用可能なアップデート",
     "statusSynced": "最新の",
     "updatesFoundBanner": "{{count}} バケットに更新があります: {{names}}。 Buckets タブを開いて更新します。",
+    "autoSyncStarted": "更新のある {{count}} バケットを自動同期中: {{names}}",
     "statusSyncedStale": "最新の状態 (キャッシュ済み)",
     "statusUnchecked": "未チェック",
     "commitCurrentRemote": "現在の{{local}}\nリモート {{remote}}",
@@ -668,8 +671,11 @@
       "loadFailed": "設定の読み込みに失敗: {{error}}",
       "saveFailed": "保存に失敗: {{error}}"
     },
-    "bucketCheckIntervalSaved": "Bucket チェック間隔が {{n}} 分に設定されました",
-    "bucketCheckIntervalSaveFailed": "バケットのチェック間隔を保存できませんでした: {{error}}"
+    "bucketSyncIntervalSaved": "Bucket チェック間隔が {{n}} 分に設定されました",
+    "bucketSyncIntervalSaveFailed": "バケットのチェック間隔を保存できませんでした: {{error}}",
+    "bucketSyncModeAutoSaved": "Bucket 同期を自動に設定しました（チェック後すぐ同期）",
+    "bucketSyncModeManualSaved": "Bucket 同期を手動に設定しました（定期チェックのみ）",
+    "bucketSyncModeSaveFailed": "Bucket 同期モードを保存できませんでした: {{error}}"
   },
   "about": {
     "title": "について",

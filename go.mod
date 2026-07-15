@@ -3,7 +3,7 @@ module gluestick.sh/desktop
 go 1.26.3
 
 require (
-	github.com/gluestick-sh/core v0.1.3
+	github.com/gluestick-sh/core v0.1.4
 	github.com/wailsapp/wails/v2 v2.13.0
 	golang.org/x/sys v0.46.0
 )

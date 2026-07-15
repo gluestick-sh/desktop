@@ -62,8 +62,8 @@ export function GetActivityLogPage(arg1) {
   return window['go']['main']['App']['GetActivityLogPage'](arg1);
 }
 
-export function GetBucketCheckInterval() {
-  return window['go']['main']['App']['GetBucketCheckInterval']();
+export function GetBucketSyncConfig() {
+  return window['go']['main']['App']['GetBucketSyncConfig']();
 }
 
 export function GetCacheSummary() {
@@ -220,6 +220,10 @@ export function SetBucketCheckInterval(arg1) {
 
 export function SetBucketDescription(arg1, arg2) {
   return window['go']['main']['App']['SetBucketDescription'](arg1, arg2);
+}
+
+export function SetBucketSyncMode(arg1) {
+  return window['go']['main']['App']['SetBucketSyncMode'](arg1);
 }
 
 export function SetDownloadWorkers(arg1) {

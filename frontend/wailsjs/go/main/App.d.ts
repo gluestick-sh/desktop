@@ -32,7 +32,7 @@ export function GetAboutInfo():Promise<main.AboutInfo>;
 
 export function GetActivityLogPage(arg1:main.ActivityLogQuery):Promise<main.ActivityLogPage>;
 
-export function GetBucketCheckInterval():Promise<main.BucketCheckIntervalConfig>;
+export function GetBucketSyncConfig():Promise<main.BucketSyncConfig>;
 
 export function GetCacheSummary():Promise<main.CacheSummary>;
 
@@ -111,6 +111,8 @@ export function Search(arg1:string):Promise<main.SearchResult>;
 export function SetBucketCheckInterval(arg1:number):Promise<void>;
 
 export function SetBucketDescription(arg1:string,arg2:string):Promise<void>;
+
+export function SetBucketSyncMode(arg1:string):Promise<void>;
 
 export function SetDownloadWorkers(arg1:number):Promise<void>;
 

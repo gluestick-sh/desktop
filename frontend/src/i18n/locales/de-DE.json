@@ -352,8 +352,10 @@
     "doctor": "Umweltcheck…",
     "githubProxy": "GitHub-Proxy-Einstellungen…",
     "downloadWorkers": "Datei-Download",
-    "bucketCheckInterval": "Bucket-Überprüfungsintervall",
-    "bucketCheckIntervalMin": "{{n}} min",
+    "bucketSync": "Bucket sync",
+    "bucketSyncIntervalMin": "{{n}} min",
+    "bucketSyncAuto": "Automatic",
+    "bucketSyncManual": "Manual",
     "language": "Sprache",
     "localeEn": "Englisch",
     "localeZh": "简体中文",
@@ -430,6 +432,7 @@
     "statusHasUpdates": "Updates verfügbar",
     "statusSynced": "Auf dem neuesten Stand",
     "updatesFoundBanner": "{{count}} Bucket(s) haben Updates: {{names}}. Öffnen Sie zum Aktualisieren die Registerkarte „Buckets“.",
+    "autoSyncStarted": "{{count}} Bucket(s) mit Updates werden synchronisiert: {{names}}",
     "statusSyncedStale": "Auf dem neuesten Stand (zwischengespeichert)",
     "statusUnchecked": "Nicht geprüft",
     "commitCurrentRemote": "Aktuelle {{local}}\nRemote {{remote}}",
@@ -668,8 +671,11 @@
       "loadFailed": "Einstellungen konnten nicht geladen werden: {{error}}",
       "saveFailed": "Speichern fehlgeschlagen: {{error}}"
     },
-    "bucketCheckIntervalSaved": "Bucket-Prüfintervall auf {{n}} Min. eingestellt",
-    "bucketCheckIntervalSaveFailed": "Bucket-Prüfintervall konnte nicht gespeichert werden: {{error}}"
+    "bucketSyncIntervalSaved": "Bucket-Prüfintervall auf {{n}} Min. eingestellt",
+    "bucketSyncIntervalSaveFailed": "Bucket-Prüfintervall konnte nicht gespeichert werden: {{error}}",
+    "bucketSyncModeAutoSaved": "Bucket-Synchronisierung auf automatisch gesetzt (Sync direkt nach Prüfung)",
+    "bucketSyncModeManualSaved": "Bucket-Synchronisierung auf manuell gesetzt (nur Prüfung, Sync selbst)",
+    "bucketSyncModeSaveFailed": "Bucket-Sync-Modus konnte nicht gespeichert werden: {{error}}"
   },
   "about": {
     "title": "Um",

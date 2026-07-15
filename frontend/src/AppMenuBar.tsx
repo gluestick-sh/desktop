@@ -52,6 +52,8 @@ export type MenuAction =
   | 'bucket-check-interval:5'
   | 'bucket-check-interval:15'
   | 'bucket-check-interval:30'
+  | 'bucket-sync-mode:auto'
+  | 'bucket-sync-mode:manual'
   | LocaleMenuAction
   | 'about'
 
@@ -93,10 +95,15 @@ function buildMenuGroups(t: TFunction, customThemes: ThemeDefinition[], isPro: b
     { label: t('menu.deprecatedShow'), action: 'deprecated:show' },
   ]
 
-  const bucketCheckIntervalSubmenu: MenuEntry[] = ([5, 15, 30] as const).map((n) => ({
-    label: t('menu.bucketCheckIntervalMin', { n }),
-    action: `bucket-check-interval:${n}` as MenuAction,
-  }))
+  const bucketSyncSubmenu: MenuEntry[] = [
+    ...([5, 15, 30] as const).map((n) => ({
+      label: t('menu.bucketSyncIntervalMin', { n }),
+      action: `bucket-check-interval:${n}` as MenuAction,
+    })),
+    { type: 'separator' },
+    { label: t('menu.bucketSyncAuto'), action: 'bucket-sync-mode:auto' },
+    { label: t('menu.bucketSyncManual'), action: 'bucket-sync-mode:manual' },
+  ]
 
   const templateDefinitionsSubmenu: MenuEntry[] = [
     {
@@ -181,7 +188,7 @@ function buildMenuGroups(t: TFunction, customThemes: ThemeDefinition[], isPro: b
         { label: t('menu.doctor'), action: 'doctor' },
         { label: t('menu.githubProxy'), action: 'github-proxy' },
         { label: t('menu.downloadWorkers'), action: 'download-workers' },
-        { label: t('menu.bucketCheckInterval'), submenu: bucketCheckIntervalSubmenu },
+        { label: t('menu.bucketSync'), submenu: bucketSyncSubmenu },
         { type: 'separator' },
         {
           label: t('menu.language'),
@@ -251,6 +258,12 @@ function isBucketCheckIntervalSelected(action: MenuAction, minutes: number): boo
   return action === `bucket-check-interval:${minutes}`
 }
 
+function isBucketSyncModeSelected(action: MenuAction, mode: string): boolean {
+  if (action === 'bucket-sync-mode:auto') return mode === 'auto'
+  if (action === 'bucket-sync-mode:manual') return mode === 'manual'
+  return false
+}
+
 function isDeprecatedHiddenSelected(action: MenuAction, hideDeprecated: boolean): boolean {
   if (action === 'deprecated:hide') return hideDeprecated
   if (action === 'deprecated:show') return !hideDeprecated
@@ -264,6 +277,7 @@ function isSubmenuItemChecked(
   pageSize: number,
   locale: AppLocale,
   bucketCheckIntervalMinutes: number,
+  bucketSyncMode: string,
   hideDeprecated: boolean,
 ): boolean {
   return (
@@ -271,6 +285,7 @@ function isSubmenuItemChecked(
     isPageSizeSelected(action, pageSizeMode, pageSize) ||
     isLocaleSelected(action, locale) ||
     isBucketCheckIntervalSelected(action, bucketCheckIntervalMinutes) ||
+    isBucketSyncModeSelected(action, bucketSyncMode) ||
     isDeprecatedHiddenSelected(action, hideDeprecated)
   )
 }
@@ -300,6 +315,7 @@ function submenuUsesCheckMarks(submenu: MenuEntry[]): boolean {
       action.startsWith('page-size:') ||
       action.startsWith('locale:') ||
       action.startsWith('bucket-check-interval:') ||
+      action.startsWith('bucket-sync-mode:') ||
       action === 'deprecated:hide' ||
       action === 'deprecated:show'
     )
@@ -380,6 +396,7 @@ function DropdownItems({
   pageSize,
   locale,
   bucketCheckIntervalMinutes,
+  bucketSyncMode,
   hideDeprecated,
   isActionDisabled,
   onSelect,
@@ -390,6 +407,7 @@ function DropdownItems({
   pageSize: number
   locale: AppLocale
   bucketCheckIntervalMinutes: number
+  bucketSyncMode: string
   hideDeprecated: boolean
   isActionDisabled?: (action: MenuAction) => boolean
   onSelect: (action: MenuAction) => void
@@ -439,13 +457,13 @@ function DropdownItems({
                         disabled={disabled}
                         onClick={() => onSelect(locked ? 'pro' : sub.action)}
                         role="menuitemradio"
-                        aria-checked={!locked && isSubmenuItemChecked(sub.action, themeId, pageSizeMode, pageSize, locale, bucketCheckIntervalMinutes, hideDeprecated)}
+                        aria-checked={!locked && isSubmenuItemChecked(sub.action, themeId, pageSizeMode, pageSize, locale, bucketCheckIntervalMinutes, bucketSyncMode, hideDeprecated)}
                       >
                         <MenuRowContent
                           label={sub.label}
                           shortcut={sub.shortcut}
                           icon={sub.icon}
-                          checked={!locked && isSubmenuItemChecked(sub.action, themeId, pageSizeMode, pageSize, locale, bucketCheckIntervalMinutes, hideDeprecated)}
+                          checked={!locked && isSubmenuItemChecked(sub.action, themeId, pageSizeMode, pageSize, locale, bucketCheckIntervalMinutes, bucketSyncMode, hideDeprecated)}
                           locked={locked}
                           reserveCheck={subReserveCheck}
                           reserveIcon={subReserveIcon}
@@ -499,6 +517,7 @@ interface AppMenuBarProps {
   pageSize: number
   locale: AppLocale
   bucketCheckIntervalMinutes: number
+  bucketSyncMode: string
   hideDeprecated: boolean
   isActionDisabled?: (action: MenuAction) => boolean
 }
@@ -512,6 +531,7 @@ export default function AppMenuBar({
   pageSize,
   locale,
   bucketCheckIntervalMinutes,
+  bucketSyncMode,
   hideDeprecated,
   isActionDisabled,
 }: AppMenuBarProps) {
@@ -597,6 +617,7 @@ export default function AppMenuBar({
                 pageSize={pageSize}
                 locale={locale}
                 bucketCheckIntervalMinutes={bucketCheckIntervalMinutes}
+                bucketSyncMode={bucketSyncMode}
                 hideDeprecated={hideDeprecated}
                 isActionDisabled={isActionDisabled}
                 onSelect={handleSelect}

@@ -19,8 +19,9 @@ import {
   DismissDesktopUpdate,
   OpenDesktopUpdateURL,
   UpdateBuckets,
-  GetBucketCheckInterval,
+  GetBucketSyncConfig,
   SetBucketCheckInterval,
+  SetBucketSyncMode,
   RecordCheckUpdatesResult,
   RunDoctor,
 } from '../wailsjs/go/main/App'
@@ -380,6 +381,7 @@ function App() {
   const [showGitHubProxyModal, setShowGitHubProxyModal] = useState(false)
   const [showDownloadWorkersModal, setShowDownloadWorkersModal] = useState(false)
   const [bucketCheckIntervalMinutes, setBucketCheckIntervalMinutes] = useState(15)
+  const [bucketSyncMode, setBucketSyncMode] = useState<'auto' | 'manual'>('manual')
   const [doctorChecks, setDoctorChecks] = useState<DoctorCheckItem[]>([])
   const [doctorOK, setDoctorOK] = useState<boolean | null>(null)
   const [doctorLoading, setDoctorLoading] = useState(false)
@@ -578,16 +580,22 @@ function App() {
     })
     const cancelEngineReady = EventsOnce('engine-ready', () => {
       bootstrapData()
-      void GetBucketCheckInterval()
-        .then((cfg) => setBucketCheckIntervalMinutes(cfg.minutes))
-        .catch((err) => console.error('Failed to load bucket check interval:', err))
+      void GetBucketSyncConfig()
+        .then((cfg) => {
+          setBucketCheckIntervalMinutes(cfg.minutes)
+          setBucketSyncMode(cfg.mode === 'auto' ? 'auto' : 'manual')
+        })
+        .catch((err) => console.error('Failed to load bucket sync config:', err))
     })
     void IsEngineReady().then((ready) => {
       if (ready) {
         bootstrapData()
-        void GetBucketCheckInterval()
-          .then((cfg) => setBucketCheckIntervalMinutes(cfg.minutes))
-          .catch((err) => console.error('Failed to load bucket check interval:', err))
+        void GetBucketSyncConfig()
+          .then((cfg) => {
+            setBucketCheckIntervalMinutes(cfg.minutes)
+            setBucketSyncMode(cfg.mode === 'auto' ? 'auto' : 'manual')
+          })
+          .catch((err) => console.error('Failed to load bucket sync config:', err))
       }
     })
 
@@ -1326,12 +1334,27 @@ function App() {
             void SetBucketCheckInterval(minutes)
               .then(() => {
                 setBucketCheckIntervalMinutes(minutes)
-                showInfoMessage(t('settings.bucketCheckIntervalSaved', { n: minutes }), {
+                showInfoMessage(t('settings.bucketSyncIntervalSaved', { n: minutes }), {
                   autoHideMs: INFO_BANNER_AUTO_HIDE_MS,
                 })
               })
-              .catch((err) => setError(t('settings.bucketCheckIntervalSaveFailed', { error: String(err) })))
+              .catch((err) => setError(t('settings.bucketSyncIntervalSaveFailed', { error: String(err) })))
           }
+          break
+        }
+        if (action === 'bucket-sync-mode:auto' || action === 'bucket-sync-mode:manual') {
+          const mode = action === 'bucket-sync-mode:auto' ? 'auto' : 'manual'
+          void SetBucketSyncMode(mode)
+            .then(() => {
+              setBucketSyncMode(mode)
+              showInfoMessage(
+                mode === 'auto'
+                  ? t('settings.bucketSyncModeAutoSaved')
+                  : t('settings.bucketSyncModeManualSaved'),
+                { autoHideMs: INFO_BANNER_AUTO_HIDE_MS },
+              )
+            })
+            .catch((err) => setError(t('settings.bucketSyncModeSaveFailed', { error: String(err) })))
           break
         }
         if (action.startsWith('locale:')) {
@@ -1511,7 +1534,15 @@ function App() {
       const count = Number(data.withUpdates ?? 0)
       if (count <= 0) return
       const names = Array.isArray(data.names) ? (data.names as string[]).join(', ') : ''
+      const autoSync = data.autoSync === true
       pulseStatAttention('buckets')
+      if (autoSync) {
+        showInfoMessage(t('bucket.autoSyncStarted', { count, names }), {
+          centered: true,
+          autoHideMs: INFO_BANNER_AUTO_HIDE_MS,
+        })
+        return
+      }
       showInfoMessage(t('bucket.updatesFoundBanner', { count, names }), {
         centered: true,
         autoHideMs: INFO_BANNER_AUTO_HIDE_MS,
@@ -1860,6 +1891,7 @@ function App() {
         pageSize={pageSize}
         locale={getAppLocale()}
         bucketCheckIntervalMinutes={bucketCheckIntervalMinutes}
+        bucketSyncMode={bucketSyncMode}
         hideDeprecated={hideDeprecated}
         isActionDisabled={isMenuActionDisabled}
       />

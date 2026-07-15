@@ -96,22 +96,6 @@ export namespace main {
 	        this.pageSize = source["pageSize"];
 	    }
 	}
-	export class BucketCheckIntervalConfig {
-	    minutes: number;
-	    configPath: string;
-	    options: number[];
-	
-	    static createFrom(source: any = {}) {
-	        return new BucketCheckIntervalConfig(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.minutes = source["minutes"];
-	        this.configPath = source["configPath"];
-	        this.options = source["options"];
-	    }
-	}
 	export class BucketInfo {
 	    name: string;
 	    repoURL: string;
@@ -146,6 +130,24 @@ export namespace main {
 	        this.localCommit = source["localCommit"];
 	        this.remoteCommit = source["remoteCommit"];
 	        this.lastCheckedAt = source["lastCheckedAt"];
+	    }
+	}
+	export class BucketSyncConfig {
+	    minutes: number;
+	    mode: string;
+	    configPath: string;
+	    intervalOptions: number[];
+	
+	    static createFrom(source: any = {}) {
+	        return new BucketSyncConfig(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.minutes = source["minutes"];
+	        this.mode = source["mode"];
+	        this.configPath = source["configPath"];
+	        this.intervalOptions = source["intervalOptions"];
 	    }
 	}
 	export class CachePackageInfo {

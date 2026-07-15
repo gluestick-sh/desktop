@@ -352,8 +352,10 @@
     "doctor": "환경점검…",
     "githubProxy": "GitHub 프록시 설정…",
     "downloadWorkers": "파일 다운로드",
-    "bucketCheckInterval": "Bucket 확인 간격",
-    "bucketCheckIntervalMin": "{{n}}분",
+    "bucketSync": "Bucket 동기화",
+    "bucketSyncIntervalMin": "{{n}}분",
+    "bucketSyncAuto": "자동",
+    "bucketSyncManual": "수동",
     "language": "언어",
     "localeEn": "영어",
     "localeZh": "简体中文",
@@ -430,6 +432,7 @@
     "statusHasUpdates": "업데이트 가능",
     "statusSynced": "최신",
     "updatesFoundBanner": "{{count}} 버킷에 {{names}} 업데이트가 있습니다. 업데이트하려면 Buckets 탭을 엽니다.",
+    "autoSyncStarted": "업데이트가 있는 {{count}}개 버킷 자동 동기화 중: {{names}}",
     "statusSyncedStale": "최신 상태(캐시됨)",
     "statusUnchecked": "체크하지 않음",
     "commitCurrentRemote": "현재 {{local}}\n원격 {{remote}}",
@@ -668,8 +671,11 @@
       "loadFailed": "설정 불러오기 실패: {{error}}",
       "saveFailed": "저장 실패: {{error}}"
     },
-    "bucketCheckIntervalSaved": "Bucket 확인 간격이 {{n}}분으로 설정되었습니다.",
-    "bucketCheckIntervalSaveFailed": "버킷 확인 간격을 저장하지 못했습니다: {{error}}"
+    "bucketSyncIntervalSaved": "Bucket 확인 간격이 {{n}}분으로 설정되었습니다.",
+    "bucketSyncIntervalSaveFailed": "버킷 확인 간격을 저장하지 못했습니다: {{error}}",
+    "bucketSyncModeAutoSaved": "Bucket 동기화를 자동으로 설정했습니다(확인 후 즉시 동기화)",
+    "bucketSyncModeManualSaved": "Bucket 동기화를 수동으로 설정했습니다(주기적 확인만)",
+    "bucketSyncModeSaveFailed": "Bucket 동기화 모드를 저장하지 못했습니다: {{error}}"
   },
   "about": {
     "title": "에 대한",

@@ -352,8 +352,10 @@
     "doctor": "Vérification de l’environnement…",
     "githubProxy": "Paramètres du proxy GitHub…",
     "downloadWorkers": "Téléchargement de fichiers",
-    "bucketCheckInterval": "Bucket intervalle de contrôle",
-    "bucketCheckIntervalMin": "{{n}} min",
+    "bucketSync": "Bucket sync",
+    "bucketSyncIntervalMin": "{{n}} min",
+    "bucketSyncAuto": "Automatic",
+    "bucketSyncManual": "Manual",
     "language": "Langue",
     "localeEn": "Anglais",
     "localeZh": "简体中文",
@@ -430,6 +432,7 @@
     "statusHasUpdates": "Mises à jour disponibles",
     "statusSynced": "À jour",
     "updatesFoundBanner": "Les compartiments {{count}} ont des mises à jour : {{names}}. Ouvrez l'onglet Buckets pour mettre à jour.",
+    "autoSyncStarted": "Synchronisation de {{count}} bucket(s) avec mises à jour : {{names}}",
     "statusSyncedStale": "À jour (mis en cache)",
     "statusUnchecked": "Non vérifié",
     "commitCurrentRemote": "{{local}} actuel\nÀ distance {{remote}}",
@@ -668,8 +671,11 @@
       "loadFailed": "Échec du chargement des paramètres : {{error}}",
       "saveFailed": "Échec de l’enregistrement : {{error}}"
     },
-    "bucketCheckIntervalSaved": "Intervalle de contrôle Bucket réglé sur {{n}} min",
-    "bucketCheckIntervalSaveFailed": "Échec de l'enregistrement de l'intervalle de vérification du compartiment : {{error}}"
+    "bucketSyncIntervalSaved": "Intervalle de contrôle Bucket réglé sur {{n}} min",
+    "bucketSyncIntervalSaveFailed": "Échec de l'enregistrement de l'intervalle de vérification du compartiment : {{error}}",
+    "bucketSyncModeAutoSaved": "Synchronisation Bucket en mode automatique (sync après chaque vérification)",
+    "bucketSyncModeManualSaved": "Synchronisation Bucket en mode manuel (vérification périodique uniquement)",
+    "bucketSyncModeSaveFailed": "Échec de l'enregistrement du mode de synchronisation : {{error}}"
   },
   "about": {
     "title": "À propos",

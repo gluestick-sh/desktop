@@ -352,8 +352,10 @@
     "doctor": "Control ambiental…",
     "githubProxy": "Configuración del proxy de GitHub…",
     "downloadWorkers": "Descarga de archivos",
-    "bucketCheckInterval": "Bucket intervalo de verificación",
-    "bucketCheckIntervalMin": "{{n}} min",
+    "bucketSync": "Bucket sync",
+    "bucketSyncIntervalMin": "{{n}} min",
+    "bucketSyncAuto": "Automatic",
+    "bucketSyncManual": "Manual",
     "language": "Idioma",
     "localeEn": "Inglés",
     "localeZh": "简体中文",
@@ -430,6 +432,7 @@
     "statusHasUpdates": "Actualizaciones disponibles",
     "statusSynced": "A hoy",
     "updatesFoundBanner": "Los depósitos {{count}} tienen actualizaciones: {{names}}. Abra la pestaña Buckets para actualizar.",
+    "autoSyncStarted": "Sincronizando {{count}} bucket(s) con actualizaciones: {{names}}",
     "statusSyncedStale": "Actualizado (en caché)",
     "statusUnchecked": "No comprobado",
     "commitCurrentRemote": "Actual {{local}}\nRemoto {{remote}}",
@@ -668,8 +671,11 @@
       "loadFailed": "Error al cargar la configuración: {{error}}",
       "saveFailed": "Error al guardar: {{error}}"
     },
-    "bucketCheckIntervalSaved": "Bucket intervalo de verificación establecido en {{n}} min",
-    "bucketCheckIntervalSaveFailed": "No se pudo guardar el intervalo de verificación del depósito: {{error}}"
+    "bucketSyncIntervalSaved": "Bucket intervalo de verificación establecido en {{n}} min",
+    "bucketSyncIntervalSaveFailed": "No se pudo guardar el intervalo de verificación del depósito: {{error}}",
+    "bucketSyncModeAutoSaved": "Sincronización de buckets en automático (sincronizar tras cada comprobación)",
+    "bucketSyncModeManualSaved": "Sincronización de buckets en manual (solo comprobación periódica)",
+    "bucketSyncModeSaveFailed": "No se pudo guardar el modo de sincronización: {{error}}"
   },
   "about": {
     "title": "Acerca de",

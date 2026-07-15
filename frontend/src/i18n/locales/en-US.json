@@ -352,8 +352,10 @@
     "doctor": "Environment check…",
     "githubProxy": "GitHub proxy settings…",
     "downloadWorkers": "File downloads",
-    "bucketCheckInterval": "Bucket check interval",
-    "bucketCheckIntervalMin": "{{n}} min",
+    "bucketSync": "Bucket sync",
+    "bucketSyncIntervalMin": "{{n}} min",
+    "bucketSyncAuto": "Automatic",
+    "bucketSyncManual": "Manual",
     "language": "Language",
     "localeEn": "English",
     "localeZh": "简体中文",
@@ -430,6 +432,7 @@
     "statusHasUpdates": "Updates available",
     "statusSynced": "Up to date",
     "updatesFoundBanner": "{{count}} bucket(s) have updates: {{names}}. Open the Buckets tab to update.",
+    "autoSyncStarted": "Syncing {{count}} bucket(s) with updates: {{names}}",
     "statusSyncedStale": "Up to date (cached)",
     "statusUnchecked": "Not checked",
     "commitCurrentRemote": "Current {{local}}\nRemote {{remote}}",
@@ -668,8 +671,11 @@
       "loadFailed": "Failed to load settings: {{error}}",
       "saveFailed": "Save failed: {{error}}"
     },
-    "bucketCheckIntervalSaved": "Bucket check interval set to {{n}} min",
-    "bucketCheckIntervalSaveFailed": "Failed to save bucket check interval: {{error}}"
+    "bucketSyncIntervalSaved": "Bucket check interval set to {{n}} min",
+    "bucketSyncIntervalSaveFailed": "Failed to save bucket check interval: {{error}}",
+    "bucketSyncModeAutoSaved": "Bucket sync set to automatic (sync immediately after each check)",
+    "bucketSyncModeManualSaved": "Bucket sync set to manual (periodic checks only; sync yourself)",
+    "bucketSyncModeSaveFailed": "Failed to save bucket sync mode: {{error}}"
   },
   "about": {
     "title": "About",
