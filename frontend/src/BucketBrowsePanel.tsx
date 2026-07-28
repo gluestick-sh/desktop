@@ -517,7 +517,7 @@ export default function BucketBrowsePanel({
                     : t('browse.emptyBucket')}
                 </p>
               ) : (
-                <div className="browse-list-body">
+                <>
                   {bucketData && activeQuery.trim() ? (
                     <p className="browse-result-summary">{t('browse.resultSummary', { total: bucketData.total })}</p>
                   ) : null}
@@ -529,7 +529,6 @@ export default function BucketBrowsePanel({
                       rowKey={(pkg) => `${pkg.bucket}-${pkg.name}`}
                     />
                   </div>
-
                   <ListPagination
                     page={bucketPage}
                     totalPages={bucketTotalPages}
@@ -541,7 +540,7 @@ export default function BucketBrowsePanel({
                     onNext={() => void loadBucketPackages(bucketPage + 1)}
                     disabled={loadingPackages}
                   />
-                </div>
+                </>
               )}
             </>
           )}

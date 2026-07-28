@@ -263,6 +263,7 @@
   align-items: flex-start;
   gap: 10px;
   padding: 0;
+  margin: 0 0 14px;
 }
 
 .search-recent-label {
@@ -360,6 +361,12 @@
   padding: 12px 24px;
   background: var(--bg-primary);
   border-top: 1px solid var(--border);
+}
+
+/* Pin pagination to the bottom of the list column (History / Browse / Installed / …). */
+.list-pagination-footer {
+  flex-shrink: 0;
+  margin-top: auto;
 }
 
 .list-pagination-nav {
@@ -583,6 +590,14 @@
   box-sizing: border-box;
 }
 
+/* Flush list pagination against the app footer on list tabs */
+.content.list-full,
+.content.activity-full {
+  flex: 1;
+  min-height: 0;
+  padding-bottom: 0;
+}
+
 .content > .tab-panel {
   display: flex;
   flex: 1;
@@ -598,16 +613,27 @@
 
 /* List pages: align table with section-header / search bar */
 .content > .installed-section,
+.content > .storage-section,
 .content > .browse-section,
 .content > .template-section,
 .content > .activity-section,
-.content > .bucket-section {
+.content > .bucket-section,
+.content > .tab-panel > .browse-section,
+.content > .tab-panel > .bucket-section {
   display: flex;
   flex: 1;
   flex-direction: column;
   width: 100%;
   min-height: 0;
   min-width: 0;
+}
+
+.installed-section > .list-scroll,
+.activity-section > .list-scroll,
+.storage-section > .list-scroll,
+.bucket-section > .list-scroll {
+  flex: 1;
+  min-height: 0;
 }
 
 .package-table {

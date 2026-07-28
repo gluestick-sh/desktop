@@ -33,7 +33,7 @@ export default function ListPagination({
   }
 
   return (
-    <div className={['list-pagination', className].filter(Boolean).join(' ')}>
+    <div className={['list-pagination', 'list-pagination-footer', className].filter(Boolean).join(' ')}>
       <div className="list-pagination-nav">
         <button type="button" className="secondary" disabled={!canPrev || disabled} onClick={onPrev}>
           {t('pagination.prev')}

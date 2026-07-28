@@ -444,7 +444,6 @@ export default function ActivityLogPanel({
       )}
 
       <ListPagination
-        className="activity-pagination-footer"
         page={page}
         totalPages={totalPages}
         total={data?.total ?? 0}

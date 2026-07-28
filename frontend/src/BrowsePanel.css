@@ -10,26 +10,19 @@
 .bucket-browse-panel {
   display: flex;
   flex-direction: column;
-  gap: 14px;
   flex: 1;
   min-height: 0;
   overflow: hidden;
 }
 
-.browse-list-body {
-  display: flex;
+.bucket-browse-panel > .list-scroll {
   flex: 1;
-  flex-direction: column;
-  gap: 0;
   min-height: 0;
 }
 
-.browse-scope-hint {
-  margin: 0;
-}
-
 .browse-result-summary {
-  margin: 0;
+  flex-shrink: 0;
+  margin: 0 0 12px;
   font-size: 13px;
   color: var(--text-secondary);
 }
@@ -58,7 +51,7 @@
 }
 
 .browse-section-header {
-  margin-bottom: 0;
+  margin-bottom: 14px;
 }
 
 .browse-toolbar {
@@ -116,6 +109,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 12px;
+  margin-bottom: 14px;
 }
 
 .browse-name-cell {

@@ -304,7 +304,7 @@ export default function StoragePanel({
           <p className="storage-empty-hint">{t('storageExt.emptyHint')}</p>
         </div>
       ) : (
-        <div className="storage-list-body">
+        <>
           <div className="list-scroll" ref={listScrollRef as React.Ref<HTMLDivElement>}>
             <PackageDataTable
               tableId="storage"
@@ -324,7 +324,7 @@ export default function StoragePanel({
             onNext={() => setPage((p) => p + 1)}
             disabled={loading || opsBusy}
           />
-        </div>
+        </>
       )}
 
       {pendingPurge && (

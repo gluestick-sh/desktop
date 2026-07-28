@@ -2029,7 +2029,18 @@ function App() {
         ))}
       </nav>
 
-      <main className={`content ${activeTab === 'activity' ? 'activity-full' : ''}`}>
+      <main
+        className={`content ${
+          activeTab === 'activity' ||
+          activeTab === 'browse' ||
+          activeTab === 'installed' ||
+          activeTab === 'updates' ||
+          activeTab === 'buckets' ||
+          activeTab === 'storage'
+            ? 'list-full'
+            : ''
+        }`}
+      >
         <div className={activeTab === 'buckets' ? 'tab-panel' : 'tab-panel tab-panel-hidden'} aria-hidden={activeTab !== 'buckets'}>
           <BucketPanel
             refreshKey={bucketRefreshKey}

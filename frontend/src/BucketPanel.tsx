@@ -688,7 +688,7 @@ export default function BucketPanel({
           )}
         </div>
       ) : (
-        <div className="bucket-list-body">
+        <>
           <div className="list-scroll" ref={listScrollRef as React.Ref<HTMLDivElement>}>
             <PackageDataTable
               tableId="buckets"
@@ -708,7 +708,7 @@ export default function BucketPanel({
             onNext={() => setPage((p) => p + 1)}
             disabled={loading}
           />
-        </div>
+        </>
       )}
 
       {showAdd && (

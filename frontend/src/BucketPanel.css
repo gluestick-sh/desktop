@@ -1,18 +1,19 @@
 .bucket-section {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 0;
   padding: 0;
   min-height: 0;
   flex: 1;
   overflow: hidden;
 }
 
-.bucket-list-body {
-  display: flex;
+.bucket-section > .bucket-error {
+  margin-bottom: 16px;
+}
+
+.bucket-section > .list-scroll {
   flex: 1;
-  flex-direction: column;
-  gap: 0;
   min-height: 0;
 }
 
