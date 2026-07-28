@@ -162,6 +162,7 @@ function buildMenuGroups(t: TFunction, customThemes: ThemeDefinition[]): MenuGro
             action: `locale:${code}` as LocaleMenuAction,
           })),
         },
+        { type: 'separator' },
         { label: t('menu.downloadWorkers'), action: 'download-workers' },
         { label: t('menu.bucketSync'), submenu: bucketSyncSubmenu },
         { type: 'separator' },

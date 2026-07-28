@@ -2592,52 +2592,106 @@ function App() {
             <div className="modal-body">
               <p className="modal-intro">{t('pro.intro')}</p>
               <div className="pro-features">
-                <button type="button" className="pro-feature pro-feature-action" onClick={() => setShowProModal(false)}>
-                  <div className="pro-feature-icon" aria-hidden="true">🔄</div>
+                <button
+                  type="button"
+                  className="pro-feature pro-feature-action is-pro-locked"
+                  onClick={() => setShowProModal(false)}
+                  aria-disabled="true"
+                  title={t('pro.locked')}
+                >
+                  <div className="pro-feature-icon" aria-hidden="true">📊</div>
                   <div className="pro-feature-content">
-                    <h4>{t('pro.feature.deviceSync.title')}</h4>
-                    <p>{t('pro.feature.deviceSync.desc')}</p>
+                    <h4>
+                      {t('pro.feature.envHealth.title')}
+                      <span className="pro-inline-badge">{t('pro.badge')}</span>
+                    </h4>
+                    <p>{t('pro.feature.envHealth.desc')}</p>
                   </div>
                 </button>
-                <button type="button" className="pro-feature pro-feature-action" onClick={() => { setShowProModal(false); setActiveTab('templates') }}>
-                  <div className="pro-feature-icon" aria-hidden="true">🧰</div>
-                  <div className="pro-feature-content">
-                    <h4>{t('pro.feature.recipe.title')}</h4>
-                    <p>{t('pro.feature.recipe.desc')}</p>
-                  </div>
-                </button>
-                <button type="button" className="pro-feature pro-feature-action" onClick={() => setShowProModal(false)}>
+                <button
+                  type="button"
+                  className="pro-feature pro-feature-action is-pro-locked"
+                  onClick={() => setShowProModal(false)}
+                  aria-disabled="true"
+                  title={t('pro.locked')}
+                >
                   <div className="pro-feature-icon" aria-hidden="true">💾</div>
                   <div className="pro-feature-content">
-                    <h4>{t('pro.feature.snapshot.title')}</h4>
+                    <h4>
+                      {t('pro.feature.snapshot.title')}
+                      <span className="pro-inline-badge">{t('pro.badge')}</span>
+                    </h4>
                     <p>{t('pro.feature.snapshot.desc')}</p>
                   </div>
                 </button>
-                <button type="button" className="pro-feature pro-feature-action" onClick={() => setShowProModal(false)}>
+                <button
+                  type="button"
+                  className="pro-feature pro-feature-action is-pro-locked"
+                  onClick={() => setShowProModal(false)}
+                  aria-disabled="true"
+                  title={t('pro.locked')}
+                >
+                  <div className="pro-feature-icon" aria-hidden="true">🔄</div>
+                  <div className="pro-feature-content">
+                    <h4>
+                      {t('pro.feature.deviceSync.title')}
+                      <span className="pro-inline-badge">{t('pro.badge')}</span>
+                    </h4>
+                    <p>{t('pro.feature.deviceSync.desc')}</p>
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  className="pro-feature pro-feature-action is-teams-locked"
+                  onClick={() => setShowProModal(false)}
+                  aria-disabled="true"
+                  title={t('teams.lockedHint')}
+                >
                   <div className="pro-feature-icon" aria-hidden="true">🛡️</div>
                   <div className="pro-feature-content">
-                    <h4>{t('pro.feature.complianceAudit.title')}</h4>
-                    <p>{t('pro.feature.complianceAudit.desc')}</p>
+                    <h4>
+                      {t('teams.feature.complianceAudit.title')}
+                      <span className="teams-inline-badge">{t('teams.badge')}</span>
+                    </h4>
+                    <p>{t('teams.feature.complianceAudit.desc')}</p>
                   </div>
                 </button>
-                <button type="button" className="pro-feature pro-feature-action" onClick={() => { setShowProModal(false); setActiveTab('templates') }}>
+                <button
+                  type="button"
+                  className="pro-feature pro-feature-action is-teams-locked"
+                  onClick={() => setShowProModal(false)}
+                  aria-disabled="true"
+                  title={t('teams.lockedHint')}
+                >
+                  <div className="pro-feature-icon" aria-hidden="true">🧰</div>
+                  <div className="pro-feature-content">
+                    <h4>
+                      {t('teams.feature.customConfig.title')}
+                      <span className="teams-inline-badge">{t('teams.badge')}</span>
+                    </h4>
+                    <p>{t('teams.feature.customConfig.desc')}</p>
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  className="pro-feature pro-feature-action is-teams-locked"
+                  onClick={() => setShowProModal(false)}
+                  aria-disabled="true"
+                  title={t('teams.lockedHint')}
+                >
                   <div className="pro-feature-icon" aria-hidden="true">👥</div>
                   <div className="pro-feature-content">
-                    <h4>{t('pro.feature.teamCollab.title')}</h4>
-                    <p>{t('pro.feature.teamCollab.desc')}</p>
-                  </div>
-                </button>
-                <button type="button" className="pro-feature pro-feature-action" onClick={() => { setShowProModal(false); openEnvironment() }}>
-                  <div className="pro-feature-icon" aria-hidden="true">📊</div>
-                  <div className="pro-feature-content">
-                    <h4>{t('pro.feature.envHealth.title')}</h4>
-                    <p>{t('pro.feature.envHealth.desc')}</p>
+                    <h4>
+                      {t('teams.feature.orgBaseline.title')}
+                      <span className="teams-inline-badge">{t('teams.badge')}</span>
+                    </h4>
+                    <p>{t('teams.feature.orgBaseline.desc')}</p>
                   </div>
                 </button>
               </div>
               <div className="modal-footer">
                 <button type="button" className="primary" onClick={() => setShowProModal(false)}>
-                  {t('pro.later')}
+                  {t('app.close')}
                 </button>
               </div>
             </div>

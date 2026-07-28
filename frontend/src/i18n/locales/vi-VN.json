@@ -746,36 +746,36 @@
   },
   "pro": {
     "title": "Gluestick Desktop Pro",
-    "intro": "Pro quản lý môi trường qua sáu năng lực: đồng bộ, công thức, snapshot, kiểm toán tuân thủ, chia sẻ và sức khỏe môi trường.",
+    "intro": "Pro covers device sync, environment health, and snapshots. Items marked Teams require a private discussion to enable.",
     "badge": "Pro",
     "feature": {
       "deviceSync": {
         "title": "Đồng bộ hóa thiết bị",
-        "desc": "Sau khi đăng nhập, đẩy/kéo ảnh chụp môi trường giữa các thiết bị và khôi phục trên máy mới (cần mạng). Cài đặt và quản lý cục bộ hàng ngày không phụ thuộc vào đám mây"
+        "desc": "Sau khi đăng nhập, đẩy/kéo ảnh chụp môi trường giữa các thiết bị và khôi phục trên máy mới (cần mạng). Cài đặt và quản lý cục bộ hàng ngày không phụ thuộc vào đám mây."
       },
       "workspace": {
-        "title": "Công thức",
-        "desc": "Khai báo môi trường mục tiêu theo vai trò (ví dụ frontend/data) và căn chỉnh máy này chỉ với một cú nhấp"
+        "title": "Công thức nấu ăn",
+        "desc": "Khai báo môi trường vai trò (ví dụ: giao diện người dùng / dữ liệu) và căn chỉnh máy này với danh sách mục tiêu chỉ bằng một cú nhấp chuột."
       },
       "snapshot": {
-        "title": "Snapshot & rollback",
-        "desc": "Tự snapshot trước khi cài/gỡ/nâng cấp; lỗi hoặc hỏng thì quay lại trạng thái trước"
+        "title": "Ảnh chụp nhanh và khôi phục",
+        "desc": "Tự động chụp nhanh trước khi cài đặt/gỡ cài đặt/nâng cấp; quay lại nếu có gì đó không thành công hoặc bị hỏng."
       },
       "complianceAudit": {
         "title": "Kiểm toán tuân thủ",
-        "desc": "Kiểm kê phần mềm đã cài và xuất báo cáo Markdown/Word phục vụ rà soát, lưu trữ tài sản và đối chiếu thay đổi"
+        "desc": "Kiểm kê phần mềm đã cài đặt và xuất báo cáo tuân thủ Markdown/Word để xem xét, ghi lại tài sản và đối chiếu thay đổi."
       },
       "teamCollab": {
-        "title": "Chia sẻ",
-        "desc": "Xuất công thức cho người khác hoặc nhập file công thức được chia sẻ (tính năng tổ chức sẽ bổ sung sau)"
+        "title": "Organization baseline & permissions",
+        "desc": "Define a shared environment baseline for your organization and manage who can access or change it."
       },
       "envHealth": {
         "title": "Sức khỏe môi trường",
-        "desc": "Bảng điều khiển và gợi ý từ lần chẩn đoán gần nhất, lỗi 7 ngày qua và gói có thể cập nhật"
+        "desc": "Trang tổng quan và các đề xuất từ ​​lần kiểm tra env mới nhất, các lỗi gần đây và các bản cập nhật có sẵn."
       },
       "recipe": {
-        "title": "Công thức",
-        "desc": "Khai báo môi trường mục tiêu theo vai trò (ví dụ frontend/data) và căn chỉnh máy này chỉ với một cú nhấp"
+        "title": "Mẫu môi trường",
+        "desc": "Lưu và chia sẻ cấu hình môi trường nhà phát triển; triển khai toàn bộ chuỗi công cụ chỉ bằng một cú nhấp chuột."
       }
     },
     "later": "Có lẽ sau này",
@@ -1164,6 +1164,32 @@
         "title": "Cơ sở dữ liệu",
         "summary": "Máy chủ và công cụ cơ sở dữ liệu phổ biến",
         "description": "MariaDB, MySQL, Redis, MongoDB, PostgreSQL, and SQLite from the main bucket — pick what your stack needs for local development."
+      }
+    }
+  },
+  "teams": {
+    "title": "Gluestick Desktop Teams",
+    "intro": "Teams is a private enterprise offering. Capabilities are enabled after direct discussion with us and are not listed publicly.",
+    "comingSoon": "To enable Teams, contact us to discuss your needs.",
+    "lockedHint": "This is a private Teams capability and is not available here.",
+    "upgrade": "Contact to enable",
+    "badge": "Teams",
+    "feature": {
+      "customConfig": {
+        "title": "Công thức tùy chỉnh",
+        "desc": "Tạo và quản lý công thức tùy chỉnh để chỉnh danh sách môi trường theo vai trò/dự án và triển khai một lần."
+      },
+      "recipe": {
+        "title": "Công thức tùy chỉnh",
+        "desc": "Tạo và quản lý công thức tùy chỉnh để chỉnh danh sách môi trường theo vai trò/dự án và triển khai một lần."
+      },
+      "complianceAudit": {
+        "title": "Compliance audit",
+        "desc": "Inventory installed software and export compliance reports."
+      },
+      "orgBaseline": {
+        "title": "Organization baseline & permissions",
+        "desc": "Define a shared environment baseline for your organization and manage who can access or change it."
       }
     }
   }

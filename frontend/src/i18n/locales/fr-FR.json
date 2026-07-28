@@ -743,36 +743,36 @@
   },
   "pro": {
     "title": "Gluestick Desktop Pro",
-    "intro": "Pro gère votre environnement via six capacités : sync, recettes, instantanés, audit de conformité, partage et santé de l'environnement.",
+    "intro": "Pro covers device sync, environment health, and snapshots. Items marked Teams require a private discussion to enable.",
     "badge": "Pro",
     "feature": {
       "deviceSync": {
         "title": "Synchronisation des appareils",
-        "desc": "Après connexion, poussez/tirez des instantanés d'environnement entre appareils et restaurez sur une nouvelle machine (réseau requis). Les installations et la gestion locale quotidienne ne dépendent pas du cloud"
+        "desc": "Après connexion, poussez/tirez des instantanés d'environnement entre appareils et restaurez sur une nouvelle machine (réseau requis). Les installations et la gestion locale quotidienne ne dépendent pas du cloud."
       },
       "workspace": {
         "title": "Recettes",
-        "desc": "Déclarez l'environnement cible d'un rôle (ex. front/data) et alignez cette machine en un clic"
+        "desc": "Déclarez un environnement de rôle (ex. frontend/data) et alignez cette machine sur la liste cible en un clic."
       },
       "snapshot": {
-        "title": "Instantanés et rollback",
-        "desc": "Instantané auto avant install/désinstall/mise à niveau ; revenez à l'état précédent en cas d'échec"
+        "title": "Instantanés et restauration",
+        "desc": "Instantané automatique avant l'installation/désinstallation/mise à niveau ; revenir en arrière si quelque chose échoue ou se brise."
       },
       "complianceAudit": {
         "title": "Audit de conformité",
-        "desc": "Inventoriez les logiciels installés et exportez des rapports Markdown/Word pour revue, archivage et rapprochement des changements"
+        "desc": "Inventorier les logiciels installés et exporter les rapports de conformité Markdown/Word à des fins d'examen, d'enregistrement des actifs et de rapprochement des modifications."
       },
       "teamCollab": {
-        "title": "Partager",
-        "desc": "Exportez des recettes pour d'autres ou importez des fichiers partagés (fonctions organisation à venir)"
+        "title": "Organization baseline & permissions",
+        "desc": "Define a shared environment baseline for your organization and manage who can access or change it."
       },
       "envHealth": {
         "title": "Santé de l'environnement",
-        "desc": "Tableau de bord et suggestions à partir du dernier diagnostic, des échecs récents et des mises à jour disponibles"
+        "desc": "Tableau de bord et suggestions issues de la dernière vérification d'environnement, des échecs récents et des mises à jour disponibles."
       },
       "recipe": {
-        "title": "Recettes",
-        "desc": "Déclarez l'environnement cible d'un rôle (ex. front/data) et alignez cette machine en un clic"
+        "title": "Modèles d'environnement",
+        "desc": "Enregistrez et partagez les configurations de l'environnement de développement ; déployer des chaînes d'outils complètes en un clic."
       }
     },
     "later": "Peut-être plus tard",
@@ -1161,6 +1161,32 @@
         "title": "Bases de données",
         "summary": "Serveurs et moteurs de bases de données courants",
         "description": "MariaDB, MySQL, Redis, MongoDB, PostgreSQL, and SQLite from the main bucket — pick what your stack needs for local development."
+      }
+    }
+  },
+  "teams": {
+    "title": "Gluestick Desktop Teams",
+    "intro": "Teams is a private enterprise offering. Capabilities are enabled after direct discussion with us and are not listed publicly.",
+    "comingSoon": "To enable Teams, contact us to discuss your needs.",
+    "lockedHint": "This is a private Teams capability and is not available here.",
+    "upgrade": "Contact to enable",
+    "badge": "Teams",
+    "feature": {
+      "customConfig": {
+        "title": "Recettes personnalisées",
+        "desc": "Créer et gérer des recettes personnalisées pour adapter les listes d’environnement par rôle ou projet et déployer en un clic."
+      },
+      "recipe": {
+        "title": "Recettes personnalisées",
+        "desc": "Créer et gérer des recettes personnalisées pour adapter les listes d’environnement par rôle ou projet et déployer en un clic."
+      },
+      "complianceAudit": {
+        "title": "Compliance audit",
+        "desc": "Inventory installed software and export compliance reports."
+      },
+      "orgBaseline": {
+        "title": "Organization baseline & permissions",
+        "desc": "Define a shared environment baseline for your organization and manage who can access or change it."
       }
     }
   }

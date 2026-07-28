@@ -746,36 +746,36 @@
   },
   "pro": {
     "title": "Gluestick Desktop Pro",
-    "intro": "Pro は 6 つの能力で環境を管理します：同期、レシピ、スナップショット、コンプライアンス監査、共有、環境ヘルス。",
+    "intro": "Pro covers device sync, environment health, and snapshots. Items marked Teams require a private discussion to enable.",
     "badge": "Pro",
     "feature": {
       "deviceSync": {
         "title": "デバイスの同期",
-        "desc": "サインイン後、デバイス間で環境スナップショットをプッシュ/プルし、新しいマシンで復元（ネットワークが必要）。日常のローカルインストールと管理はクラウドに依存しません"
+        "desc": "サインイン後、デバイス間で環境スナップショットをプッシュ/プルし、新しいマシンで復元（ネットワークが必要）。日常のローカルインストールと管理はクラウドに依存しません."
       },
       "workspace": {
         "title": "レシピ",
-        "desc": "役割ごとの目標環境（フロント/データなど）を宣言し、ワンクリックで本機を揃える"
+        "desc": "ロール環境 (フロントエンド/データなど) を宣言し、ワンクリックでこのマシンをターゲット リストに合わせます。."
       },
       "snapshot": {
         "title": "スナップショットとロールバック",
-        "desc": "インストール等の前に自動スナップショット。失敗時は直前の状態へ戻せる"
+        "desc": "インストール/アンインストール/アップグレード前の自動スナップショット。何かが失敗したり壊れたりした場合にロールバックする."
       },
       "complianceAudit": {
         "title": "コンプライアンス監査",
-        "desc": "インストール済みソフトを棚卸しし、Markdown/Word 形式のコンプライアンスレポートを書き出して審査・資産管理・変更照合に活用"
+        "desc": "インストールされているソフトウェアのインベントリを作成し、レビュー、資産記録、および変更の調整のために Markdown/Word コンプライアンス レポートをエクスポートします。."
       },
       "teamCollab": {
-        "title": "共有",
-        "desc": "レシピを他人向けにエクスポート、または共有ファイルをインポート（組織向け機能は今後拡充）"
+        "title": "Organization baseline & permissions",
+        "desc": "Define a shared environment baseline for your organization and manage who can access or change it."
       },
       "envHealth": {
-        "title": "環境ヘルス",
-        "desc": "直近の環境診断、7 日間の失敗、更新可能パッケージに基づくダッシュボードと提案"
+        "title": "環境の健康",
+        "desc": "ダッシュボードと、最新の環境チェック、最近の失敗、利用可能なアップデートからの提案."
       },
       "recipe": {
-        "title": "レシピ",
-        "desc": "役割ごとの目標環境（フロント/データなど）を宣言し、ワンクリックで本機を揃える"
+        "title": "環境テンプレート",
+        "desc": "開発環境構成を保存して共有します。ワンクリックで完全なツールチェーンを展開."
       }
     },
     "later": "たぶん後で",
@@ -1164,6 +1164,32 @@
         "title": "データベース",
         "summary": "一般的なデータベース サーバーとエンジン",
         "description": "MariaDB, MySQL, Redis, MongoDB, PostgreSQL, and SQLite from the main bucket — pick what your stack needs for local development."
+      }
+    }
+  },
+  "teams": {
+    "title": "Gluestick Desktop Teams",
+    "intro": "Teams is a private enterprise offering. Capabilities are enabled after direct discussion with us and are not listed publicly.",
+    "comingSoon": "To enable Teams, contact us to discuss your needs.",
+    "lockedHint": "This is a private Teams capability and is not available here.",
+    "upgrade": "Contact to enable",
+    "badge": "Teams",
+    "feature": {
+      "customConfig": {
+        "title": "カスタムレシピ",
+        "desc": "カスタムレシピを作成・管理し、役割やプロジェクトごとに環境一覧を整えてワンクリック展開."
+      },
+      "recipe": {
+        "title": "カスタムレシピ",
+        "desc": "カスタムレシピを作成・管理し、役割やプロジェクトごとに環境一覧を整えてワンクリック展開."
+      },
+      "complianceAudit": {
+        "title": "Compliance audit",
+        "desc": "Inventory installed software and export compliance reports."
+      },
+      "orgBaseline": {
+        "title": "Organization baseline & permissions",
+        "desc": "Define a shared environment baseline for your organization and manage who can access or change it."
       }
     }
   }

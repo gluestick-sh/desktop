@@ -751,36 +751,36 @@
   },
   "pro": {
     "title": "Gluestick Desktop Pro",
-    "intro": "Pro manages your environment across six capabilities: sync, recipes, snapshots, compliance audit, sharing, and environment health.",
+    "intro": "Pro covers environment health, snapshots, and device sync. Items marked Teams require a private discussion to enable.",
     "badge": "Pro",
     "feature": {
       "deviceSync": {
         "title": "Device Sync",
-        "desc": "Sign in to push/pull environment snapshots across devices and restore on a new machine (requires network). Day-to-day local installs and management don't depend on the cloud"
+        "desc": "Sign in to push/pull environment snapshots between primary and secondary devices and restore on a new machine. Day-to-day local installs and management don't depend on the cloud."
       },
       "workspace": {
         "title": "Recipes",
-        "desc": "Declare a role environment (e.g. frontend / data) and align this machine to the target list in one click"
+        "desc": "Declare a role environment (e.g. frontend / data) and align this machine to the target list in one click."
       },
       "snapshot": {
         "title": "Snapshots & rollback",
-        "desc": "Auto-snapshot before install/uninstall/upgrade; roll back if something fails or breaks"
+        "desc": "Auto-snapshot before install/uninstall/upgrade; roll back if something fails or breaks."
       },
       "complianceAudit": {
         "title": "Compliance audit",
-        "desc": "Inventory installed software and export Markdown/Word compliance reports for review, asset records, and change reconciliation"
+        "desc": "Inventory installed software and export Markdown/Word compliance reports for review, asset records, and change reconciliation."
       },
       "teamCollab": {
-        "title": "Share",
-        "desc": "Export recipes for others or import shared recipe files (org features coming later)"
+        "title": "Organization baseline & permissions",
+        "desc": "Define a shared environment baseline for your organization and manage who can access or change it."
       },
       "envHealth": {
         "title": "Environment health",
-        "desc": "Dashboard and suggestions from the latest env check, recent failures, and available updates"
+        "desc": "Dashboard and suggestions from the latest env check, recent failures, and available updates."
       },
       "recipe": {
         "title": "Recipes",
-        "desc": "Declare a role environment (e.g. frontend / data) and align this machine to the target list in one click"
+        "desc": "Declare a role environment (e.g. frontend / data) and align this machine to the target list in one click."
       }
     },
     "later": "Maybe later",
@@ -1169,6 +1169,32 @@
         "title": "Databases",
         "summary": "Common database servers and engines",
         "description": "Common relational, in-memory, and document databases for local development."
+      }
+    }
+  },
+  "teams": {
+    "title": "Gluestick Desktop Teams",
+    "intro": "Feature details are not listed here. Teams is a private enterprise offering enabled after direct discussion with us.",
+    "comingSoon": "To enable Teams, contact us at support@gluestick.sh.",
+    "lockedHint": "This is a private Teams capability and is not available here.",
+    "upgrade": "Contact to enable",
+    "badge": "Teams",
+    "feature": {
+      "customConfig": {
+        "title": "Custom recipes",
+        "desc": "Create and manage custom recipes to tailor environment lists by role or project and deploy in one click."
+      },
+      "recipe": {
+        "title": "Custom recipes",
+        "desc": "Create and manage custom recipes to tailor environment lists by role or project and deploy in one click."
+      },
+      "complianceAudit": {
+        "title": "Compliance audit",
+        "desc": "Inventory installed software and export compliance reports."
+      },
+      "orgBaseline": {
+        "title": "Organization baseline & permissions",
+        "desc": "Define a shared environment baseline for your organization and manage who can access or change it."
       }
     }
   }

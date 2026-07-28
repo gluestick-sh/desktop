@@ -1408,6 +1408,46 @@ button.pro-feature-action:hover {
   background: color-mix(in srgb, var(--accent) 8%, var(--bg-secondary));
 }
 
+button.pro-feature-action.is-pro-locked,
+button.pro-feature-action.is-teams-locked {
+  opacity: 0.72;
+  cursor: not-allowed;
+}
+
+button.pro-feature-action.is-pro-locked:hover,
+button.pro-feature-action.is-teams-locked:hover {
+  border-color: color-mix(in srgb, var(--text-secondary) 40%, transparent);
+  background: var(--bg-secondary);
+}
+
+.pro-inline-badge,
+.teams-inline-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--text-secondary) 35%, transparent);
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  color: var(--text-secondary);
+  vertical-align: middle;
+}
+
+.pro-inline-badge {
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  color: var(--accent);
+}
+
+.pro-inline-badge::before,
+.teams-inline-badge::before {
+  content: '🔒';
+  font-size: 9px;
+  line-height: 1;
+}
+
 .pro-feature-icon {
   font-size: 24px;
   width: 40px;

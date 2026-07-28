@@ -746,36 +746,36 @@
   },
   "pro": {
     "title": "Gluestick Desktop Pro",
-    "intro": "Pro는 동기화, 레시피, 스냅샷, 컴플라이언스 감사, 공유, 환경 상태의 여섯 가지 기능으로 환경을 관리합니다.",
+    "intro": "Pro covers device sync, environment health, and snapshots. Items marked Teams require a private discussion to enable.",
     "badge": "Pro",
     "feature": {
       "deviceSync": {
         "title": "장치 동기화",
-        "desc": "로그인 후 기기 간 환경 스냅샷을 푸시/풀하고 새 PC에서 복원(네트워크 필요). 일상적인 로컬 설치와 관리는 클라우드에 의존하지 않습니다"
+        "desc": "로그인 후 기기 간 환경 스냅샷을 푸시/풀하고 새 PC에서 복원(네트워크 필요). 일상적인 로컬 설치와 관리는 클라우드에 의존하지 않습니다."
       },
       "workspace": {
-        "title": "레시피",
-        "desc": "역할별 목표 환경(프론트/데이터 등)을 선언하고 원클릭으로 이 기기를 맞춤"
+        "title": "조리법",
+        "desc": "역할 환경(예: 프런트엔드/데이터)을 선언하고 한 번의 클릭으로 이 머신을 대상 목록에 정렬합니다."
       },
       "snapshot": {
         "title": "스냅샷 및 롤백",
-        "desc": "설치/제거/업그레이드 전 자동 스냅샷; 실패나 손상 시 이전 상태로 복원"
+        "desc": "설치/제거/업그레이드 전 자동 스냅샷; 무언가 실패하거나 중단되면 롤백."
       },
       "complianceAudit": {
-        "title": "컴플라이언스 감사",
-        "desc": "설치된 소프트웨어를 조사하고 Markdown/Word 컴플라이언스 보고서를 내보내 검토, 자산 기록, 변경 대조에 활용"
+        "title": "규정 준수 감사",
+        "desc": "설치된 소프트웨어의 인벤토리를 작성하고 검토, 자산 기록 및 변경 조정을 위해 Markdown/Word 규정 준수 보고서를 내보냅니다."
       },
       "teamCollab": {
-        "title": "공유",
-        "desc": "다른 사람을 위해 레시피를 내보내거나 공유된 레시피 파일을 가져오기(조직 기능은 추후 제공)"
+        "title": "Organization baseline & permissions",
+        "desc": "Define a shared environment baseline for your organization and manage who can access or change it."
       },
       "envHealth": {
-        "title": "환경 상태",
-        "desc": "최근 환경 진단, 7일간 실패, 업데이트 가능 패키지를 바탕으로 한 대시보드와 제안"
+        "title": "환경 건강",
+        "desc": "최신 환경 확인, 최근 실패, 사용 가능한 업데이트의 대시보드 및 제안."
       },
       "recipe": {
-        "title": "레시피",
-        "desc": "역할별 목표 환경(프론트/데이터 등)을 선언하고 원클릭으로 이 기기를 맞춤"
+        "title": "환경 템플릿",
+        "desc": "개발 환경 구성을 저장하고 공유합니다. 한 번의 클릭으로 전체 툴체인 배포."
       }
     },
     "later": "어쩌면 나중에",
@@ -1164,6 +1164,32 @@
         "title": "데이터베이스",
         "summary": "공통 데이터베이스 서버 및 엔진",
         "description": "MariaDB, MySQL, Redis, MongoDB, PostgreSQL, and SQLite from the main bucket — pick what your stack needs for local development."
+      }
+    }
+  },
+  "teams": {
+    "title": "Gluestick Desktop Teams",
+    "intro": "Teams is a private enterprise offering. Capabilities are enabled after direct discussion with us and are not listed publicly.",
+    "comingSoon": "To enable Teams, contact us to discuss your needs.",
+    "lockedHint": "This is a private Teams capability and is not available here.",
+    "upgrade": "Contact to enable",
+    "badge": "Teams",
+    "feature": {
+      "customConfig": {
+        "title": "사용자 정의 레시피",
+        "desc": "사용자 정의 레시피를 만들고 관리하여 역할/프로젝트별 환경 목록을 맞춘 뒤 한 번에 배포."
+      },
+      "recipe": {
+        "title": "사용자 정의 레시피",
+        "desc": "사용자 정의 레시피를 만들고 관리하여 역할/프로젝트별 환경 목록을 맞춘 뒤 한 번에 배포."
+      },
+      "complianceAudit": {
+        "title": "Compliance audit",
+        "desc": "Inventory installed software and export compliance reports."
+      },
+      "orgBaseline": {
+        "title": "Organization baseline & permissions",
+        "desc": "Define a shared environment baseline for your organization and manage who can access or change it."
       }
     }
   }

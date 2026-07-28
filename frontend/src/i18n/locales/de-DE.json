@@ -746,36 +746,36 @@
   },
   "pro": {
     "title": "Gluestick Desktop Pro",
-    "intro": "Pro verwaltet Ihre Umgebung über sechs Fähigkeiten: Sync, Rezepte, Snapshots, Compliance-Audit, Teilen und Umgebungsgesundheit.",
+    "intro": "Pro covers device sync, environment health, and snapshots. Items marked Teams require a private discussion to enable.",
     "badge": "Pro",
     "feature": {
       "deviceSync": {
         "title": "Gerätesynchronisierung",
-        "desc": "Nach der Anmeldung Umgebungs-Snapshots zwischen Geräten pushen/pullen und auf einem neuen Rechner wiederherstellen (Netzwerk erforderlich). Lokale Installationen und Verwaltung sind nicht von der Cloud abhängig"
+        "desc": "Nach der Anmeldung Umgebungs-Snapshots zwischen Geräten pushen/pullen und auf einem neuen Rechner wiederherstellen (Netzwerk erforderlich). Lokale Installationen und Verwaltung sind nicht von der Cloud abhängig."
       },
       "workspace": {
         "title": "Rezepte",
-        "desc": "Soll-Umgebung einer Rolle deklarieren (z. B. Frontend/Daten) und die Maschine mit einem Klick darauf ausrichten"
+        "desc": "Deklarieren Sie eine Rollenumgebung (z. B. Frontend/Daten) und richten Sie diese Maschine mit einem Klick an der Zielliste aus."
       },
       "snapshot": {
-        "title": "Snapshots & Rollback",
-        "desc": "Automatische Snapshots vor Install/Deinstall/Upgrade; bei Fehlern zum vorherigen Zustand zurück"
+        "title": "Snapshots und Rollback",
+        "desc": "Automatischer Schnappschuss vor der Installation/Deinstallation/Aktualisierung; Rollback, wenn etwas ausfällt oder kaputt geht."
       },
       "complianceAudit": {
         "title": "Compliance-Audit",
-        "desc": "Installierte Software inventarisieren und Markdown/Word-Compliance-Berichte für Prüfung, Asset-Archiv und Änderungsabgleich exportieren"
+        "desc": "Inventarisieren Sie installierte Software und exportieren Sie Markdown-/Word-Compliance-Berichte zur Überprüfung, Bestandsaufzeichnung und Änderungsabstimmung."
       },
       "teamCollab": {
-        "title": "Teilen",
-        "desc": "Rezepte für andere exportieren oder geteilte Rezeptdateien importieren (Organisationsfunktionen folgen später)"
+        "title": "Organization baseline & permissions",
+        "desc": "Define a shared environment baseline for your organization and manage who can access or change it."
       },
       "envHealth": {
-        "title": "Umgebungsgesundheit",
-        "desc": "Dashboard und Empfehlungen aus dem letzten Umgebungscheck, jüngsten Fehlern und verfügbaren Updates"
+        "title": "Umweltgesundheit",
+        "desc": "Dashboard und Vorschläge aus der letzten Umgebungsprüfung, aktuellen Fehlern und verfügbaren Updates."
       },
       "recipe": {
-        "title": "Rezepte",
-        "desc": "Soll-Umgebung einer Rolle deklarieren (z. B. Frontend/Daten) und die Maschine mit einem Klick darauf ausrichten"
+        "title": "Umgebungsvorlagen",
+        "desc": "Speichern und teilen Sie Entwicklungsumgebungskonfigurationen; Stellen Sie vollständige Toolchains mit einem Klick bereit."
       }
     },
     "later": "Vielleicht später",
@@ -1164,6 +1164,32 @@
         "title": "Datenbanken",
         "summary": "Gängige Datenbankserver und Engines",
         "description": "MariaDB, MySQL, Redis, MongoDB, PostgreSQL, and SQLite from the main bucket — pick what your stack needs for local development."
+      }
+    }
+  },
+  "teams": {
+    "title": "Gluestick Desktop Teams",
+    "intro": "Teams is a private enterprise offering. Capabilities are enabled after direct discussion with us and are not listed publicly.",
+    "comingSoon": "To enable Teams, contact us to discuss your needs.",
+    "lockedHint": "This is a private Teams capability and is not available here.",
+    "upgrade": "Contact to enable",
+    "badge": "Teams",
+    "feature": {
+      "customConfig": {
+        "title": "Eigene Rezepte",
+        "desc": "Eigene Rezepte erstellen und verwalten, Umgebungslisten nach Rolle/Projekt anpassen und per Klick bereitstellen."
+      },
+      "recipe": {
+        "title": "Eigene Rezepte",
+        "desc": "Eigene Rezepte erstellen und verwalten, Umgebungslisten nach Rolle/Projekt anpassen und per Klick bereitstellen."
+      },
+      "complianceAudit": {
+        "title": "Compliance audit",
+        "desc": "Inventory installed software and export compliance reports."
+      },
+      "orgBaseline": {
+        "title": "Organization baseline & permissions",
+        "desc": "Define a shared environment baseline for your organization and manage who can access or change it."
       }
     }
   }
