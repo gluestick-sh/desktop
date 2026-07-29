@@ -102,14 +102,21 @@ jobs:
           .\build-installer.ps1 -Arch "${{ matrix.arch }}" -Version $version `
             -GluestickExe "..\build\bin\gluestick.exe" -ShimExe "..\build\bin\shim.exe"
 
+      - name: Stage release files
+        shell: pwsh
+        run: |
+          $stage = "release-assets"
+          New-Item -ItemType Directory -Force -Path $stage | Out-Null
+          Copy-Item "dist/gluestick-windows-${{ matrix.arch }}.zip" $stage
+          Copy-Item "dist/gluestick-windows-${{ matrix.arch }}.zip.sha256" $stage
+          Copy-Item "installer/output/GluestickDesktopSetup-${{ matrix.arch }}.exe" $stage
+          Copy-Item "installer/output/GluestickDesktopSetup-${{ matrix.arch }}.exe.sha256" $stage
+          Get-ChildItem $stage | Format-Table Name, Length
+
       - uses: actions/upload-artifact@v7
         with:
           name: gluestick-windows-${{ matrix.arch }}
-          path: |
-            dist/gluestick-windows-${{ matrix.arch }}.zip
-            dist/gluestick-windows-${{ matrix.arch }}.zip.sha256
-            installer/output/GluestickDesktopSetup-${{ matrix.arch }}.exe
-            installer/output/GluestickDesktopSetup-${{ matrix.arch }}.exe.sha256
+          path: release-assets/
           if-no-files-found: error
 
   release:
@@ -124,10 +131,21 @@ jobs:
           pattern: gluestick-windows-*
           merge-multiple: true
 
+      - name: List release assets
+        run: ls -la dist
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v3
         with:
-          files: dist/*
+          files: |
+            dist/gluestick-windows-amd64.zip
+            dist/gluestick-windows-amd64.zip.sha256
+            dist/gluestick-windows-arm64.zip
+            dist/gluestick-windows-arm64.zip.sha256
+            dist/GluestickDesktopSetup-amd64.exe
+            dist/GluestickDesktopSetup-amd64.exe.sha256
+            dist/GluestickDesktopSetup-arm64.exe
+            dist/GluestickDesktopSetup-arm64.exe.sha256
           generate_release_notes: true
           fail_on_unmatched_files: true
 
