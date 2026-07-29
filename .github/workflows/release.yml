@@ -1,0 +1,271 @@
+# Tag push: build → GitHub Release → https://gluestick.sh/releases/desktop/
+# Manual: workflow_dispatch with an existing tag to re-sync that release to the site.
+#
+# Secrets (org recommended): GLUESTICK_SSH_HOST, GLUESTICK_SSH_PORT,
+#   GLUESTICK_SSH_USER, GLUESTICK_SSH_KEY, GLUESTICK_SSH_PATH,
+#   optional GLUESTICK_SSH_PASSPHRASE / GLUESTICK_SSH_KNOWN_HOSTS
+# Upload target: $GLUESTICK_SSH_PATH/desktop/ → https://gluestick.sh/releases/desktop/
+
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing release tag to sync to gluestick.sh (e.g. v1.2.3)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+env:
+  GOWORK: off
+
+jobs:
+  build:
+    if: github.event_name == 'push'
+    name: windows-${{ matrix.arch }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: windows-latest
+            platform: windows/amd64
+          - arch: arm64
+            runner: windows-11-arm
+            platform: windows/arm64
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache-dependency-path: go.sum
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Wails CLI
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.13.0
+
+      - name: Add Go bin to PATH
+        shell: pwsh
+        run: Add-Content -Path $env:GITHUB_PATH -Value "$(go env GOPATH)\bin"
+
+      - name: Prepare app icon
+        shell: pwsh
+        run: |
+          $publicIcon = "frontend/public/appicon.png"
+          $buildIcon = "build/appicon.png"
+          if ((Test-Path $publicIcon) -and -not (Test-Path $buildIcon)) {
+            New-Item -ItemType Directory -Force -Path build | Out-Null
+            Copy-Item $publicIcon $buildIcon
+          }
+
+      - name: Build
+        shell: pwsh
+        run: .\build.ps1 -Platform ${{ matrix.platform }} -nocolour
+
+      - name: Verify artifacts
+        shell: pwsh
+        run: |
+          if (-not (Test-Path build/bin/gluestick.exe)) { throw "missing gluestick.exe" }
+          if (-not (Test-Path build/bin/shim.exe)) { throw "missing shim.exe" }
+
+      - name: Package zip
+        shell: pwsh
+        run: |
+          $dest = "dist/gluestick-windows-${{ matrix.arch }}"
+          New-Item -ItemType Directory -Force -Path $dest | Out-Null
+          Copy-Item build/bin/gluestick.exe, build/bin/shim.exe $dest
+          $zip = "dist/gluestick-windows-${{ matrix.arch }}.zip"
+          Compress-Archive -Path "$dest/*" -DestinationPath $zip
+          $hash = (Get-FileHash $zip -Algorithm SHA256).Hash.ToLower()
+          "$hash  gluestick-windows-${{ matrix.arch }}.zip" | Out-File "$zip.sha256" -Encoding ascii
+
+      - name: Build installer
+        shell: pwsh
+        working-directory: installer
+        run: |
+          choco install nsis -y --no-progress
+          $version = "${{ github.ref_name }}" -replace '^v', ''
+          .\build-installer.ps1 -Arch "${{ matrix.arch }}" -Version $version `
+            -GluestickExe "..\build\bin\gluestick.exe" -ShimExe "..\build\bin\shim.exe"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: gluestick-windows-${{ matrix.arch }}
+          path: |
+            dist/gluestick-windows-${{ matrix.arch }}.zip
+            dist/gluestick-windows-${{ matrix.arch }}.zip.sha256
+            installer/output/GluestickDesktopSetup-${{ matrix.arch }}.exe
+            installer/output/GluestickDesktopSetup-${{ matrix.arch }}.exe.sha256
+          if-no-files-found: error
+
+  release:
+    if: github.event_name == 'push'
+    name: publish GitHub Release
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          path: dist
+          pattern: gluestick-windows-*
+          merge-multiple: true
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v3
+        with:
+          files: dist/*
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: desktop-release
+          path: dist/GluestickDesktopSetup-*
+          if-no-files-found: error
+
+  sync-web:
+    if: github.event_name == 'workflow_dispatch'
+    name: sync from existing release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          gh release download "$TAG" -R "${{ github.repository }}" -D dist \
+            -p 'GluestickDesktopSetup-amd64.exe' \
+            -p 'GluestickDesktopSetup-arm64.exe'
+          # Checksums are optional for older releases.
+          gh release download "$TAG" -R "${{ github.repository }}" -D dist \
+            -p 'GluestickDesktopSetup-amd64.exe.sha256' \
+            -p 'GluestickDesktopSetup-arm64.exe.sha256' || true
+          ls -la dist
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: desktop-release
+          path: dist/GluestickDesktopSetup-*
+          if-no-files-found: error
+
+  publish-web:
+    name: publish to gluestick.sh
+    runs-on: ubuntu-latest
+    needs: [release, sync-web]
+    if: |
+      always() && !cancelled() && (
+        needs.release.result == 'success' ||
+        needs.sync-web.result == 'success'
+      )
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: desktop-release
+          path: dist
+
+      - name: Setup SSH
+        env:
+          SSH_HOST: ${{ secrets.GLUESTICK_SSH_HOST }}
+          SSH_PORT: ${{ secrets.GLUESTICK_SSH_PORT }}
+          SSH_KEY: ${{ secrets.GLUESTICK_SSH_KEY }}
+          SSH_PASSPHRASE: ${{ secrets.GLUESTICK_SSH_PASSPHRASE }}
+          SSH_KNOWN_HOSTS: ${{ secrets.GLUESTICK_SSH_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+          # Prefer env + printf so multiline PEM secrets stay intact.
+          printf '%s\n' "$SSH_KEY" | tr -d '\r' > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+
+          if [ -n "${SSH_KNOWN_HOSTS:-}" ]; then
+            printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          else
+            ssh-keyscan -p "${SSH_PORT}" -H "${SSH_HOST}" >> ~/.ssh/known_hosts
+          fi
+          chmod 644 ~/.ssh/known_hosts
+
+          # Unlock encrypted keys once for later -i IdentitiesOnly=yes commands.
+          if [ -n "${SSH_PASSPHRASE:-}" ]; then
+            eval "$(ssh-agent -s)"
+            export SSH_PASSPHRASE
+            printf '%s\n' '#!/bin/sh' 'printf "%s\n" "$SSH_PASSPHRASE"' > ~/.ssh/askpass.sh
+            chmod 700 ~/.ssh/askpass.sh
+            DISPLAY=:0 SSH_ASKPASS="$HOME/.ssh/askpass.sh" SSH_ASKPASS_REQUIRE=force \
+              ssh-add ~/.ssh/deploy_key </dev/null
+            echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK" >> "$GITHUB_ENV"
+            echo "SSH_AGENT_PID=$SSH_AGENT_PID" >> "$GITHUB_ENV"
+          fi
+
+      - name: Test SSH
+        env:
+          SSH_HOST: ${{ secrets.GLUESTICK_SSH_HOST }}
+          SSH_PORT: ${{ secrets.GLUESTICK_SSH_PORT }}
+          SSH_USER: ${{ secrets.GLUESTICK_SSH_USER }}
+        run: |
+          set -euo pipefail
+          ssh \
+            -p "${SSH_PORT}" \
+            -i ~/.ssh/deploy_key \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            -o BatchMode=yes \
+            "${SSH_USER}@${SSH_HOST}" \
+            "whoami"
+
+      - name: Deploy to gluestick.sh/releases/desktop/
+        env:
+          SSH_HOST: ${{ secrets.GLUESTICK_SSH_HOST }}
+          SSH_PORT: ${{ secrets.GLUESTICK_SSH_PORT }}
+          SSH_USER: ${{ secrets.GLUESTICK_SSH_USER }}
+          SSH_PATH: ${{ secrets.GLUESTICK_SSH_PATH }}
+        run: |
+          set -euo pipefail
+          remote_dir="${SSH_PATH%/}/desktop"
+          ssh_opts=(-p "${SSH_PORT}" -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o BatchMode=yes)
+
+          ls -la dist/GluestickDesktopSetup-*
+
+          ssh "${ssh_opts[@]}" "${SSH_USER}@${SSH_HOST}" "mkdir -p $(printf %q "$remote_dir")"
+
+          # scp uses -P for port (capital P).
+          scp_files=(
+            dist/GluestickDesktopSetup-amd64.exe
+            dist/GluestickDesktopSetup-arm64.exe
+          )
+          for f in \
+            dist/GluestickDesktopSetup-amd64.exe.sha256 \
+            dist/GluestickDesktopSetup-arm64.exe.sha256
+          do
+            if [ -f "$f" ]; then
+              scp_files+=("$f")
+            fi
+          done
+
+          scp \
+            -P "${SSH_PORT}" \
+            -i ~/.ssh/deploy_key \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            -o BatchMode=yes \
+            "${scp_files[@]}" \
+            "${SSH_USER}@${SSH_HOST}:${remote_dir}/"
+
+          echo "public URL: https://gluestick.sh/releases/desktop/"

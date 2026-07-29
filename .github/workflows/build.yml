@@ -3,7 +3,6 @@ name: Build
 on:
   push:
     branches: [main, master]
-    tags: ["v*"]
   pull_request:
   workflow_dispatch:
 
@@ -14,8 +13,6 @@ jobs:
   build:
     name: windows-${{ matrix.arch }}
     runs-on: ${{ matrix.runner }}
-    permissions:
-      contents: write
     strategy:
       fail-fast: false
       matrix:
@@ -29,16 +26,16 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
           cache-dependency-path: go.sum
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 20
           cache: npm
@@ -83,29 +80,8 @@ jobs:
           "$hash  gluestick-windows-${{ matrix.arch }}.zip" | Out-File "$zip.sha256" -Encoding ascii
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: gluestick-windows-${{ matrix.arch }}
           path: dist/gluestick-windows-${{ matrix.arch }}.zip*
           if-no-files-found: error
-
-      - name: Build installer
-        if: startsWith(github.ref, 'refs/tags/')
-        shell: pwsh
-        working-directory: installer
-        run: |
-          choco install nsis -y --no-progress
-          $version = "${{ github.ref_name }}" -replace '^v', ''
-          .\build-installer.ps1 -Arch "${{ matrix.arch }}" -Version $version `
-            -GluestickExe "..\build\bin\gluestick.exe" -ShimExe "..\build\bin\shim.exe"
-
-      - name: Publish release
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            dist/gluestick-windows-${{ matrix.arch }}.zip
-            dist/gluestick-windows-${{ matrix.arch }}.zip.sha256
-            installer/output/GluestickDesktopSetup-${{ matrix.arch }}.exe
-            installer/output/GluestickDesktopSetup-${{ matrix.arch }}.exe.sha256
-          fail_on_unmatched_files: true
