@@ -47,6 +47,7 @@ export type MenuAction =
   | 'doctor'
   | 'github-proxy'
   | 'download-workers'
+  | 'task-center'
   | 'bucket-check-interval:5'
   | 'bucket-check-interval:15'
   | 'bucket-check-interval:30'
@@ -165,6 +166,8 @@ function buildMenuGroups(t: TFunction, customThemes: ThemeDefinition[]): MenuGro
         { type: 'separator' },
         { label: t('menu.downloadWorkers'), action: 'download-workers' },
         { label: t('menu.bucketSync'), submenu: bucketSyncSubmenu },
+        { type: 'separator' },
+        { label: t('menu.taskCenter'), action: 'task-center' },
         { type: 'separator' },
         { label: t('menu.environment'), action: 'environment' },
         { label: t('menu.githubProxy'), action: 'github-proxy' },

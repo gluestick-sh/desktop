@@ -8,6 +8,8 @@
 scripts/go-dev.exe
 build/bin/shim.exe
 scripts/shim/shim.exe
+go.work
+go.work.sum
 
 # Desktop / Wails (generated or local)
 frontend/node_modules/

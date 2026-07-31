@@ -363,7 +363,8 @@
     "upgradePro": "프로로 업그레이드…",
     "about": "에 대한",
     "ariaLabel": "애플리케이션 메뉴",
-    "openRootDir": "루트 디렉터리 열기…"
+    "openRootDir": "루트 디렉터리 열기…",
+    "taskCenter": "작업…"
   },
   "table": {
     "sortColumn": "{{column}} 기준으로 정렬",
@@ -1025,7 +1026,15 @@
     "gcStart": "청소 시작",
     "gcTaskTitle": "고아를 청소하세요",
     "noSpace": "회수할 공간이 없음",
-    "freed": "{{removed}}개의 고아 blob을 제거하고 해제 {{freed}}"
+    "freed": "{{removed}}개의 고아 blob을 제거하고 해제 {{freed}}",
+    "batchPurge": "Delete selected ({{count}})",
+    "batchPurgeDialogTitle": "Delete selected cache",
+    "batchPurgeDialogBody": "Remove {{count}} package(s) from the cache index and delete unreferenced blobs.",
+    "batchPurgeConfirm": "Delete selected",
+    "batchPurged": "Removed cache for {{count}} package(s)",
+    "batchPurgeFailed": "Some deletions failed: {{error}}",
+    "selectPageAria": "Select all on this page",
+    "selectAria": "Select {{name}}"
   },
   "activityExt": {
     "subtitle": "최근 설치, 제거, 업데이트 및 환경 확인",
@@ -1165,7 +1174,9 @@
         "summary": "공통 데이터베이스 서버 및 엔진",
         "description": "MariaDB, MySQL, Redis, MongoDB, PostgreSQL, and SQLite from the main bucket — pick what your stack needs for local development."
       }
-    }
+    },
+    "forceInstallPending": "Force install ({{count}})",
+    "forceInstallHint": "Queue pending packages with --force (re-download). Does not skip hash checks."
   },
   "teams": {
     "title": "Gluestick Desktop Teams",
@@ -1192,5 +1203,59 @@
         "desc": "Define a shared environment baseline for your organization and manage who can access or change it."
       }
     }
+  },
+  "taskCenter": {
+    "title": "작업",
+    "intro": "Track install and uninstall work. Up to {{max}} installs run at once; the rest wait in the queue.",
+    "tabsAria": "작업 분류",
+    "tabRunning": "실행 중",
+    "tabCompleted": "완료",
+    "tabFailed": "실패",
+    "tabAll": "전체",
+    "empty": "아직 작업이 없습니다",
+    "emptyRunning": "실행 중인 작업이 없습니다",
+    "clearFinished": "종료된 항목 지우기",
+    "open": "작업 열기",
+    "kindInstall": "설치",
+    "kindUninstall": "제거",
+    "kindSnapshotApply": "스냅샷 복원",
+    "kindCloudPush": "스냅샷 푸시",
+    "kindBucket": "버킷",
+    "kindOther": "기타",
+    "statusRunning": "실행 중",
+    "statusCompleted": "완료",
+    "statusFailed": "실패",
+    "startedAt": "시작 {{time}}",
+    "finishedAt": "종료 {{time}}",
+    "current": "현재: {{name}}",
+    "currentNamed": "현재: {{name}} ({{percent}}%)",
+    "moreItems": "…외 {{count}}개",
+    "installTitle": "{{name}} 설치",
+    "uninstallTitle": "{{name}} 제거",
+    "snapshotApplyTitle": "스냅샷에서 환경 복원",
+    "snapshotApplyDetail": "계획: 패키지 {{packages}}개 설치, 버킷 {{buckets}}개 추가",
+    "snapshotApplyStarted": "스냅샷 복원 시작: 패키지 {{packages}}개, 버킷 {{buckets}}개. 「고급 → 작업」에서 자세히 보기.",
+    "cloudPushTitle": "환경 스냅샷 푸시",
+    "cloudPushDetail": "이 장치의 환경을 클라우드에 업로드하는 중",
+    "cloudPushDetailRevision": "revision {{revision}}(으)로 업로드됨",
+    "cloudPushStarted": "스냅샷 푸시를 시작했습니다. 「고급 → 작업」에서 진행 상황을 확인하세요.",
+    "statusQueued": "Queued",
+    "queuedDetail": "Waiting for a free install slot",
+    "batchQueued": "Queued {{count}} installs (up to {{max}} run at once).",
+    "progressOnly": "진행률: {{percent}}%",
+    "forceDetail": "Force install (--force): re-download and overwrite",
+    "forceQueuedDetail": "Queued for force install",
+    "batchForceQueued": "Queued {{count}} force installs (up to {{max}} run at once).",
+    "forceNote": "Force re-downloads and overwrites local files; it does not skip hash checks. For hash mismatch, update the bucket or use Accept hash.",
+    "retry": "Retry",
+    "forceRetry": "Force retry",
+    "acceptHashRetry": "Accept hash & retry",
+    "acceptHashHint": "Save the downloaded file hash as a local override, purge cache, then force reinstall.",
+    "retryAllFailed": "Retry failed ({{count}})",
+    "forceRetryAllFailed": "Force retry failed ({{count}})",
+    "acceptHashUnavailable": "This failure is not a hash mismatch",
+    "acceptHashNoUrl": "No download URL for {{name}}",
+    "acceptHashFailed": "Could not save hash override: {{error}}",
+    "hashMismatchHint": "Hash mismatch for {{name}}. Accept the downloaded file hash and retry, or update the extras bucket."
   }
 }

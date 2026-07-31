@@ -126,6 +126,8 @@ export function SetGitHubProxy(arg1:string):Promise<void>;
 
 export function SetManifestDownloadOverride(arg1:string,arg2:string):Promise<void>;
 
+export function SetManifestDownloadOverrideWithHash(arg1:string,arg2:string,arg3:string):Promise<void>;
+
 export function SetManifestJSONOverride(arg1:string,arg2:string):Promise<void>;
 
 export function SetPackageLaunchKind(arg1:string,arg2:string,arg3:string):Promise<void>;

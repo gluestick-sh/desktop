@@ -2,25 +2,67 @@
 # Workaround: wails dev fails on Windows ARM64 + Go 1.26 when -gcflags "all=-N -l" is set (white screen)
 $ErrorActionPreference = "Stop"
 Set-Location $PSScriptRoot
-$env:GOWORK = "off"
+
+# Prefer sibling ../core when developing in the monorepo layout so installer.script
+# helper fixes (e.g. Scoop `ensure`) are picked up without publishing a new core tag.
+# Otherwise keep GOWORK=off so a standalone desktop clone still builds against the
+# module proxy version.
+$siblingCore = Join-Path (Split-Path $PSScriptRoot -Parent) "core"
+$siblingCoreMod = Join-Path $siblingCore "go.mod"
+if (Test-Path $siblingCoreMod) {
+  $goWorkPath = Join-Path $PSScriptRoot "go.work"
+  $goWork = @"
+go 1.26.3
+
+use (
+	.
+	../core
+)
+"@
+  [System.IO.File]::WriteAllText($goWorkPath, $goWork.Replace("`r`n", "`n") + "`n")
+  # Point at this repo's go.work so a parent monorepo go.work is not used.
+  $env:GOWORK = $goWorkPath
+  Write-Host "Using local core from $siblingCore"
+} else {
+  $env:GOWORK = "off"
+}
+
+function Test-WorkingNpmDirectory([string]$dir) {
+  if (-not $dir) { return $false }
+  $npmCmd = Join-Path $dir "npm.cmd"
+  $nodeExe = Join-Path $dir "node.exe"
+  # Prefer a real Node install (has npm.cmd + node.exe). Skip broken Glue shims
+  # that only expose shim.exe copies without runnable node binaries in-dir.
+  return (Test-Path $npmCmd) -and (Test-Path $nodeExe)
+}
 
 function Resolve-NpmDirectory {
-  $npmCmd = Get-Command npm -ErrorAction SilentlyContinue
-  if ($npmCmd) {
-    return (Split-Path $npmCmd.Source -Parent)
-  }
-  $candidates = @(
+  $candidates = [System.Collections.Generic.List[string]]::new()
+
+  $glueNode = Join-Path $env:USERPROFILE ".glue\apps\nodejs-lts\current"
+  if ($glueNode) { $candidates.Add($glueNode) }
+
+  foreach ($dir in @(
     (Join-Path $env:ProgramFiles "nodejs"),
     (Join-Path ${env:ProgramFiles(x86)} "nodejs"),
     (Join-Path $env:LOCALAPPDATA "Programs\nodejs")
-  )
+  )) {
+    $candidates.Add($dir)
+  }
+
+  $npmCmd = Get-Command npm -ErrorAction SilentlyContinue
+  if ($npmCmd) {
+    $candidates.Add((Split-Path $npmCmd.Source -Parent))
+  }
+
   foreach ($dir in $candidates) {
-    if (Test-Path (Join-Path $dir "npm.cmd")) {
+    if (Test-WorkingNpmDirectory $dir) {
       return $dir
     }
   }
   return $null
 }
+
 
 $npmDir = Resolve-NpmDirectory
 if (-not $npmDir) {

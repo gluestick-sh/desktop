@@ -43,6 +43,7 @@ interface TemplatePanelProps {
   operationBusy: boolean
   isPackageInstalling: (ref: string) => boolean
   onInstall: (ref: string, intent?: 'install' | 'upgrade') => void
+  onInstallParallel: (refs: string[], options?: { force?: boolean }) => void
   onInspectManifest: (ref: string) => void
   manifestPreview?: { packageRef: string; manifest: main.InstallManifestInfo } | null
   onCloseManifest?: () => void
@@ -62,6 +63,7 @@ export default function TemplatePanel({
   operationBusy,
   isPackageInstalling,
   onInstall,
+  onInstallParallel,
   onInspectManifest,
   manifestPreview,
   onCloseManifest,
@@ -385,14 +387,16 @@ export default function TemplatePanel({
     }
   }
 
-  const installTemplate = (template: EffectiveTemplate) => {
+  const installTemplate = (template: EffectiveTemplate, options?: { force?: boolean }) => {
     const items = resolveTemplateItems(template)
     const pending = items.filter((pkg) => !pkg.missing && !isPackageInstalled(pkg.name))
     if (pending.length === 0 || operationBusy) return
     const refs = pending.map((pkg) => packageInstallRefFromInfo(pkg))
-    for (const ref of refs) {
-      onInstall(ref)
+    if (refs.length > 1 || options?.force) {
+      onInstallParallel(refs, options)
+      return
     }
+    onInstall(refs[0])
   }
 
   const renderTemplateSummary = (template: EffectiveTemplate) => {
@@ -623,6 +627,17 @@ export default function TemplatePanel({
                 >
                   {installButtonLabel(pendingCount, installedCount)}
                 </button>
+                {pendingCount > 0 ? (
+                  <button
+                    type="button"
+                    className="secondary"
+                    disabled={installButtonDisabled(pendingCount)}
+                    title={t('officialRecipes.forceInstallHint')}
+                    onClick={() => installTemplate(activeTemplate, { force: true })}
+                  >
+                    {t('officialRecipes.forceInstallPending', { count: pendingCount })}
+                  </button>
+                ) : null}
               </>
             )}
           </div>
@@ -724,6 +739,17 @@ export default function TemplatePanel({
                     >
                       {installButtonLabel(pendingCount, installedCount)}
                     </button>
+                    {pendingCount > 0 ? (
+                      <button
+                        type="button"
+                        className="secondary"
+                        disabled={installButtonDisabled(pendingCount)}
+                        title={t('officialRecipes.forceInstallHint')}
+                        onClick={() => installTemplate(template, { force: true })}
+                      >
+                        {t('officialRecipes.forceInstallPending', { count: pendingCount })}
+                      </button>
+                    ) : null}
                   </div>
                 </article>
               )

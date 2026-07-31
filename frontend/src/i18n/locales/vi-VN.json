@@ -363,7 +363,8 @@
     "upgradePro": "Nâng cấp lên Pro…",
     "about": "Về",
     "ariaLabel": "Trình đơn ứng dụng",
-    "openRootDir": "Mở thư mục gốc…"
+    "openRootDir": "Mở thư mục gốc…",
+    "taskCenter": "Tác vụ…"
   },
   "table": {
     "sortColumn": "Sắp xếp theo {{column}}",
@@ -1025,7 +1026,15 @@
     "gcStart": "Bắt đầu dọn dẹp",
     "gcTaskTitle": "Sạch trẻ mồ côi",
     "noSpace": "Không còn chỗ để đòi lại",
-    "freed": "Đã xóa {{removed}} đốm màu mồ côi, giải phóng {{freed}}"
+    "freed": "Đã xóa {{removed}} đốm màu mồ côi, giải phóng {{freed}}",
+    "batchPurge": "Delete selected ({{count}})",
+    "batchPurgeDialogTitle": "Delete selected cache",
+    "batchPurgeDialogBody": "Remove {{count}} package(s) from the cache index and delete unreferenced blobs.",
+    "batchPurgeConfirm": "Delete selected",
+    "batchPurged": "Removed cache for {{count}} package(s)",
+    "batchPurgeFailed": "Some deletions failed: {{error}}",
+    "selectPageAria": "Select all on this page",
+    "selectAria": "Select {{name}}"
   },
   "activityExt": {
     "subtitle": "Các lượt cài đặt, gỡ cài đặt, cập nhật và kiểm tra môi trường gần đây",
@@ -1165,7 +1174,9 @@
         "summary": "Máy chủ và công cụ cơ sở dữ liệu phổ biến",
         "description": "MariaDB, MySQL, Redis, MongoDB, PostgreSQL, and SQLite from the main bucket — pick what your stack needs for local development."
       }
-    }
+    },
+    "forceInstallPending": "Force install ({{count}})",
+    "forceInstallHint": "Queue pending packages with --force (re-download). Does not skip hash checks."
   },
   "teams": {
     "title": "Gluestick Desktop Teams",
@@ -1192,5 +1203,59 @@
         "desc": "Define a shared environment baseline for your organization and manage who can access or change it."
       }
     }
+  },
+  "taskCenter": {
+    "title": "Tác vụ",
+    "intro": "Track install and uninstall work. Up to {{max}} installs run at once; the rest wait in the queue.",
+    "tabsAria": "Phân loại tác vụ",
+    "tabRunning": "Đang chạy",
+    "tabCompleted": "Hoàn thành",
+    "tabFailed": "Thất bại",
+    "tabAll": "Tất cả",
+    "empty": "Chưa có tác vụ",
+    "emptyRunning": "Không có tác vụ đang chạy",
+    "clearFinished": "Xóa đã kết thúc",
+    "open": "Mở tác vụ",
+    "kindInstall": "Cài đặt",
+    "kindUninstall": "Gỡ cài đặt",
+    "kindSnapshotApply": "Khôi phục ảnh chụp",
+    "kindCloudPush": "Đẩy snapshot",
+    "kindBucket": "Kho",
+    "kindOther": "Khác",
+    "statusRunning": "Đang chạy",
+    "statusCompleted": "Hoàn thành",
+    "statusFailed": "Thất bại",
+    "startedAt": "Bắt đầu {{time}}",
+    "finishedAt": "Kết thúc {{time}}",
+    "current": "Hiện tại: {{name}}",
+    "currentNamed": "Hiện tại: {{name}} ({{percent}}%)",
+    "moreItems": "…và {{count}} nữa",
+    "installTitle": "Cài {{name}}",
+    "uninstallTitle": "Gỡ {{name}}",
+    "snapshotApplyTitle": "Khôi phục môi trường từ ảnh chụp",
+    "snapshotApplyDetail": "Kế hoạch: cài {{packages}} gói, thêm {{buckets}} kho",
+    "snapshotApplyStarted": "Đã bắt đầu khôi phục: {{packages}} gói, {{buckets}} kho. Mở Nâng cao → Tác vụ.",
+    "cloudPushTitle": "Đẩy snapshot môi trường",
+    "cloudPushDetail": "Đang tải môi trường máy này lên đám mây",
+    "cloudPushDetailRevision": "Đã tải lên với revision {{revision}}",
+    "cloudPushStarted": "Đã bắt đầu đẩy snapshot. Mở Nâng cao → Tác vụ để xem tiến trình.",
+    "statusQueued": "Queued",
+    "queuedDetail": "Waiting for a free install slot",
+    "batchQueued": "Queued {{count}} installs (up to {{max}} run at once).",
+    "progressOnly": "Tiến độ: {{percent}}%",
+    "forceDetail": "Force install (--force): re-download and overwrite",
+    "forceQueuedDetail": "Queued for force install",
+    "batchForceQueued": "Queued {{count}} force installs (up to {{max}} run at once).",
+    "forceNote": "Force re-downloads and overwrites local files; it does not skip hash checks. For hash mismatch, update the bucket or use Accept hash.",
+    "retry": "Retry",
+    "forceRetry": "Force retry",
+    "acceptHashRetry": "Accept hash & retry",
+    "acceptHashHint": "Save the downloaded file hash as a local override, purge cache, then force reinstall.",
+    "retryAllFailed": "Retry failed ({{count}})",
+    "forceRetryAllFailed": "Force retry failed ({{count}})",
+    "acceptHashUnavailable": "This failure is not a hash mismatch",
+    "acceptHashNoUrl": "No download URL for {{name}}",
+    "acceptHashFailed": "Could not save hash override: {{error}}",
+    "hashMismatchHint": "Hash mismatch for {{name}}. Accept the downloaded file hash and retry, or update the extras bucket."
   }
 }

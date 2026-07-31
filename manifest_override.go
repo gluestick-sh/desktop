@@ -1,15 +1,27 @@
 package main
 
+import "strings"
+
 // SetManifestDownloadOverride saves a user-edited download URL for a package ref.
 func (a *App) SetManifestDownloadOverride(pkgRef, downloadURL string) error {
+	return a.SetManifestDownloadOverrideWithHash(pkgRef, downloadURL, "")
+}
+
+// SetManifestDownloadOverrideWithHash saves a download URL and/or hash override for a package ref.
+// hash may be empty (URL-only), or a value like "sha256:…" / bare hex when accepting a mismatched download.
+func (a *App) SetManifestDownloadOverrideWithHash(pkgRef, downloadURL, hash string) error {
 	if err := a.requireEngine(); err != nil {
 		return err
 	}
 	urls := []string{}
-	if downloadURL != "" {
-		urls = []string{downloadURL}
+	if strings.TrimSpace(downloadURL) != "" {
+		urls = []string{strings.TrimSpace(downloadURL)}
 	}
-	return a.engine.SetManifestDownloadOverride(pkgRef, urls, nil)
+	hashes := []string{}
+	if strings.TrimSpace(hash) != "" {
+		hashes = []string{strings.TrimSpace(hash)}
+	}
+	return a.engine.SetManifestDownloadOverride(pkgRef, urls, hashes)
 }
 
 // ClearManifestDownloadOverride removes a saved download URL override.

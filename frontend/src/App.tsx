@@ -24,6 +24,8 @@ import {
   SetBucketCheckInterval,
   SetBucketSyncMode,
   RecordCheckUpdatesResult,
+  PurgeCachePackage,
+  SetManifestDownloadOverrideWithHash,
   RunDoctor,
   IsProActive,
 } from '../wailsjs/go/main/App'
@@ -38,6 +40,14 @@ import { EventsOn, EventsOnce, Quit } from '../wailsjs/runtime/runtime'
 import AppMenuBar, { type MenuAction } from './AppMenuBar'
 import AboutDialog from './AboutDialog'
 import DesktopUpdateDialog from './DesktopUpdateDialog'
+import TaskCenterDialog from './TaskCenterDialog'
+import {
+  installTaskId,
+  uninstallTaskId,
+  upsertTaskCenterItem,
+  type TaskCenterItem,
+} from './taskCenter'
+import { formatOverrideHash, parseHashMismatch } from './hashMismatch'
 import HelpDialog from './HelpDialog'
 import GitHubProxyDialog from './GitHubProxyDialog'
 import DownloadWorkersDialog from './DownloadWorkersDialog'
@@ -265,6 +275,8 @@ interface TaskDockNotice {
   kind: TaskDockNoticeKind
   message: string
   detail?: string
+  actionLabel?: string
+  onAction?: () => void
 }
 
 function splitTaskDockMessage(text: string): { message: string; detail?: string } {
@@ -361,6 +373,10 @@ function App() {
   const installRefreshPendingRef = useRef(false)
   const activeInstallsRef = useRef(activeInstalls)
   activeInstallsRef.current = activeInstalls
+  const installQueueRef = useRef<{ ref: string; force: boolean }[]>([])
+  const installInFlightKeysRef = useRef(new Set<string>())
+  const [installQueueVersion, setInstallQueueVersion] = useState(0)
+  const installPumpRunningRef = useRef(false)
   const pendingInstallProgressRef = useRef<Record<string, InstallProgress>>({})
   const installProgressRafRef = useRef<number | null>(null)
   const [currentUninstall, setCurrentUninstall] = useState<{name: string, progress: InstallProgress} | null>(null)
@@ -372,6 +388,8 @@ function App() {
   const [taskDockNotice, setTaskDockNotice] = useState<TaskDockNotice | null>(null)
   const taskDockHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [showProModal, setShowProModal] = useState(false)
+  const [showTaskCenterModal, setShowTaskCenterModal] = useState(false)
+  const [backgroundTasks, setBackgroundTasks] = useState<TaskCenterItem[]>([])
   const [showAboutModal, setShowAboutModal] = useState(false)
   const [showHelpModal, setShowHelpModal] = useState(false)
   const [showEnvironmentModal, setShowEnvironmentModal] = useState(false)
@@ -860,7 +878,13 @@ function App() {
   const showTaskDockNotice = useCallback((
     text: string,
     kind: TaskDockNoticeKind,
-    options?: { detail?: string; autoHideMs?: number; persistent?: boolean },
+    options?: {
+      detail?: string
+      autoHideMs?: number
+      persistent?: boolean
+      actionLabel?: string
+      onAction?: () => void
+    },
   ) => {
     clearTaskDockHideTimer()
     const parsed = splitTaskDockMessage(text)
@@ -868,6 +892,8 @@ function App() {
       kind,
       message: parsed.message,
       detail: options?.detail ?? parsed.detail,
+      actionLabel: options?.actionLabel,
+      onAction: options?.onAction,
     })
     if (!options?.persistent) {
       const hideMs = options?.autoHideMs ?? (kind === 'error' ? null : TASK_DOCK_NOTICE_AUTO_HIDE_MS)
@@ -981,26 +1007,28 @@ function App() {
   const flushPendingInstallProgress = useCallback(() => {
     installProgressRafRef.current = null
     const pending = pendingInstallProgressRef.current
-    const names = Object.keys(pending)
-    if (names.length === 0) return
+    const keys = Object.keys(pending)
+    if (keys.length === 0) return
     pendingInstallProgressRef.current = {}
     setActiveInstalls((prev) => {
       let next: Record<string, InstallProgress> | null = null
-      for (const name of names) {
-        const data = pending[name]
-        const cur = prev[name]
+      for (const key of keys) {
+        const data = pending[key]
+        const cur = prev[key]
         if (!cur) continue
-        const merged = mergeInstallProgress(cur, { ...data, name })
+        const merged = mergeInstallProgress(cur, { ...data, name: data.name || cur.name || key })
         if (installProgressEqual(cur, merged)) continue
         if (!next) next = { ...prev }
-        next[name] = merged
+        next[key] = merged
       }
+      if (next) activeInstallsRef.current = next
       return next ?? prev
     })
   }, [])
 
   const cancelPendingInstallProgress = useCallback((name?: string) => {
     if (name) {
+      delete pendingInstallProgressRef.current[installPackageKey(name)]
       delete pendingInstallProgressRef.current[name]
     } else {
       pendingInstallProgressRef.current = {}
@@ -1014,8 +1042,11 @@ function App() {
   const queueInstallProgress = useCallback(
     (data: InstallProgress) => {
       const name = data?.name
-      if (!name || !activeInstallsRef.current[name]) return
-      pendingInstallProgressRef.current[name] = { ...data, name }
+      if (!name) return
+      // Always index by package key so parallel installs cannot overwrite each other.
+      const key = installPackageKey(name)
+      if (!activeInstallsRef.current[key]) return
+      pendingInstallProgressRef.current[key] = { ...data, name }
       if (installProgressRafRef.current == null) {
         installProgressRafRef.current = requestAnimationFrame(flushPendingInstallProgress)
       }
@@ -1033,22 +1064,135 @@ function App() {
   }, [refreshAfterPackageOp])
 
   const removeActiveInstall = useCallback((name: string) => {
+    const key = installPackageKey(name)
+    installInFlightKeysRef.current.delete(key)
     cancelPendingInstallProgress(name)
     setActiveInstalls((prev) => {
       const next = { ...prev }
-      delete next[name]
+      for (const n of Object.keys(next)) {
+        if (installPackageKey(n) === key) {
+          delete next[n]
+          cancelPendingInstallProgress(n)
+        }
+      }
       if (Object.keys(next).length === 0) {
         scheduleInstallListRefresh()
       }
+      activeInstallsRef.current = next
       return next
     })
     setInstallCancelling((prev) => {
-      if (!prev[name]) return prev
+      let changed = false
       const next = { ...prev }
-      delete next[name]
-      return next
+      for (const n of Object.keys(next)) {
+        if (installPackageKey(n) === key) {
+          delete next[n]
+          changed = true
+        }
+      }
+      return changed ? next : prev
     })
   }, [cancelPendingInstallProgress, scheduleInstallListRefresh])
+
+  const upsertBackgroundTask = useCallback((task: TaskCenterItem) => {
+    setBackgroundTasks((prev) => upsertTaskCenterItem(prev, task))
+  }, [])
+
+  const bumpInstallQueue = useCallback(() => {
+    setInstallQueueVersion((v) => v + 1)
+  }, [])
+
+  const pumpInstallQueueRef = useRef<() => void>(() => {})
+
+  const pumpInstallQueue = useCallback(() => {
+    if (installPumpRunningRef.current) return
+    installPumpRunningRef.current = true
+    void (async () => {
+      try {
+        while (true) {
+          if (installInFlightKeysRef.current.size >= MAX_PARALLEL_INSTALLS) break
+          const queued = installQueueRef.current.shift()
+          if (!queued) break
+          bumpInstallQueue()
+
+          const name = queued.ref
+          const force = queued.force
+          const key = installPackageKey(name)
+          if (
+            installInFlightKeysRef.current.has(key) ||
+            isRefInstalling(name, activeInstallsRef.current)
+          ) {
+            continue
+          }
+
+          installInFlightKeysRef.current.add(key)
+          upsertBackgroundTask({
+            id: installTaskId(key),
+            kind: 'install',
+            title: t('taskCenter.installTitle', { name }),
+            status: 'running',
+            progress: 0,
+            detail: force ? t('taskCenter.forceDetail') : undefined,
+            startedAt: Date.now(),
+            items: [name],
+          })
+
+          try {
+            await Install(name, isPro, force, '', false)
+          } catch (err) {
+            console.error('Install failed:', err)
+            installInFlightKeysRef.current.delete(key)
+            const errText = String(err)
+            // Backend concurrency race: put back in queue and wait for a free slot.
+            if (/too many installs|already being installed/i.test(errText)) {
+              if (!installQueueRef.current.some((q) => installPackageKey(q.ref) === key)) {
+                installQueueRef.current.unshift({ ref: name, force })
+                bumpInstallQueue()
+              }
+              upsertBackgroundTask({
+                id: installTaskId(key),
+                kind: 'install',
+                title: t('taskCenter.installTitle', { name }),
+                status: 'queued',
+                detail: t('taskCenter.queuedDetail'),
+                startedAt: Date.now(),
+                items: [name],
+              })
+              break
+            }
+            removeActiveInstall(name)
+            upsertBackgroundTask({
+              id: installTaskId(key),
+              kind: 'install',
+              title: t('taskCenter.installTitle', { name }),
+              status: 'failed',
+              error: errText,
+              startedAt: Date.now(),
+              finishedAt: Date.now(),
+              items: [name],
+            })
+            showTaskDockNotice(t('appExt.installFailed', { error: errText }), 'error', {
+              persistent: true,
+            })
+          }
+        }
+      } finally {
+        installPumpRunningRef.current = false
+        if (
+          installQueueRef.current.length > 0 &&
+          installInFlightKeysRef.current.size < MAX_PARALLEL_INSTALLS
+        ) {
+          pumpInstallQueueRef.current()
+        }
+      }
+    })()
+  }, [bumpInstallQueue, isPro, removeActiveInstall, showTaskDockNotice, t, upsertBackgroundTask])
+
+  pumpInstallQueueRef.current = pumpInstallQueue
+
+  const retryInstallTasksRef = useRef<
+    (tasks: TaskCenterItem[], options?: { force?: boolean; acceptHash?: boolean }) => Promise<void>
+  >(async () => {})
 
   const installEventHandlersRef = useRef({
     removeActiveInstall,
@@ -1058,6 +1202,8 @@ function App() {
     pulseStatAttention,
     queueInstallProgress,
     flushPendingInstallProgress,
+    upsertBackgroundTask,
+    pumpInstallQueue,
     t,
   })
   installEventHandlersRef.current = {
@@ -1068,6 +1214,8 @@ function App() {
     pulseStatAttention,
     queueInstallProgress,
     flushPendingInstallProgress,
+    upsertBackgroundTask,
+    pumpInstallQueue,
     t,
   }
 
@@ -1076,24 +1224,46 @@ function App() {
 
     const cancelStart = EventsOn('install:start', (name: string) => {
       h().dismissTaskDockNotice()
-      setInstallCancelling((prev) => ({ ...prev, [name]: false }))
+      const key = installPackageKey(name)
+      setInstallCancelling((prev) => {
+        const next = { ...prev }
+        for (const n of Object.keys(next)) {
+          if (installPackageKey(n) === key) delete next[n]
+        }
+        next[key] = false
+        return next
+      })
       setActiveInstalls((prev) => {
-        const next = {
-          ...prev,
-          [name]: {
-            phase: 'Starting',
-            status: '',
-            percentage: 0,
-            message: '',
-            bytesDown: 0,
-            bytesTotal: 0,
-          },
+        const next: Record<string, InstallProgress> = {}
+        for (const [n, prog] of Object.entries(prev)) {
+          if (installPackageKey(n) !== key) next[n] = prog
+        }
+        next[key] = {
+          name,
+          phase: 'Starting',
+          status: '',
+          percentage: 0,
+          message: '',
+          bytesDown: 0,
+          bytesTotal: 0,
         }
         activeInstallsRef.current = next
         return next
       })
+      h().upsertBackgroundTask({
+        id: installTaskId(key),
+        kind: 'install',
+        title: h().t('taskCenter.installTitle', { name }),
+        status: 'running',
+        progress: 0,
+        currentItem: name,
+        startedAt: Date.now(),
+        items: [name],
+      })
     })
     const cancelProgress = EventsOn('install:progress', (data: InstallProgress) => {
+      // Progress is keyed strictly by package name in activeInstalls; Task Center
+      // binds live progress per task id so rows never show another install's %.
       h().queueInstallProgress(data)
     })
     const cancelComplete = EventsOn(
@@ -1103,6 +1273,18 @@ function App() {
         handlers.flushPendingInstallProgress()
         const name = data?.name ?? ''
         if (name) handlers.removeActiveInstall(name)
+        if (name) {
+          handlers.upsertBackgroundTask({
+            id: installTaskId(installPackageKey(name)),
+            kind: 'install',
+            title: handlers.t('taskCenter.installTitle', { name }),
+            status: 'completed',
+            progress: 100,
+            startedAt: Date.now(),
+            finishedAt: Date.now(),
+            items: [name],
+          })
+        }
         handlers.bumpActivityLog()
         const label = formatPackageOpLabel(String(data?.name ?? ''), data?.version)
         if (label) {
@@ -1112,6 +1294,7 @@ function App() {
           setInstallSuggestions(data.suggestions)
         }
         handlers.pulseStatAttention('installed')
+        handlers.pumpInstallQueue()
       },
     )
     const cancelError = EventsOn('install:error', (data: unknown) => {
@@ -1123,23 +1306,64 @@ function App() {
           ? (data as { name: string }).name
           : ''
       if (name) handlers.removeActiveInstall(name)
+      const failedTask: TaskCenterItem | null = name
+        ? {
+            id: installTaskId(installPackageKey(name)),
+            kind: 'install',
+            title: handlers.t('taskCenter.installTitle', { name }),
+            status: 'failed',
+            error: errText,
+            startedAt: Date.now(),
+            finishedAt: Date.now(),
+            items: [name],
+          }
+        : null
+      if (failedTask) handlers.upsertBackgroundTask(failedTask)
       const label = name
         ? handlers.t('progress.install.failedNamed', { name, error: errText })
         : `${handlers.t('progress.install.failed')}: ${errText}`
-      handlers.showTaskDockNotice(label, 'error', { persistent: true })
+      const hashMismatch = parseHashMismatch(errText)
+      if (hashMismatch && failedTask) {
+        handlers.showTaskDockNotice(handlers.t('taskCenter.hashMismatchHint', { name }), 'error', {
+          persistent: true,
+          detail: errText,
+          actionLabel: handlers.t('taskCenter.acceptHashRetry'),
+          onAction: () => {
+            handlers.dismissTaskDockNotice()
+            void retryInstallTasksRef.current([failedTask], { acceptHash: true })
+          },
+        })
+        setShowTaskCenterModal(true)
+      } else {
+        handlers.showTaskDockNotice(label, 'error', { persistent: true })
+      }
       handlers.bumpActivityLog()
+      handlers.pumpInstallQueue()
     })
     const cancelCancelled = EventsOn('install:cancelled', (data?: { name?: string }) => {
       const handlers = h()
       handlers.flushPendingInstallProgress()
       const name = data?.name ?? ''
       if (name) handlers.removeActiveInstall(name)
+      if (name) {
+        handlers.upsertBackgroundTask({
+          id: installTaskId(installPackageKey(name)),
+          kind: 'install',
+          title: handlers.t('taskCenter.installTitle', { name }),
+          status: 'failed',
+          error: handlers.t('appExt.installCancelled'),
+          startedAt: Date.now(),
+          finishedAt: Date.now(),
+          items: [name],
+        })
+      }
       handlers.bumpActivityLog()
       const label = name ? formatPackageOpLabel(name, '') || name : ''
       handlers.showTaskDockNotice(
         label ? handlers.t('appExt.installCancelledNamed', { name: label }) : handlers.t('appExt.installCancelled'),
         'info',
       )
+      handlers.pumpInstallQueue()
     })
     const cancelUninstallStart = EventsOn('uninstall:start', (name: string) => {
       h().dismissTaskDockNotice()
@@ -1147,12 +1371,50 @@ function App() {
         name,
         progress: { phase: 'Starting', status: '', percentage: 0, message: '', bytesDown: 0, bytesTotal: 0 },
       })
+      h().upsertBackgroundTask({
+        id: uninstallTaskId(name),
+        kind: 'uninstall',
+        title: h().t('taskCenter.uninstallTitle', { name }),
+        status: 'running',
+        progress: 0,
+        startedAt: Date.now(),
+        items: [name],
+      })
     })
     const cancelUninstallProgress = EventsOn('uninstall:progress', (data: InstallProgress) => {
       setCurrentUninstall((prev) => (prev ? { ...prev, progress: data } : null))
+      if (data?.name) {
+        h().upsertBackgroundTask({
+          id: uninstallTaskId(data.name),
+          kind: 'uninstall',
+          title: h().t('taskCenter.uninstallTitle', { name: data.name }),
+          status: 'running',
+          progress: data.percentage,
+          currentItem: data.name,
+          detail: data.message,
+          startedAt: Date.now(),
+          items: [data.name],
+        })
+      }
     })
-    const cancelUninstallComplete = EventsOn('uninstall:complete', () => {
-      setCurrentUninstall(null)
+    const cancelUninstallComplete = EventsOn('uninstall:complete', (data?: { name?: string }) => {
+      const name = typeof data?.name === 'string' ? data.name : ''
+      setCurrentUninstall((prev) => {
+        const resolved = name || prev?.name || ''
+        if (resolved) {
+          h().upsertBackgroundTask({
+            id: uninstallTaskId(resolved),
+            kind: 'uninstall',
+            title: h().t('taskCenter.uninstallTitle', { name: resolved }),
+            status: 'completed',
+            progress: 100,
+            startedAt: Date.now(),
+            finishedAt: Date.now(),
+            items: [resolved],
+          })
+        }
+        return null
+      })
       h().bumpActivityLog()
     })
     const cancelUninstallError = EventsOn('uninstall:error', (data: unknown) => {
@@ -1162,6 +1424,18 @@ function App() {
         data && typeof data === 'object' && typeof (data as { name?: string }).name === 'string'
           ? (data as { name: string }).name
           : ''
+      if (name) {
+        handlers.upsertBackgroundTask({
+          id: uninstallTaskId(name),
+          kind: 'uninstall',
+          title: handlers.t('taskCenter.uninstallTitle', { name }),
+          status: 'failed',
+          error: errText,
+          startedAt: Date.now(),
+          finishedAt: Date.now(),
+          items: [name],
+        })
+      }
       const label = name
         ? handlers.t('progress.uninstall.failedNamed', { name, error: errText })
         : `${handlers.t('progress.uninstall.failed')}: ${errText}`
@@ -1298,6 +1572,9 @@ function App() {
         break
       case 'pro':
         setShowProModal(true)
+        break
+      case 'task-center':
+        setShowTaskCenterModal(true)
         break
       case 'zoom:in':
         setZoom((z) => clampZoom(z + ZOOM_STEP))
@@ -1620,11 +1897,66 @@ function App() {
   const gcRunning = useMemo(() => cacheTasks.some((task) => task.kind === 'gc'), [cacheTasks])
   const hasActiveInstalls = Object.keys(activeInstalls).length > 0
   const isPackageInstalling = useCallback(
-    (ref: string) => isRefInstalling(ref, activeInstalls),
-    [activeInstalls],
+    (ref: string) => {
+      if (isRefInstalling(ref, activeInstalls)) return true
+      // installQueueVersion keeps this callback fresh when the queue changes.
+      void installQueueVersion
+      return installQueueRef.current.some((q) => installPackageKey(q.ref) === installPackageKey(ref))
+    },
+    [activeInstalls, installQueueVersion],
   )
   const operationBusy = gcRunning || !!currentUninstall
 
+  const enqueueInstalls = useCallback(
+    (refs: string[], options?: { force?: boolean }) => {
+      if (gcRunning || currentUninstall) return
+      const force = !!options?.force
+      let added = 0
+      for (const ref of refs) {
+        const trimmed = ref.trim()
+        if (!trimmed) continue
+        if (isRefInstalling(trimmed, activeInstallsRef.current)) continue
+        const key = installPackageKey(trimmed)
+        const existing = installQueueRef.current.find((q) => installPackageKey(q.ref) === key)
+        if (existing) {
+          if (force && !existing.force) existing.force = true
+          continue
+        }
+        installQueueRef.current.push({ ref: trimmed, force })
+        added += 1
+        upsertBackgroundTask({
+          id: installTaskId(key),
+          kind: 'install',
+          title: t('taskCenter.installTitle', { name: trimmed }),
+          status: 'queued',
+          detail: force ? t('taskCenter.forceQueuedDetail') : t('taskCenter.queuedDetail'),
+          startedAt: Date.now(),
+          items: [trimmed],
+        })
+      }
+      bumpInstallQueue()
+      if (added > 0) {
+        showInfoMessage(
+          force
+            ? t('taskCenter.batchForceQueued', { count: added, max: MAX_PARALLEL_INSTALLS })
+            : t('taskCenter.batchQueued', { count: added, max: MAX_PARALLEL_INSTALLS }),
+          { autoHideMs: 8000 },
+        )
+        setShowTaskCenterModal(true)
+        // Defer pump so React can flush state; also clears any stale in-flight locks.
+        queueMicrotask(() => pumpInstallQueue())
+      }
+    },
+    [
+      bumpInstallQueue,
+      currentUninstall,
+      gcRunning,
+      pumpInstallQueue,
+      showInfoMessage,
+      t,
+      upsertBackgroundTask,
+    ],
+  )
   const isPackageDetailExpanded = useCallback(
     (name: string) => selectedPackage?.name === name,
     [selectedPackage],
@@ -1709,21 +2041,122 @@ function App() {
     }
   }, [t])
 
-  const handleCancelInstall = async (name: string) => {
-    if (!activeInstalls[name] || installCancelling[name]) return
-    setInstallCancelling((prev) => ({ ...prev, [name]: true }))
+  const handleCancelInstall = useCallback(async (name: string) => {
+    const key = installPackageKey(name)
+    const activeKey =
+      Object.keys(activeInstallsRef.current).find((n) => installPackageKey(n) === key) ??
+      (activeInstallsRef.current[key] ? key : '')
+    if (!activeKey) return
+    if (installCancelling[activeKey] || installCancelling[key]) return
+    setInstallCancelling((prev) => ({ ...prev, [activeKey]: true, [key]: true }))
     try {
       await CancelInstall(name)
     } catch (err) {
       console.error('CancelInstall failed:', err)
-      setInstallCancelling((prev) => ({ ...prev, [name]: false }))
+      setInstallCancelling((prev) => ({ ...prev, [activeKey]: false, [key]: false }))
       const errText = String(err)
       const message = errText.includes('no install in progress')
         ? t('appExt.cancelInstallNoTask')
         : t('appExt.cancelInstallFailed', { error: errText })
       showTaskDockNotice(message, 'error', { persistent: true })
     }
-  }
+  }, [installCancelling, showTaskDockNotice, t])
+
+  const handleCancelTask = useCallback(
+    (task: TaskCenterItem) => {
+      if (task.kind !== 'install') return
+      const ref = task.items?.[0] || task.currentItem || ''
+      if (!ref) return
+      const key = installPackageKey(ref)
+
+      if (task.status === 'queued') {
+        installQueueRef.current = installQueueRef.current.filter(
+          (q) => installPackageKey(q.ref) !== key,
+        )
+        bumpInstallQueue()
+        installInFlightKeysRef.current.delete(key)
+        upsertBackgroundTask({
+          id: installTaskId(key),
+          kind: 'install',
+          title: task.title,
+          status: 'failed',
+          error: t('appExt.installCancelled'),
+          startedAt: task.startedAt,
+          finishedAt: Date.now(),
+          items: task.items,
+        })
+        return
+      }
+
+      if (task.status === 'running') {
+        const live = activeInstallsRef.current[key]
+        void handleCancelInstall(live?.name || ref)
+      }
+    },
+    [bumpInstallQueue, handleCancelInstall, t, upsertBackgroundTask],
+  )
+
+  const retryInstallTasks = useCallback(
+    async (
+      tasks: TaskCenterItem[],
+      options?: { force?: boolean; acceptHash?: boolean },
+    ) => {
+      const force = !!options?.force || !!options?.acceptHash
+      const refs: string[] = []
+      for (const task of tasks) {
+        if (task.kind !== 'install' || task.status !== 'failed') continue
+        const ref = (task.items?.[0] || task.currentItem || '').trim()
+        if (!ref) continue
+        const key = installPackageKey(ref)
+
+        if (options?.acceptHash) {
+          const mismatch = parseHashMismatch(task.error || '')
+          if (!mismatch) {
+            showTaskDockNotice(t('taskCenter.acceptHashUnavailable'), 'error', { persistent: true })
+            continue
+          }
+          try {
+            const plan = await PlanInstall(ref)
+            const url = plan?.manifest?.downloadUrls?.[0]?.trim() || ''
+            if (!url) {
+              showTaskDockNotice(t('taskCenter.acceptHashNoUrl', { name: ref }), 'error', {
+                persistent: true,
+              })
+              continue
+            }
+            await SetManifestDownloadOverrideWithHash(
+              ref,
+              url,
+              formatOverrideHash(mismatch.algo, mismatch.got),
+            )
+          } catch (err) {
+            console.error('accept hash override failed:', err)
+            showTaskDockNotice(
+              t('taskCenter.acceptHashFailed', { error: String(err) }),
+              'error',
+              { persistent: true },
+            )
+            continue
+          }
+        }
+
+        if (force) {
+          try {
+            await PurgeCachePackage(key)
+          } catch (err) {
+            // Best-effort: missing cache entry is fine.
+            console.warn('PurgeCachePackage before force retry:', err)
+          }
+        }
+
+        refs.push(ref)
+      }
+      if (refs.length === 0) return
+      enqueueInstalls(refs, { force })
+    },
+    [enqueueInstalls, showTaskDockNotice, t],
+  )
+  retryInstallTasksRef.current = retryInstallTasks
 
   const handleRefreshManifestPreview = useCallback(async () => {
     if (!browseManifestPreview) return
@@ -2060,6 +2493,7 @@ function App() {
             isPackageInstalling={isPackageInstalling}
             operationBusy={operationBusy}
             onInstall={(ref, intent) => void beginInstall(ref, intent ?? 'install')}
+            onInstallParallel={(refs, options) => enqueueInstalls(refs, options)}
             onInspectManifest={(ref) => void handleInspectManifest(ref)}
             manifestPreview={browseManifestPreview}
             onCloseManifest={() => setBrowseManifestPreview(null)}
@@ -2187,15 +2621,16 @@ function App() {
       <div className="task-progress-dock" aria-live="polite">
         {hasActiveInstalls && (
           <div className="install-progress-stack">
-            {Object.entries(activeInstalls).map(([name, progress]) => {
+            {Object.entries(activeInstalls).map(([key, progress]) => {
+              const displayName = progress.name?.trim() || key
               const isDownloading = progress.phase === 'download'
               const { barPct, indeterminate, showPercent } = operationProgressDisplay(progress)
               const showBytes = isDownloading && (progress.bytesDown > 0 || progress.bytesTotal > 0)
-              const cancelling = !!installCancelling[name]
+              const cancelling = !!installCancelling[key]
               return (
-                <div key={name} className="card install-progress">
+                <div key={key} className="card install-progress">
                   <div className="card-header">
-                    <span>{t('appExt.installing', { name })}</span>
+                    <span>{t('appExt.installing', { name: displayName })}</span>
                     <div className="install-progress-header-actions">
                       <span className="pill info">{formatPhaseLabel(progress.phase)}</span>
                       <button
@@ -2203,7 +2638,7 @@ function App() {
                         className="ghost progress-cancel-btn"
                         disabled={cancelling}
                         aria-label={t('appExt.cancelInstallAria')}
-                        onClick={() => void handleCancelInstall(name)}
+                        onClick={() => void handleCancelInstall(displayName)}
                       >
                         {cancelling ? t('appExt.cancellingInstall') : t('app.cancel')}
                       </button>
@@ -2278,6 +2713,15 @@ function App() {
                   <pre>{taskDockNotice.detail}</pre>
                 </details>
               )}
+              {taskDockNotice.actionLabel && taskDockNotice.onAction ? (
+                <button
+                  type="button"
+                  className="secondary task-dock-notice-action"
+                  onClick={() => taskDockNotice.onAction?.()}
+                >
+                  {taskDockNotice.actionLabel}
+                </button>
+              ) : null}
             </div>
             <button
               type="button"
@@ -2590,6 +3034,37 @@ function App() {
             setEditingTheme(null)
             applyThemeById(themeId)
           }}
+        />
+      )}
+
+      {showTaskCenterModal && (
+        <TaskCenterDialog
+          tasks={backgroundTasks}
+          liveInstallProgress={Object.fromEntries(
+            Object.entries(activeInstalls).map(([key, progress]) => [
+              installTaskId(key),
+              progress,
+            ]),
+          )}
+          cancellingTaskIds={Object.fromEntries(
+            Object.entries(installCancelling)
+              .filter(([, cancelling]) => cancelling)
+              .map(([key]) => [installTaskId(key), true]),
+          )}
+          onCancelTask={handleCancelTask}
+          onRetryTask={(task, options) => void retryInstallTasks([task], options)}
+          onRetryFailed={(options) =>
+            void retryInstallTasks(
+              backgroundTasks.filter((item) => item.status === 'failed' && item.kind === 'install'),
+              options,
+            )
+          }
+          onClose={() => setShowTaskCenterModal(false)}
+          onClearFinished={() =>
+            setBackgroundTasks((prev) =>
+              prev.filter((item) => item.status === 'running' || item.status === 'queued'),
+            )
+          }
         />
       )}
 

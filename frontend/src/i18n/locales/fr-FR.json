@@ -363,7 +363,8 @@
     "upgradePro": "Passer à Pro…",
     "about": "À propos",
     "ariaLabel": "Menu des applications",
-    "openRootDir": "Ouvrir le répertoire racine…"
+    "openRootDir": "Ouvrir le répertoire racine…",
+    "taskCenter": "Tâches…"
   },
   "table": {
     "sortColumn": "Trier par {{column}}",
@@ -1022,7 +1023,15 @@
     "gcStart": "Commencer le nettoyage",
     "gcTaskTitle": "Des orphelins propres",
     "noSpace": "Pas d'espace à récupérer",
-    "freed": "Suppression des blobs orphelins {{removed}}, libération de {{freed}}"
+    "freed": "Suppression des blobs orphelins {{removed}}, libération de {{freed}}",
+    "batchPurge": "Delete selected ({{count}})",
+    "batchPurgeDialogTitle": "Delete selected cache",
+    "batchPurgeDialogBody": "Remove {{count}} package(s) from the cache index and delete unreferenced blobs.",
+    "batchPurgeConfirm": "Delete selected",
+    "batchPurged": "Removed cache for {{count}} package(s)",
+    "batchPurgeFailed": "Some deletions failed: {{error}}",
+    "selectPageAria": "Select all on this page",
+    "selectAria": "Select {{name}}"
   },
   "activityExt": {
     "subtitle": "Installations, désinstallations, mises à jour et vérifications d'environnement récentes",
@@ -1162,7 +1171,9 @@
         "summary": "Serveurs et moteurs de bases de données courants",
         "description": "MariaDB, MySQL, Redis, MongoDB, PostgreSQL, and SQLite from the main bucket — pick what your stack needs for local development."
       }
-    }
+    },
+    "forceInstallPending": "Force install ({{count}})",
+    "forceInstallHint": "Queue pending packages with --force (re-download). Does not skip hash checks."
   },
   "teams": {
     "title": "Gluestick Desktop Teams",
@@ -1189,5 +1200,59 @@
         "desc": "Define a shared environment baseline for your organization and manage who can access or change it."
       }
     }
+  },
+  "taskCenter": {
+    "title": "Tâches",
+    "intro": "Track install and uninstall work. Up to {{max}} installs run at once; the rest wait in the queue.",
+    "tabsAria": "Catégories de tâches",
+    "tabRunning": "En cours",
+    "tabCompleted": "Terminées",
+    "tabFailed": "Échouées",
+    "tabAll": "Toutes",
+    "empty": "Aucune tâche pour le moment",
+    "emptyRunning": "Aucune tâche en cours",
+    "clearFinished": "Effacer les terminées",
+    "open": "Ouvrir les tâches",
+    "kindInstall": "Installation",
+    "kindUninstall": "Désinstallation",
+    "kindSnapshotApply": "Restauration d’instantané",
+    "kindCloudPush": "Pousser l’instantané",
+    "kindBucket": "Compartiment",
+    "kindOther": "Autre",
+    "statusRunning": "En cours",
+    "statusCompleted": "Terminée",
+    "statusFailed": "Échouée",
+    "startedAt": "Démarrée {{time}}",
+    "finishedAt": "Terminée {{time}}",
+    "current": "En cours : {{name}}",
+    "currentNamed": "En cours : {{name}} ({{percent}} %)",
+    "moreItems": "…et {{count}} de plus",
+    "installTitle": "Installer {{name}}",
+    "uninstallTitle": "Désinstaller {{name}}",
+    "snapshotApplyTitle": "Restaurer l’environnement depuis un instantané",
+    "snapshotApplyDetail": "Plan : installer {{packages}} package(s), ajouter {{buckets}} compartiment(s)",
+    "snapshotApplyStarted": "Restauration démarrée : {{packages}} package(s), {{buckets}} compartiment(s). Ouvrez Avancé → Tâches.",
+    "cloudPushTitle": "Pousser l’instantané d’environnement",
+    "cloudPushDetail": "Téléversement de l’environnement de cet appareil vers le cloud",
+    "cloudPushDetailRevision": "Téléversé en tant que révision {{revision}}",
+    "cloudPushStarted": "Envoi de l’instantané démarré. Ouvrez Avancé → Tâches pour suivre la progression.",
+    "statusQueued": "Queued",
+    "queuedDetail": "Waiting for a free install slot",
+    "batchQueued": "Queued {{count}} installs (up to {{max}} run at once).",
+    "progressOnly": "Progression : {{percent}} %",
+    "forceDetail": "Force install (--force): re-download and overwrite",
+    "forceQueuedDetail": "Queued for force install",
+    "batchForceQueued": "Queued {{count}} force installs (up to {{max}} run at once).",
+    "forceNote": "Force re-downloads and overwrites local files; it does not skip hash checks. For hash mismatch, update the bucket or use Accept hash.",
+    "retry": "Retry",
+    "forceRetry": "Force retry",
+    "acceptHashRetry": "Accept hash & retry",
+    "acceptHashHint": "Save the downloaded file hash as a local override, purge cache, then force reinstall.",
+    "retryAllFailed": "Retry failed ({{count}})",
+    "forceRetryAllFailed": "Force retry failed ({{count}})",
+    "acceptHashUnavailable": "This failure is not a hash mismatch",
+    "acceptHashNoUrl": "No download URL for {{name}}",
+    "acceptHashFailed": "Could not save hash override: {{error}}",
+    "hashMismatchHint": "Hash mismatch for {{name}}. Accept the downloaded file hash and retry, or update the extras bucket."
   }
 }

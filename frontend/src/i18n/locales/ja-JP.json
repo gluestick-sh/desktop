@@ -363,7 +363,8 @@
     "upgradePro": "プロにアップグレード…",
     "about": "について",
     "ariaLabel": "アプリケーションメニュー",
-    "openRootDir": "ルートディレクトリを開く…"
+    "openRootDir": "ルートディレクトリを開く…",
+    "taskCenter": "タスク…"
   },
   "table": {
     "sortColumn": "{{column}} で並べ替え",
@@ -1025,7 +1026,15 @@
     "gcStart": "クリーンアップの開始",
     "gcTaskTitle": "きれいな孤児たち",
     "noSpace": "再利用できるスペースがない",
-    "freed": "{{removed}} 個の孤立 BLOB を削除し、{{freed}} を解放しました"
+    "freed": "{{removed}} 個の孤立 BLOB を削除し、{{freed}} を解放しました",
+    "batchPurge": "Delete selected ({{count}})",
+    "batchPurgeDialogTitle": "Delete selected cache",
+    "batchPurgeDialogBody": "Remove {{count}} package(s) from the cache index and delete unreferenced blobs.",
+    "batchPurgeConfirm": "Delete selected",
+    "batchPurged": "Removed cache for {{count}} package(s)",
+    "batchPurgeFailed": "Some deletions failed: {{error}}",
+    "selectPageAria": "Select all on this page",
+    "selectAria": "Select {{name}}"
   },
   "activityExt": {
     "subtitle": "最近のインストール、アンインストール、アップデート、環境チェック",
@@ -1165,7 +1174,9 @@
         "summary": "一般的なデータベース サーバーとエンジン",
         "description": "MariaDB, MySQL, Redis, MongoDB, PostgreSQL, and SQLite from the main bucket — pick what your stack needs for local development."
       }
-    }
+    },
+    "forceInstallPending": "Force install ({{count}})",
+    "forceInstallHint": "Queue pending packages with --force (re-download). Does not skip hash checks."
   },
   "teams": {
     "title": "Gluestick Desktop Teams",
@@ -1192,5 +1203,59 @@
         "desc": "Define a shared environment baseline for your organization and manage who can access or change it."
       }
     }
+  },
+  "taskCenter": {
+    "title": "タスク",
+    "intro": "Track install and uninstall work. Up to {{max}} installs run at once; the rest wait in the queue.",
+    "tabsAria": "タスク分類",
+    "tabRunning": "実行中",
+    "tabCompleted": "完了",
+    "tabFailed": "失敗",
+    "tabAll": "すべて",
+    "empty": "タスクはまだありません",
+    "emptyRunning": "実行中のタスクはありません",
+    "clearFinished": "終了済みをクリア",
+    "open": "タスクを開く",
+    "kindInstall": "インストール",
+    "kindUninstall": "アンインストール",
+    "kindSnapshotApply": "スナップショット復元",
+    "kindCloudPush": "スナップショットのプッシュ",
+    "kindBucket": "バケット",
+    "kindOther": "その他",
+    "statusRunning": "実行中",
+    "statusCompleted": "完了",
+    "statusFailed": "失敗",
+    "startedAt": "開始 {{time}}",
+    "finishedAt": "終了 {{time}}",
+    "current": "現在：{{name}}",
+    "currentNamed": "現在：{{name}}（{{percent}}%）",
+    "moreItems": "…ほか {{count}} 件",
+    "installTitle": "{{name}} をインストール",
+    "uninstallTitle": "{{name}} をアンインストール",
+    "snapshotApplyTitle": "スナップショットから環境を復元",
+    "snapshotApplyDetail": "計画：パッケージ {{packages}}、バケット {{buckets}} を追加",
+    "snapshotApplyStarted": "スナップショット復元を開始：パッケージ {{packages}}、バケット {{buckets}}。「詳細 → タスク」で詳細を確認。",
+    "cloudPushTitle": "環境スナップショットをプッシュ",
+    "cloudPushDetail": "このデバイスの環境をクラウドにアップロードしています",
+    "cloudPushDetailRevision": "revision {{revision}} としてアップロード済み",
+    "cloudPushStarted": "スナップショットのプッシュを開始しました。「詳細 → タスク」で進捗を確認できます。",
+    "statusQueued": "Queued",
+    "queuedDetail": "Waiting for a free install slot",
+    "batchQueued": "Queued {{count}} installs (up to {{max}} run at once).",
+    "progressOnly": "進捗：{{percent}}%",
+    "forceDetail": "Force install (--force): re-download and overwrite",
+    "forceQueuedDetail": "Queued for force install",
+    "batchForceQueued": "Queued {{count}} force installs (up to {{max}} run at once).",
+    "forceNote": "Force re-downloads and overwrites local files; it does not skip hash checks. For hash mismatch, update the bucket or use Accept hash.",
+    "retry": "Retry",
+    "forceRetry": "Force retry",
+    "acceptHashRetry": "Accept hash & retry",
+    "acceptHashHint": "Save the downloaded file hash as a local override, purge cache, then force reinstall.",
+    "retryAllFailed": "Retry failed ({{count}})",
+    "forceRetryAllFailed": "Force retry failed ({{count}})",
+    "acceptHashUnavailable": "This failure is not a hash mismatch",
+    "acceptHashNoUrl": "No download URL for {{name}}",
+    "acceptHashFailed": "Could not save hash override: {{error}}",
+    "hashMismatchHint": "Hash mismatch for {{name}}. Accept the downloaded file hash and retry, or update the extras bucket."
   }
 }

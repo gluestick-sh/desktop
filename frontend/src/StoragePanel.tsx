@@ -68,6 +68,8 @@ export default function StoragePanel({
   const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [pendingPurge, setPendingPurge] = useState<main.CachePackageInfo | null>(null)
+  const [pendingBatchPurge, setPendingBatchPurge] = useState(false)
+  const [selectedNames, setSelectedNames] = useState<Set<string>>(() => new Set())
   const [showGcConfirm, setShowGcConfirm] = useState(false)
   const cacheTasks = useCacheTasks()
   const cacheRunning = cacheTasks.length > 0
@@ -152,8 +154,64 @@ export default function StoragePanel({
   const totalPages = Math.max(1, Math.ceil(packages.length / pageSize))
   const pageItems = packages.slice((page - 1) * pageSize, page * pageSize)
   const opsBusy = cacheRunning || refreshing
+  const selectedCount = selectedNames.size
+  const pageSelectedCount = pageItems.filter((pkg) => selectedNames.has(pkg.name)).length
+  const allPageSelected = pageItems.length > 0 && pageSelectedCount === pageItems.length
+
+  const toggleSelected = useCallback((name: string, checked: boolean) => {
+    setSelectedNames((prev) => {
+      const next = new Set(prev)
+      if (checked) next.add(name)
+      else next.delete(name)
+      return next
+    })
+  }, [])
+
+  const toggleSelectPage = useCallback(
+    (checked: boolean) => {
+      setSelectedNames((prev) => {
+        const next = new Set(prev)
+        for (const pkg of pageItems) {
+          if (checked) next.add(pkg.name)
+          else next.delete(pkg.name)
+        }
+        return next
+      })
+    },
+    [pageItems],
+  )
 
   const storageColumns = useMemo((): PackageDataTableColumn<main.CachePackageInfo>[] => [
+    {
+      id: 'select',
+      header: (
+        <input
+          type="checkbox"
+          className="storage-select-checkbox"
+          checked={allPageSelected}
+          disabled={opsBusy || pageItems.length === 0}
+          aria-label={t('storageExt.selectPageAria')}
+          onChange={(e) => toggleSelectPage(e.target.checked)}
+        />
+      ),
+      headerClassName: 'col-select',
+      cellClassName: 'col-select',
+      colClassName: 'col-select',
+      sortable: false,
+      resizable: false,
+      defaultWidth: 44,
+      minWidth: 40,
+      renderCell: (pkg) => (
+        <input
+          type="checkbox"
+          className="storage-select-checkbox"
+          checked={selectedNames.has(pkg.name)}
+          disabled={opsBusy}
+          aria-label={t('storageExt.selectAria', { name: pkg.name })}
+          onChange={(e) => toggleSelected(pkg.name, e.target.checked)}
+        />
+      ),
+    },
     {
       id: 'name',
       header: t('common.name'),
@@ -228,7 +286,16 @@ export default function StoragePanel({
         />
       ),
     },
-  ], [opsBusy, t])
+  ], [
+    allPageSelected,
+    formatCacheTime,
+    opsBusy,
+    pageItems.length,
+    selectedNames,
+    t,
+    toggleSelectPage,
+    toggleSelected,
+  ])
   const canPrev = page > 1
   const canNext = page < totalPages
 
@@ -240,14 +307,57 @@ export default function StoragePanel({
     setPage((p) => Math.min(p, totalPages))
   }, [totalPages])
 
+  useEffect(() => {
+    setSelectedNames((prev) => {
+      if (prev.size === 0) return prev
+      const valid = new Set(packages.map((pkg) => pkg.name))
+      let changed = false
+      const next = new Set<string>()
+      for (const name of prev) {
+        if (valid.has(name)) next.add(name)
+        else changed = true
+      }
+      return changed ? next : prev
+    })
+  }, [packages])
+
   const handleConfirmPurge = () => {
     if (!pendingPurge) return
     const name = pendingPurge.name
     setError(null)
     setPendingPurge(null)
+    setSelectedNames((prev) => {
+      if (!prev.has(name)) return prev
+      const next = new Set(prev)
+      next.delete(name)
+      return next
+    })
     void PurgeCachePackage(name).catch((err) => {
       setError(t('storageExt.purgeFailed', { error: String(err) }))
     })
+  }
+
+  const handleConfirmBatchPurge = () => {
+    const names = [...selectedNames]
+    if (names.length === 0) return
+    setError(null)
+    setPendingBatchPurge(false)
+    setSelectedNames(new Set())
+    void (async () => {
+      const errors: string[] = []
+      for (const name of names) {
+        try {
+          await PurgeCachePackage(name)
+        } catch (err) {
+          errors.push(`${name}: ${String(err)}`)
+        }
+      }
+      if (errors.length > 0) {
+        setError(t('storageExt.batchPurgeFailed', { error: errors.slice(0, 3).join('; ') }))
+      } else {
+        onChanged?.(t('storageExt.batchPurged', { count: names.length }))
+      }
+    })()
   }
 
   const handleConfirmGc = () => {
@@ -268,6 +378,14 @@ export default function StoragePanel({
           <p className="section-subtitle">{t('storageExt.subtitle')}</p>
         </div>
         <div className="storage-toolbar">
+          <button
+            type="button"
+            className="secondary"
+            disabled={loading || opsBusy || selectedCount === 0}
+            onClick={() => setPendingBatchPurge(true)}
+          >
+            {t('storageExt.batchPurge', { count: selectedCount })}
+          </button>
           <button
             type="button"
             className="secondary"
@@ -353,6 +471,29 @@ export default function StoragePanel({
               </button>
               <button type="button" className="primary danger" onClick={handleConfirmPurge}>
                 {t('app.delete')}
+              </button>
+            </div>
+          </div>
+        </ModalOverlay>
+      )}
+
+      {pendingBatchPurge && (
+        <ModalOverlay onClose={() => setPendingBatchPurge(false)}>
+          <div className="modal confirm-dialog" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+            <div className="modal-header">
+              <h2>{t('storageExt.batchPurgeDialogTitle')}</h2>
+              <ModalCloseButton onClick={() => setPendingBatchPurge(false)} ariaLabel={t('app.cancel')} />
+            </div>
+            <div className="modal-body">
+              <p>{t('storageExt.batchPurgeDialogBody', { count: selectedCount })}</p>
+              <p className="storage-confirm-note">{t('storageExt.purgeDialogNote')}</p>
+            </div>
+            <div className="confirm-dialog-footer">
+              <button type="button" className="secondary" onClick={() => setPendingBatchPurge(false)}>
+                {t('app.cancel')}
+              </button>
+              <button type="button" className="primary danger" onClick={handleConfirmBatchPurge}>
+                {t('storageExt.batchPurgeConfirm')}
               </button>
             </div>
           </div>

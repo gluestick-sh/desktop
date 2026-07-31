@@ -18,7 +18,7 @@ import (
 // These may be overridden at link time via:
 // -ldflags "-X gluestick.sh/desktop.Version=..." etc.
 var (
-	Version = "0.1.15"
+	Version = "0.1.16"
 	Commit  = "none"
 	Date    = "unknown"
 )
@@ -437,7 +437,9 @@ func (a *App) CancelInstall(name string) error {
 	}
 	if strings.TrimSpace(name) == "" {
 		for _, cancel := range a.installTasks {
-			cancel()
+			if cancel != nil {
+				cancel()
+			}
 		}
 		return nil
 	}
@@ -446,7 +448,9 @@ func (a *App) CancelInstall(name string) error {
 	if !ok {
 		return fmt.Errorf("no install in progress for %q", name)
 	}
-	cancel()
+	if cancel != nil {
+		cancel()
+	}
 	return nil
 }
 

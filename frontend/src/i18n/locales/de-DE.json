@@ -363,7 +363,8 @@
     "upgradePro": "Upgrade auf Pro…",
     "about": "Um",
     "ariaLabel": "Anwendungsmenü",
-    "openRootDir": "Stammverzeichnis öffnen…"
+    "openRootDir": "Stammverzeichnis öffnen…",
+    "taskCenter": "Aufgaben…"
   },
   "table": {
     "sortColumn": "Sortieren nach {{column}}",
@@ -1025,7 +1026,15 @@
     "gcStart": "Beginnen Sie mit der Bereinigung",
     "gcTaskTitle": "Saubere Waisenkinder",
     "noSpace": "Kein Platz zum Zurückgewinnen",
-    "freed": "{{removed}} verwaiste Blobs entfernt, {{freed}} freigegeben"
+    "freed": "{{removed}} verwaiste Blobs entfernt, {{freed}} freigegeben",
+    "batchPurge": "Delete selected ({{count}})",
+    "batchPurgeDialogTitle": "Delete selected cache",
+    "batchPurgeDialogBody": "Remove {{count}} package(s) from the cache index and delete unreferenced blobs.",
+    "batchPurgeConfirm": "Delete selected",
+    "batchPurged": "Removed cache for {{count}} package(s)",
+    "batchPurgeFailed": "Some deletions failed: {{error}}",
+    "selectPageAria": "Select all on this page",
+    "selectAria": "Select {{name}}"
   },
   "activityExt": {
     "subtitle": "Aktuelle Installationen, Deinstallationen, Updates und Umgebungsprüfungen",
@@ -1165,7 +1174,9 @@
         "summary": "Gängige Datenbankserver und Engines",
         "description": "MariaDB, MySQL, Redis, MongoDB, PostgreSQL, and SQLite from the main bucket — pick what your stack needs for local development."
       }
-    }
+    },
+    "forceInstallPending": "Force install ({{count}})",
+    "forceInstallHint": "Queue pending packages with --force (re-download). Does not skip hash checks."
   },
   "teams": {
     "title": "Gluestick Desktop Teams",
@@ -1192,5 +1203,59 @@
         "desc": "Define a shared environment baseline for your organization and manage who can access or change it."
       }
     }
+  },
+  "taskCenter": {
+    "title": "Aufgaben",
+    "intro": "Track install and uninstall work. Up to {{max}} installs run at once; the rest wait in the queue.",
+    "tabsAria": "Aufgabenkategorien",
+    "tabRunning": "Laufend",
+    "tabCompleted": "Abgeschlossen",
+    "tabFailed": "Fehlgeschlagen",
+    "tabAll": "Alle",
+    "empty": "Noch keine Aufgaben",
+    "emptyRunning": "Keine laufenden Aufgaben",
+    "clearFinished": "Beendete löschen",
+    "open": "Aufgaben öffnen",
+    "kindInstall": "Installation",
+    "kindUninstall": "Deinstallation",
+    "kindSnapshotApply": "Snapshot-Wiederherstellung",
+    "kindCloudPush": "Snapshot hochladen",
+    "kindBucket": "Bucket",
+    "kindOther": "Sonstiges",
+    "statusRunning": "Laufend",
+    "statusCompleted": "Abgeschlossen",
+    "statusFailed": "Fehlgeschlagen",
+    "startedAt": "Gestartet {{time}}",
+    "finishedAt": "Beendet {{time}}",
+    "current": "Aktuell: {{name}}",
+    "currentNamed": "Aktuell: {{name}} ({{percent}}%)",
+    "moreItems": "…und {{count}} weitere",
+    "installTitle": "{{name}} installieren",
+    "uninstallTitle": "{{name}} deinstallieren",
+    "snapshotApplyTitle": "Umgebung aus Snapshot wiederherstellen",
+    "snapshotApplyDetail": "Plan: {{packages}} Paket(e) installieren, {{buckets}} Bucket(s) hinzufügen",
+    "snapshotApplyStarted": "Snapshot-Wiederherstellung gestartet: {{packages}} Paket(e), {{buckets}} Bucket(s). Details unter „Erweitert → Aufgaben“.",
+    "cloudPushTitle": "Umgebungssnapshot hochladen",
+    "cloudPushDetail": "Umgebung dieses Geräts wird in die Cloud hochgeladen",
+    "cloudPushDetailRevision": "Hochgeladen als Revision {{revision}}",
+    "cloudPushStarted": "Snapshot-Upload gestartet. Unter Erweitert → Aufgaben den Fortschritt ansehen.",
+    "statusQueued": "Queued",
+    "queuedDetail": "Waiting for a free install slot",
+    "batchQueued": "Queued {{count}} installs (up to {{max}} run at once).",
+    "progressOnly": "Fortschritt: {{percent}} %",
+    "forceDetail": "Force install (--force): re-download and overwrite",
+    "forceQueuedDetail": "Queued for force install",
+    "batchForceQueued": "Queued {{count}} force installs (up to {{max}} run at once).",
+    "forceNote": "Force re-downloads and overwrites local files; it does not skip hash checks. For hash mismatch, update the bucket or use Accept hash.",
+    "retry": "Retry",
+    "forceRetry": "Force retry",
+    "acceptHashRetry": "Accept hash & retry",
+    "acceptHashHint": "Save the downloaded file hash as a local override, purge cache, then force reinstall.",
+    "retryAllFailed": "Retry failed ({{count}})",
+    "forceRetryAllFailed": "Force retry failed ({{count}})",
+    "acceptHashUnavailable": "This failure is not a hash mismatch",
+    "acceptHashNoUrl": "No download URL for {{name}}",
+    "acceptHashFailed": "Could not save hash override: {{error}}",
+    "hashMismatchHint": "Hash mismatch for {{name}}. Accept the downloaded file hash and retry, or update the extras bucket."
   }
 }

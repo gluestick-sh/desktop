@@ -368,7 +368,8 @@
     "upgradePro": "進階功能…",
     "about": "關於",
     "ariaLabel": "應用菜單",
-    "openRootDir": "打開根目錄…"
+    "openRootDir": "打開根目錄…",
+    "taskCenter": "任務…"
   },
   "table": {
     "sortColumn": "按{{column}}排序",
@@ -1030,7 +1031,15 @@
     "gcStart": "開始清理",
     "gcTaskTitle": "清理垃圾",
     "noSpace": "沒有可釋放的空間",
-    "freed": "已刪除 {{removed}} 個無用緩存塊，釋放 {{freed}}"
+    "freed": "已刪除 {{removed}} 個無用緩存塊，釋放 {{freed}}",
+    "batchPurge": "刪除所選（{{count}}）",
+    "batchPurgeDialogTitle": "刪除所選快取",
+    "batchPurgeDialogBody": "將從快取索引移除 {{count}} 個套件，並刪除不再被引用的快取檔案。",
+    "batchPurgeConfirm": "刪除所選",
+    "batchPurged": "已清理 {{count}} 個套件的快取",
+    "batchPurgeFailed": "部分刪除失敗：{{error}}",
+    "selectPageAria": "全選本頁",
+    "selectAria": "選擇 {{name}}"
   },
   "activityExt": {
     "subtitle": "查看近期安裝、卸載、更新與環境診斷活動",
@@ -1170,7 +1179,9 @@
         "summary": "常用數據庫服務與引擎",
         "description": "MariaDB、MySQL、Redis、MongoDB、PostgreSQL 與 SQLite，均來自 main 倉庫，可按技術棧選擇安裝用於本地開發。"
       }
-    }
+    },
+    "forceInstallPending": "強制安裝（{{count}}）",
+    "forceInstallHint": "以 --force 排隊安裝待裝項（重新下載）。不會跳過 hash 檢查。"
   },
   "teams": {
     "title": "Gluestick Desktop Teams",
@@ -1197,5 +1208,59 @@
         "desc": "為組織設定統一的環境基線，並管理成員對該基線的存取與變更權限。"
       }
     }
+  },
+  "taskCenter": {
+    "title": "任務",
+    "intro": "查看安裝與卸載任務。同時最多 {{max}} 個安裝在執行，其餘在佇列中等待。",
+    "tabsAria": "任務分類",
+    "tabRunning": "執行中",
+    "tabCompleted": "已完成",
+    "tabFailed": "失敗",
+    "tabAll": "全部",
+    "empty": "暫無任務記錄",
+    "emptyRunning": "目前沒有執行中的任務",
+    "clearFinished": "清除已結束",
+    "open": "查看任務",
+    "kindInstall": "安裝",
+    "kindUninstall": "解除安裝",
+    "kindSnapshotApply": "快照還原",
+    "kindCloudPush": "推送快照",
+    "kindBucket": "倉庫",
+    "kindOther": "其他",
+    "statusRunning": "執行中",
+    "statusCompleted": "已完成",
+    "statusFailed": "失敗",
+    "startedAt": "開始於 {{time}}",
+    "finishedAt": "結束於 {{time}}",
+    "current": "目前：{{name}}",
+    "currentNamed": "目前：{{name}}（{{percent}}%）",
+    "moreItems": "…另有 {{count}} 項",
+    "installTitle": "安裝 {{name}}",
+    "uninstallTitle": "解除安裝 {{name}}",
+    "snapshotApplyTitle": "從快照還原環境",
+    "snapshotApplyDetail": "計劃安裝 {{packages}} 個軟體包、新增 {{buckets}} 個倉庫",
+    "snapshotApplyStarted": "已開始從快照還原：{{packages}} 個軟體包、{{buckets}} 個倉庫。可在「進階 → 任務」查看詳情。",
+    "cloudPushTitle": "推送環境快照",
+    "cloudPushDetail": "正在將本機環境上傳到雲端",
+    "cloudPushDetailRevision": "已上傳為 revision {{revision}}",
+    "cloudPushStarted": "已開始推送快照。可在「進階 → 任務」查看進度。",
+    "statusQueued": "排隊中",
+    "queuedDetail": "等待空閒安裝名額",
+    "batchQueued": "已將 {{count}} 個安裝加入佇列（同時最多 {{max}} 個）。",
+    "progressOnly": "進度：{{percent}}%",
+    "forceDetail": "強制安裝（--force）：重新下載並覆蓋",
+    "forceQueuedDetail": "已排隊，將強制安裝",
+    "batchForceQueued": "已將 {{count}} 個強制安裝加入佇列（同時最多 {{max}} 個）。",
+    "forceNote": "強制安裝會重新下載並覆蓋本機檔案，但不會跳過 hash 檢查。若 hash 不符，請先更新儲存庫，或使用「接受 hash 並重試」。",
+    "retry": "重試",
+    "forceRetry": "強制重試",
+    "acceptHashRetry": "接受 hash 並重試",
+    "acceptHashHint": "將實際下載檔案的 hash 儲存為本機覆寫，清理快取後強制重裝。",
+    "retryAllFailed": "重試失敗項（{{count}}）",
+    "forceRetryAllFailed": "強制重試失敗項（{{count}}）",
+    "acceptHashUnavailable": "此失敗不是 hash 不符",
+    "acceptHashNoUrl": "找不到 {{name}} 的下載網址",
+    "acceptHashFailed": "儲存 hash 覆寫失敗：{{error}}",
+    "hashMismatchHint": "{{name}} 的下載 hash 與清單不符（儲存庫過期常見）。可接受實際 hash 後重試，或先更新 extras 儲存庫。"
   }
 }

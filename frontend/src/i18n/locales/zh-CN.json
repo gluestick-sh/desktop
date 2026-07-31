@@ -368,7 +368,8 @@
     "upgradePro": "高级功能…",
     "about": "关于",
     "ariaLabel": "应用菜单",
-    "openRootDir": "打开根目录…"
+    "openRootDir": "打开根目录…",
+    "taskCenter": "任务…"
   },
   "table": {
     "sortColumn": "按{{column}}排序",
@@ -1030,7 +1031,15 @@
     "gcStart": "开始清理",
     "gcTaskTitle": "清理垃圾",
     "noSpace": "没有可释放的空间",
-    "freed": "已删除 {{removed}} 个无用缓存块，释放 {{freed}}"
+    "freed": "已删除 {{removed}} 个无用缓存块，释放 {{freed}}",
+    "batchPurge": "删除所选（{{count}}）",
+    "batchPurgeDialogTitle": "删除所选缓存",
+    "batchPurgeDialogBody": "将从缓存索引移除 {{count}} 个软件包，并删除不再被引用的缓存文件。",
+    "batchPurgeConfirm": "删除所选",
+    "batchPurged": "已清理 {{count}} 个软件包的缓存",
+    "batchPurgeFailed": "部分删除失败：{{error}}",
+    "selectPageAria": "全选本页",
+    "selectAria": "选择 {{name}}"
   },
   "activityExt": {
     "subtitle": "查看近期安装、卸载、更新与环境诊断活动",
@@ -1170,7 +1179,9 @@
         "summary": "常用数据库服务与引擎",
         "description": "常用关系型、内存与文档数据库，可按技术栈选择安装用于本地开发。"
       }
-    }
+    },
+    "forceInstallPending": "强制安装（{{count}}）",
+    "forceInstallHint": "以 --force 排队安装待装项（重新下载）。不会跳过 hash 校验。"
   },
   "teams": {
     "title": "Gluestick Desktop Teams",
@@ -1197,5 +1208,59 @@
         "desc": "为组织设定统一的环境基线，并管理成员对该基线的访问与变更权限。"
       }
     }
+  },
+  "taskCenter": {
+    "title": "任务",
+    "intro": "查看安装与卸载任务。同时最多 {{max}} 个安装在跑，其余在队列中等待。",
+    "tabsAria": "任务分类",
+    "tabRunning": "运行中",
+    "tabCompleted": "已完成",
+    "tabFailed": "失败",
+    "tabAll": "全部",
+    "empty": "暂无任务记录",
+    "emptyRunning": "当前没有运行中的任务",
+    "clearFinished": "清除已结束",
+    "open": "查看任务",
+    "kindInstall": "安装",
+    "kindUninstall": "卸载",
+    "kindSnapshotApply": "快照恢复",
+    "kindCloudPush": "推送快照",
+    "kindBucket": "仓库",
+    "kindOther": "其他",
+    "statusRunning": "运行中",
+    "statusCompleted": "已完成",
+    "statusFailed": "失败",
+    "startedAt": "开始于 {{time}}",
+    "finishedAt": "结束于 {{time}}",
+    "current": "当前：{{name}}",
+    "currentNamed": "当前：{{name}}（{{percent}}%）",
+    "moreItems": "…另有 {{count}} 项",
+    "installTitle": "安装 {{name}}",
+    "uninstallTitle": "卸载 {{name}}",
+    "snapshotApplyTitle": "从快照恢复环境",
+    "snapshotApplyDetail": "计划安装 {{packages}} 个软件包、添加 {{buckets}} 个仓库",
+    "snapshotApplyStarted": "已开始从快照恢复：{{packages}} 个软件包、{{buckets}} 个仓库。可在「任务」查看详情。",
+    "cloudPushTitle": "推送环境快照",
+    "cloudPushDetail": "正在将本机环境上传到云端",
+    "cloudPushDetailRevision": "已上传为 revision {{revision}}",
+    "cloudPushStarted": "已开始推送快照。可在「任务」查看进度。",
+    "statusQueued": "排队中",
+    "queuedDetail": "等待空闲安装名额",
+    "batchQueued": "已将 {{count}} 个安装加入队列（同时最多 {{max}} 个）。",
+    "progressOnly": "进度：{{percent}}%",
+    "forceDetail": "强制安装（--force）：重新下载并覆盖",
+    "forceQueuedDetail": "已排队，将强制安装",
+    "batchForceQueued": "已将 {{count}} 个强制安装加入队列（同时最多 {{max}} 个）。",
+    "forceNote": "强制安装会重新下载并覆盖本地文件，但不会跳过 hash 校验。若 hash 不匹配，请先更新仓库，或使用「接受 hash 并重试」。",
+    "retry": "重试",
+    "forceRetry": "强制重试",
+    "acceptHashRetry": "接受 hash 并重试",
+    "acceptHashHint": "将实际下载文件的 hash 保存为本地覆盖，清理缓存后强制重装。",
+    "retryAllFailed": "重试失败项（{{count}}）",
+    "forceRetryAllFailed": "强制重试失败项（{{count}}）",
+    "acceptHashUnavailable": "该失败不是 hash 不匹配",
+    "acceptHashNoUrl": "找不到 {{name}} 的下载地址",
+    "acceptHashFailed": "保存 hash 覆盖失败：{{error}}",
+    "hashMismatchHint": "{{name}} 的下载 hash 与清单不符（仓库过期常见）。可接受实际 hash 后重试，或先更新 extras 仓库。"
   }
 }

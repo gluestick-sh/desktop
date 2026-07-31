@@ -250,6 +250,10 @@ export function SetManifestDownloadOverride(arg1, arg2) {
   return window['go']['main']['App']['SetManifestDownloadOverride'](arg1, arg2);
 }
 
+export function SetManifestDownloadOverrideWithHash(arg1, arg2, arg3) {
+  return window['go']['main']['App']['SetManifestDownloadOverrideWithHash'](arg1, arg2, arg3);
+}
+
 export function SetManifestJSONOverride(arg1, arg2) {
   return window['go']['main']['App']['SetManifestJSONOverride'](arg1, arg2);
 }

@@ -466,6 +466,15 @@
   flex: 1;
   min-width: 0;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.task-dock-notice-action {
+  font-size: 12px;
+  padding: 4px 10px;
 }
 
 .task-dock-notice-text {
