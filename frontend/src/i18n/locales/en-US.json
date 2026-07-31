@@ -348,14 +348,14 @@
     "deprecatedPackages": "Deprecated packages",
     "deprecatedHide": "Hide",
     "deprecatedShow": "Show",
-    "manageBuckets": "Manage buckets…",
+    "manageBuckets": "Manage buckets",
     "addBucket": "Add bucket…",
-    "updateAllBuckets": "Sync updates…",
+    "updateAllBuckets": "Sync updates",
     "searchPackages": "Search packages…",
-    "checkUpdates": "Check for updates…",
-    "checkDesktopUpdate": "Check for updates…",
-    "environment": "Environment check…",
-    "githubProxy": "GitHub proxy settings…",
+    "checkUpdates": "Check for updates",
+    "checkDesktopUpdate": "Check for updates",
+    "environment": "Environment check",
+    "githubProxy": "GitHub proxy settings",
     "downloadWorkers": "File downloads",
     "bucketSync": "Bucket sync",
     "bucketSyncIntervalMin": "{{n}} min",
@@ -365,11 +365,11 @@
     "localeEn": "English",
     "localeZh": "简体中文",
     "docs": "Documentation",
-    "upgradePro": "Advanced features…",
+    "upgradePro": "Advanced features",
     "about": "About",
     "ariaLabel": "Application menu",
-    "openRootDir": "Open root directory…",
-    "taskCenter": "Tasks…"
+    "openRootDir": "Open root directory",
+    "taskCenter": "Tasks"
   },
   "table": {
     "sortColumn": "Sort by {{column}}",
@@ -743,7 +743,7 @@
       {
         "heading": "Tools",
         "items": [
-          "Use Environment… in the Tools menu for step-by-step Git, 7-Zip, shim, and GitHub checks.",
+          "Use Environment in the Tools menu for step-by-step Git, 7-Zip, shim, and GitHub checks.",
           "Configure a GitHub mirror and download concurrency from the Tools menu.",
           "Open root directory reveals the ~/.glue data folder in File Explorer."
         ]

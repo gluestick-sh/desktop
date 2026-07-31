@@ -348,14 +348,14 @@
     "deprecatedPackages": "廢棄包",
     "deprecatedHide": "不顯示",
     "deprecatedShow": "顯示",
-    "manageBuckets": "管理 Bucket…",
+    "manageBuckets": "管理 Bucket",
     "addBucket": "添加 Bucket…",
-    "updateAllBuckets": "同步更新…",
+    "updateAllBuckets": "同步更新",
     "searchPackages": "搜索包…",
-    "checkUpdates": "檢查可更新包…",
-    "checkDesktopUpdate": "檢查更新…",
-    "environment": "環境診斷…",
-    "githubProxy": "GitHub 代理設置…",
+    "checkUpdates": "檢查可更新包",
+    "checkDesktopUpdate": "檢查更新",
+    "environment": "環境診斷",
+    "githubProxy": "GitHub 代理設置",
     "downloadWorkers": "檔案下載",
     "bucketSync": "Bucket 同步",
     "bucketSyncIntervalMin": "{{n}} 分鐘",
@@ -365,11 +365,11 @@
     "localeEn": "English",
     "localeZh": "簡體中文",
     "docs": "使用文檔",
-    "upgradePro": "進階功能…",
+    "upgradePro": "進階功能",
     "about": "關於",
     "ariaLabel": "應用菜單",
-    "openRootDir": "打開根目錄…",
-    "taskCenter": "任務…"
+    "openRootDir": "打開根目錄",
+    "taskCenter": "任務"
   },
   "table": {
     "sortColumn": "按{{column}}排序",
@@ -846,9 +846,9 @@
       "border-light": "淺邊框"
     },
     "menu": {
-      "browse": "瀏覽主題...",
-      "custom": "自定義主題...",
-      "customPro": "自定義主題... [Pro]",
+      "browse": "瀏覽主題…",
+      "custom": "自定義主題…",
+      "customPro": "自定義主題… [Pro]",
       "proSuffix": " [Pro]"
     },
     "builtin": {

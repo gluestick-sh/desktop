@@ -348,14 +348,14 @@
     "deprecatedPackages": "废弃包",
     "deprecatedHide": "不显示",
     "deprecatedShow": "显示",
-    "manageBuckets": "管理仓库…",
+    "manageBuckets": "管理仓库",
     "addBucket": "添加仓库…",
-    "updateAllBuckets": "同步更新…",
+    "updateAllBuckets": "同步更新",
     "searchPackages": "搜索包…",
-    "checkUpdates": "检查可更新包…",
-    "checkDesktopUpdate": "检查更新…",
-    "environment": "环境诊断…",
-    "githubProxy": "GitHub 代理设置…",
+    "checkUpdates": "检查可更新包",
+    "checkDesktopUpdate": "检查更新",
+    "environment": "环境诊断",
+    "githubProxy": "GitHub 代理设置",
     "downloadWorkers": "文件下载",
     "bucketSync": "仓库同步",
     "bucketSyncIntervalMin": "{{n}} 分钟",
@@ -365,11 +365,11 @@
     "localeEn": "English",
     "localeZh": "简体中文",
     "docs": "使用文档",
-    "upgradePro": "高级功能…",
+    "upgradePro": "高级功能",
     "about": "关于",
     "ariaLabel": "应用菜单",
-    "openRootDir": "打开根目录…",
-    "taskCenter": "任务…"
+    "openRootDir": "打开根目录",
+    "taskCenter": "任务"
   },
   "table": {
     "sortColumn": "按{{column}}排序",
@@ -743,7 +743,7 @@
       {
         "heading": "工具",
         "items": [
-          "「环境…」可逐项检查 Git、7-Zip、Shim 及 GitHub 连通性。",
+          "「环境」可逐项检查 Git、7-Zip、Shim 及 GitHub 连通性。",
           "可在“工具”菜单中配置 GitHub 镜像与下载并发数。",
           "“打开根目录”会在资源管理器中打开 ~/.glue 数据目录。"
         ]
@@ -846,9 +846,9 @@
       "border-light": "浅边框"
     },
     "menu": {
-      "browse": "浏览主题...",
-      "custom": "自定义主题...",
-      "customPro": "自定义主题... [Pro]",
+      "browse": "浏览主题…",
+      "custom": "自定义主题…",
+      "customPro": "自定义主题… [Pro]",
       "proSuffix": " [Pro]"
     },
     "builtin": {
