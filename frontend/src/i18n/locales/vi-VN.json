@@ -46,6 +46,7 @@
     "phase": {
       "resolve": "Giải quyết",
       "download": "Tải xuống",
+      "prepare_extract": "Chuẩn bị giải nén",
       "extract": "Trích xuất",
       "link": "Liên kết tập tin",
       "shim": "miếng chêm",
@@ -127,7 +128,7 @@
     },
     "extract": {
       "files": "Giải nén và cài đặt tập tin…",
-      "decompress": "Đang giải nén kho lưu trữ…",
+      "decompress": "Đang giải nén kho lưu trữ ({{percent}}%)…",
       "processing": "Đang xử lý tệp ({{current}}/{{total}})…",
       "indexing": "Đang lập chỉ mục tệp đã cài ({{current}}/{{total}})…"
     },
@@ -252,6 +253,11 @@
       "github_mirror": "Xác minh URL nhân bản hoặc thử một nhân bản khác"
     }
   },
+  "environment": {
+    "title": "Kiểm tra môi trường",
+    "diagnosisIntro": "Kiểm tra lần lượt Git, 7-Zip, thư mục shim và kết nối GitHub.",
+    "rerunDiagnosis": "Chạy lại"
+  },
   "activity": {
     "title": "Lịch sử",
     "timeAll": "Tất cả",
@@ -349,7 +355,7 @@
     "searchPackages": "Tìm kiếm gói…",
     "checkUpdates": "Kiểm tra các bản cập nhật",
     "checkDesktopUpdate": "Kiểm tra cập nhật ứng dụng",
-    "doctor": "Kiểm tra môi trường…",
+    "environment": "Kiểm tra môi trường",
     "githubProxy": "Cài đặt proxy GitHub",
     "downloadWorkers": "Tải tệp",
     "bucketSync": "Bucket sync",
@@ -611,6 +617,9 @@
     "uninstalling": "Đang gỡ cài đặt…",
     "uninstallAria": "Gỡ cài đặt {{name}}",
     "uninstallingAria": "Đang gỡ cài đặt {{name}}",
+    "cleanReinstall": "Cài lại sạch",
+    "cleanReinstallBusy": "Đang cài lại sạch…",
+    "cleanReinstallAria": "Cài lại sạch {{name}} (xóa persist và bộ nhớ đệm rồi cài lại)",
     "latestInBucket": "Phiên bản mới nhất trong thùng"
   },
   "pagination": {
@@ -805,6 +814,7 @@
       "editTitle": "Chỉnh sửa chủ đề",
       "createTitle": "Chủ đề tùy chỉnh",
       "previewInstall": "Cài đặt",
+      "previewMenu": "Tệp",
       "previewSuccess": "Thành công",
       "defaultName": "Chủ đề của tôi",
       "light": "Chủ đề nhẹ nhàng",
@@ -949,6 +959,14 @@
       "confirmPackage": "Gỡ cài đặt gói này?",
       "confirm": "Gỡ cài đặt"
     },
+    "cleanReinstallDialog": {
+      "title": "Cài lại sạch",
+      "confirm": "Cài lại sạch <strong>{{name}}</strong>?",
+      "note": "Gỡ tất cả phiên bản, xóa dữ liệu persist và bộ nhớ đệm của gói này, rồi tải xuống và cài đặt lại. Cài đặt cục bộ và dữ liệu người dùng của gói này sẽ bị mất.",
+      "confirmButton": "Cài lại sạch"
+    },
+    "cleanReinstallSuccess": "Đã cài lại sạch {{name}}",
+    "cleanReinstallFailed": "Cài lại sạch thất bại: {{error}}",
     "installOutcomeFailed": "Cài đặt không thành công",
     "uninstallOutcomeFailed": "Gỡ cài đặt không thành công",
     "bootstrapInnounpTaskTitle": "Đang chuẩn bị innounp",

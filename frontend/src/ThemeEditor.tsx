@@ -39,8 +39,23 @@ function ThemePreview({ tokens }: { tokens: ThemeTokens }) {
         borderColor: tokens.border,
       }}
     >
+      <div
+        className="theme-preview-titlebar"
+        style={{
+          background: tokens['bg-secondary'],
+          color: tokens['text-primary'],
+          borderColor: tokens.border,
+        }}
+      >
+        <span>Gluestick Desktop</span>
+        <span className="theme-preview-titlebar-dots" aria-hidden="true">
+          <i style={{ background: tokens['text-tertiary'] }} />
+          <i style={{ background: tokens['text-tertiary'] }} />
+          <i style={{ background: tokens.danger }} />
+        </span>
+      </div>
       <div className="theme-preview-header" style={{ background: tokens['bg-secondary'], borderColor: tokens.border }}>
-        <span style={{ color: tokens['text-secondary'] }}>Gluestick</span>
+        <span style={{ color: tokens['text-secondary'] }}>{t('theme.editor.previewMenu')}</span>
         <span className="theme-preview-accent" style={{ background: tokens.accent }} />
       </div>
       <div className="theme-preview-body" style={{ background: tokens['bg-card'], borderColor: tokens.border }}>

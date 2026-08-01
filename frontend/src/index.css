@@ -1,9 +1,9 @@
 :root,
 [data-theme="dark"] {
   --bg-primary: #1a1a2e;
-  --bg-secondary: #16213e;
+  --bg-secondary: #1e2a4a;
   --bg-tertiary: #0f3460;
-  --bg-card: #1f2937;
+  --bg-card: #243044;
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
   --text-tertiary: #64748b;
@@ -12,8 +12,8 @@
   --success: #22c55e;
   --warning: #f59e0b;
   --danger: #ef4444;
-  --border: #334155;
-  --border-light: #475569;
+  --border: #3d4f6a;
+  --border-light: #55667f;
   --row-hover: rgba(255, 255, 255, 0.02);
   --ghost-hover-bg: rgba(255, 255, 255, 0.05);
   --pill-bg: rgba(255, 255, 255, 0.1);

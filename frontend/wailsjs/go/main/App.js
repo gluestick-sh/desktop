@@ -22,6 +22,10 @@ export function CheckDesktopUpdate(arg1) {
   return window['go']['main']['App']['CheckDesktopUpdate'](arg1);
 }
 
+export function CleanReinstall(arg1, arg2) {
+  return window['go']['main']['App']['CleanReinstall'](arg1, arg2);
+}
+
 export function ClearActivityLog() {
   return window['go']['main']['App']['ClearActivityLog']();
 }
@@ -268,6 +272,10 @@ export function SetPackageLaunchKinds(arg1, arg2) {
 
 export function SetPackageVersionLock(arg1, arg2) {
   return window['go']['main']['App']['SetPackageVersionLock'](arg1, arg2);
+}
+
+export function SetWindowChromeColors(arg1, arg2, arg3) {
+  return window['go']['main']['App']['SetWindowChromeColors'](arg1, arg2, arg3);
 }
 
 export function StartBucketUpdateCheck() {

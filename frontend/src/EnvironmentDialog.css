@@ -1,8 +1,7 @@
 .environment-dialog {
-  width: min(760px, calc(100vw - 32px));
+  width: min(720px, calc(100vw - 32px));
   max-width: calc(100vw - 32px);
-  height: min(640px, calc(100vh - 48px));
-  max-height: calc(100vh - 48px);
+  max-height: min(480px, calc(100vh - 48px));
   display: flex;
   flex-direction: column;
 }
@@ -16,11 +15,23 @@
   gap: 12px;
 }
 
+.environment-panel-diagnosis {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
 .environment-panel-intro {
   margin: 0;
   font-size: 13px;
   color: var(--text-secondary);
   line-height: 1.5;
+}
+
+.environment-dialog .doctor-running-hint,
+.environment-dialog .doctor-summary,
+.environment-dialog .doctor-check-list {
+  margin: 0;
 }
 
 .environment-footer {

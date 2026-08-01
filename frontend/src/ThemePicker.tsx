@@ -23,8 +23,8 @@ function ThemeSwatch({ theme }: { theme: ThemeDefinition }) {
   const { tokens } = theme
   return (
     <div className="theme-swatch" aria-hidden="true">
+      <span className="theme-swatch-titlebar" style={{ background: tokens['bg-secondary'] }} />
       <span style={{ background: tokens['bg-primary'] }} />
-      <span style={{ background: tokens['bg-secondary'] }} />
       <span style={{ background: tokens.accent }} />
       <span style={{ background: tokens['text-primary'] }} />
     </div>

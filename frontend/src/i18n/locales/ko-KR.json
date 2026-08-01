@@ -46,6 +46,7 @@
     "phase": {
       "resolve": "해결하다",
       "download": "다운로드",
+      "prepare_extract": "압축 해제 준비",
       "extract": "발췌",
       "link": "파일 링크",
       "shim": "심",
@@ -127,7 +128,7 @@
     },
     "extract": {
       "files": "파일 추출 및 설치 중…",
-      "decompress": "압축 파일을 푸는 중…",
+      "decompress": "압축 파일을 푸는 중 ({{percent}}%)…",
       "processing": "파일 처리 중 ({{current}}/{{total}})…",
       "indexing": "설치된 파일 색인 중 ({{current}}/{{total}})…"
     },
@@ -252,6 +253,11 @@
       "github_mirror": "미러 URL을 확인하거나 다른 미러를 사용해 보세요."
     }
   },
+  "environment": {
+    "title": "환경 검사",
+    "diagnosisIntro": "Git, 7-Zip, shim 디렉터리, GitHub 연결을 단계별로 확인합니다.",
+    "rerunDiagnosis": "다시 실행"
+  },
   "activity": {
     "title": "기록",
     "timeAll": "모두",
@@ -349,7 +355,7 @@
     "searchPackages": "패키지 검색…",
     "checkUpdates": "업데이트 확인",
     "checkDesktopUpdate": "앱 업데이트 확인",
-    "doctor": "환경점검…",
+    "environment": "환경 검사",
     "githubProxy": "GitHub 프록시 설정",
     "downloadWorkers": "파일 다운로드",
     "bucketSync": "Bucket 동기화",
@@ -611,6 +617,9 @@
     "uninstalling": "제거 중…",
     "uninstallAria": "{{name}} 제거",
     "uninstallingAria": "{{name}} 제거 중",
+    "cleanReinstall": "깨끗이 재설치",
+    "cleanReinstallBusy": "깨끗이 재설치 중…",
+    "cleanReinstallAria": "{{name}} 깨끗이 재설치 (persist와 캐시 삭제 후 재설치)",
     "latestInBucket": "버킷의 최신 버전"
   },
   "pagination": {
@@ -805,6 +814,7 @@
       "editTitle": "테마 수정",
       "createTitle": "맞춤 테마",
       "previewInstall": "설치하다",
+      "previewMenu": "파일",
       "previewSuccess": "성공",
       "defaultName": "내 테마",
       "light": "밝은 테마",
@@ -949,6 +959,14 @@
       "confirmPackage": "이 패키지를 제거하시겠습니까?",
       "confirm": "제거"
     },
+    "cleanReinstallDialog": {
+      "title": "깨끗이 재설치",
+      "confirm": "<strong>{{name}}</strong>을(를) 깨끗이 재설치할까요?",
+      "note": "모든 버전을 제거하고 이 패키지의 persist 데이터와 캐시를 삭제한 뒤 강제로 다시 다운로드하여 설치합니다. 이 패키지의 로컬 설정과 사용자 데이터는 사라집니다.",
+      "confirmButton": "깨끗이 재설치"
+    },
+    "cleanReinstallSuccess": "{{name}} 깨끗이 재설치 완료",
+    "cleanReinstallFailed": "깨끗이 재설치 실패: {{error}}",
     "installOutcomeFailed": "설치 실패",
     "uninstallOutcomeFailed": "제거 실패",
     "bootstrapInnounpTaskTitle": "innounp 준비 중",

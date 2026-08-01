@@ -9,6 +9,7 @@ import {
   GetPackageManifestInspect,
   GetInstalledManifestInspect,
   Uninstall,
+  CleanReinstall,
   GetStats,
   GetActivityLogPage,
   IsEngineReady,
@@ -85,6 +86,8 @@ import { formatKeyedMessage, formatPhaseLabel, localeDateString } from './i18n/f
 import i18n, { setAppLocale, getAppLocale, isAppLocale } from './i18n'
 import {
   type InstallProgress,
+  installDisplayPhase,
+  isActivelyDownloading,
   mergeInstallProgress,
   operationProgressDisplay,
 } from './installProgress'
@@ -406,6 +409,7 @@ function App() {
   const [selectedPackage, setSelectedPackage] = useState<SelectedPackage | null>(null)
   const [pendingUninstall, setPendingUninstall] = useState<main.InstalledPackage | null>(null)
   const [pendingUninstallInactiveOnly, setPendingUninstallInactiveOnly] = useState(false)
+  const [pendingCleanReinstall, setPendingCleanReinstall] = useState<main.InstalledPackage | null>(null)
   const [pendingInstallPlan, setPendingInstallPlan] = useState<PendingInstallPlan | null>(null)
   const [pendingVersionSwitch, setPendingVersionSwitch] = useState<{
     packageName: string
@@ -2213,6 +2217,37 @@ function App() {
     setPendingUninstall(pkg)
   }
 
+  const handleCleanReinstallRequest = (pkg: main.InstalledPackage) => {
+    if (operationBusy) return
+    if (currentUninstall) return
+    if (isPackageInstalling(packageInstallRef(pkg.name, pkg.bucket))) return
+    setPendingCleanReinstall(pkg)
+  }
+
+  const handleConfirmCleanReinstall = async () => {
+    if (!pendingCleanReinstall || currentUninstall) return
+    const pkg = pendingCleanReinstall
+    const ref = packageInstallRef(pkg.name, pkg.bucket)
+    setPendingCleanReinstall(null)
+    setSelectedPackage(null)
+    installInFlightKeysRef.current.add(installPackageKey(ref))
+    const outcome = waitForInstallOutcome(ref)
+    try {
+      await CleanReinstall(ref, '')
+      await outcome
+      showTaskDockNotice(t('appExt.cleanReinstallSuccess', { name: pkg.name }), 'success')
+    } catch (err) {
+      console.error('CleanReinstall failed:', err)
+      showTaskDockNotice(t('appExt.cleanReinstallFailed', { error: String(err) }), 'error', {
+        persistent: true,
+      })
+    } finally {
+      installInFlightKeysRef.current.delete(installPackageKey(ref))
+      await refreshAfterPackageOp('install')
+      bumpActivityLog()
+    }
+  }
+
   const handleUninstallVersionRequest = (packageName: string, version: string) => {
     if (operationBusy) return
     const existing = installedPackages.find((p) => p.name === packageName)
@@ -2544,6 +2579,7 @@ function App() {
             onInstall={(ref, intent) => void beginInstall(ref, intent ?? 'install')}
             onUninstall={handleUninstallRequest}
             onUninstallVersion={handleUninstallVersionRequest}
+            onCleanReinstall={handleCleanReinstallRequest}
             onError={setError}
             onPackageChanged={() => void loadInstalled({ trace: 'version-manage' })}
             onMessage={showCenteredInfo}
@@ -2577,6 +2613,7 @@ function App() {
             onInstall={(ref, intent) => void beginInstall(ref, intent ?? 'install')}
             onUninstall={handleUninstallRequest}
             onUninstallVersion={handleUninstallVersionRequest}
+            onCleanReinstall={handleCleanReinstallRequest}
             onError={setError}
             onPackageChanged={() => void loadInstalled({ trace: 'version-manage' })}
             onMessage={showCenteredInfo}
@@ -2623,7 +2660,7 @@ function App() {
           <div className="install-progress-stack">
             {Object.entries(activeInstalls).map(([key, progress]) => {
               const displayName = progress.name?.trim() || key
-              const isDownloading = progress.phase === 'download'
+              const isDownloading = isActivelyDownloading(progress)
               const { barPct, indeterminate, showPercent } = operationProgressDisplay(progress)
               const showBytes = isDownloading && (progress.bytesDown > 0 || progress.bytesTotal > 0)
               const cancelling = !!installCancelling[key]
@@ -2632,7 +2669,7 @@ function App() {
                   <div className="card-header">
                     <span>{t('appExt.installing', { name: displayName })}</span>
                     <div className="install-progress-header-actions">
-                      <span className="pill info">{formatPhaseLabel(progress.phase)}</span>
+                      <span className="pill info">{formatPhaseLabel(installDisplayPhase(progress))}</span>
                       <button
                         type="button"
                         className="ghost progress-cancel-btn"
@@ -2908,6 +2945,43 @@ function App() {
               </button>
               <button type="button" className="primary" onClick={handleConfirmUninstall}>
                 {t('appExt.uninstallDialog.confirm')}
+              </button>
+            </div>
+          </div>
+        </ModalOverlay>
+      )}
+
+      {pendingCleanReinstall && (
+        <ModalOverlay onClose={() => setPendingCleanReinstall(null)}>
+          <div className="modal confirm-dialog" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+            <div className="modal-header">
+              <h2>{t('appExt.cleanReinstallDialog.title')}</h2>
+              <ModalCloseButton onClick={() => setPendingCleanReinstall(null)} ariaLabel={t('app.cancel')} />
+            </div>
+            <div className="modal-body">
+              <p>
+                <Trans
+                  i18nKey="appExt.cleanReinstallDialog.confirm"
+                  values={{ name: pendingCleanReinstall.name }}
+                  components={{ strong: <strong /> }}
+                />
+              </p>
+              <p className="confirm-dialog-summary">
+                <strong>{pendingCleanReinstall.name}</strong>
+                {' · '}
+                {pendingCleanReinstall.version}
+                {pendingCleanReinstall.bucket ? ` · ${pendingCleanReinstall.bucket}` : ''}
+              </p>
+              <p className="confirm-dialog-summary installed-version-uninstall-note">
+                {t('appExt.cleanReinstallDialog.note')}
+              </p>
+            </div>
+            <div className="confirm-dialog-footer">
+              <button type="button" className="secondary" onClick={() => setPendingCleanReinstall(null)}>
+                {t('app.cancel')}
+              </button>
+              <button type="button" className="primary danger" onClick={() => void handleConfirmCleanReinstall()}>
+                {t('appExt.cleanReinstallDialog.confirmButton')}
               </button>
             </div>
           </div>

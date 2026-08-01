@@ -57,7 +57,7 @@
 
 .theme-swatch {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: 1.4fr 1fr 0.7fr 0.7fr;
   height: 28px;
   border-radius: 4px;
   overflow: hidden;
@@ -67,6 +67,10 @@
 .theme-swatch span {
   display: block;
   min-height: 100%;
+}
+
+.theme-swatch-titlebar {
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.18);
 }
 
 .theme-card-name {

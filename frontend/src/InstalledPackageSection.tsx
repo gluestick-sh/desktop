@@ -27,17 +27,22 @@ export interface SelectedPackage {
   isInstalled: boolean
 }
 
-function packageUninstallRef(name: string, version?: string): string {
-  return version ? `${name}@${version}` : name
+function uninstallPackageKey(ref: string): string {
+  const trimmed = ref.trim()
+  const slash = trimmed.lastIndexOf('/')
+  let base = slash >= 0 ? trimmed.slice(slash + 1) : trimmed
+  const at = base.indexOf('@')
+  if (at >= 0) base = base.slice(0, at)
+  return base.toLowerCase()
 }
 
 function isPackageUninstalling(
   currentUninstallName: string | null,
   packageName: string,
-  version?: string,
+  _version?: string,
 ): boolean {
   if (!currentUninstallName) return false
-  return currentUninstallName === packageUninstallRef(packageName, version)
+  return uninstallPackageKey(currentUninstallName) === packageName.toLowerCase()
 }
 
 import { packageInstallRef } from './templateLibrary'
@@ -89,6 +94,7 @@ interface InstalledPackageSectionProps {
   onInstall: (ref: string, intent?: 'install' | 'upgrade') => void
   onUninstall: (pkg: main.InstalledPackage) => void
   onUninstallVersion: (packageName: string, version: string) => void
+  onCleanReinstall: (pkg: main.InstalledPackage) => void
   onError: (message: string) => void
   onPackageChanged: () => void
   onMessage: (message: string) => void
@@ -118,6 +124,7 @@ export default function InstalledPackageSection({
   onInstall,
   onUninstall,
   onUninstallVersion,
+  onCleanReinstall,
   onError,
   onPackageChanged,
   onMessage,
@@ -293,6 +300,25 @@ export default function InstalledPackageSection({
             />
           )}
           <TableIconButton
+            icon="refresh"
+            title={
+              isPackageInstalling(packageInstallRef(pkg.name, pkg.bucket)) ||
+              isPackageUninstalling(currentUninstallName, pkg.name, pkg.version)
+                ? t('package.cleanReinstallBusy')
+                : t('package.cleanReinstall')
+            }
+            ariaLabel={t('package.cleanReinstallAria', { name: pkg.name })}
+            disabled={
+              operationBusy ||
+              isPackageInstalling(packageInstallRef(pkg.name, pkg.bucket)) ||
+              isPackageUninstalling(currentUninstallName, pkg.name, pkg.version)
+            }
+            onClick={(e) => {
+              e.stopPropagation()
+              onCleanReinstall(pkg)
+            }}
+          />
+          <TableIconButton
             icon="trash"
             variant="danger"
             title={
@@ -327,6 +353,7 @@ export default function InstalledPackageSection({
     onError,
     onInstall,
     onUninstall,
+    onCleanReinstall,
     showFavorites,
     favorites,
   ])

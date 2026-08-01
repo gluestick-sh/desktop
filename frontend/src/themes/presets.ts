@@ -1,11 +1,12 @@
 import type { BuiltinThemeId, ThemeDefinition, ThemeTokens } from './types'
 import { createThemeFromTokens } from './apply'
 
+/** Default dark — blue-tinted chrome, title bar uses bg-secondary. */
 const darkTokens: ThemeTokens = {
   'bg-primary': '#1a1a2e',
-  'bg-secondary': '#16213e',
+  'bg-secondary': '#1e2a4a',
   'bg-tertiary': '#0f3460',
-  'bg-card': '#1f2937',
+  'bg-card': '#243044',
   'text-primary': '#f8fafc',
   'text-secondary': '#94a3b8',
   'text-tertiary': '#64748b',
@@ -14,10 +15,11 @@ const darkTokens: ThemeTokens = {
   'success': '#22c55e',
   'warning': '#f59e0b',
   'danger': '#ef4444',
-  'border': '#334155',
-  'border-light': '#475569',
+  'border': '#3d4f6a',
+  'border-light': '#55667f',
 }
 
+/** Light — white title bar / menubar. */
 const lightTokens: ThemeTokens = {
   'bg-primary': '#f1f5f9',
   'bg-secondary': '#ffffff',
@@ -40,9 +42,9 @@ export const BUILTIN_THEMES: ThemeDefinition[] = [
   createThemeFromTokens('light', 'Light', 'free', lightTokens),
   createThemeFromTokens('midnight', 'Midnight blue', 'free', {
     'bg-primary': '#0d1117',
-    'bg-secondary': '#161b22',
-    'bg-tertiary': '#1c2333',
-    'bg-card': '#1a2030',
+    'bg-secondary': '#21262d',
+    'bg-tertiary': '#30363d',
+    'bg-card': '#161b22',
     'text-primary': '#e6edf3',
     'text-secondary': '#8b949e',
     'text-tertiary': '#6e7681',
@@ -56,9 +58,9 @@ export const BUILTIN_THEMES: ThemeDefinition[] = [
   }),
   createThemeFromTokens('forest', 'Forest green', 'free', {
     'bg-primary': '#0f1a14',
-    'bg-secondary': '#152620',
-    'bg-tertiary': '#1a3328',
-    'bg-card': '#1a2e24',
+    'bg-secondary': '#1b3328',
+    'bg-tertiary': '#244536',
+    'bg-card': '#152820',
     'text-primary': '#e8f5e9',
     'text-secondary': '#a5d6a7',
     'text-tertiary': '#81c784',
@@ -72,9 +74,9 @@ export const BUILTIN_THEMES: ThemeDefinition[] = [
   }),
   createThemeFromTokens('dracula', 'Dracula', 'free', {
     'bg-primary': '#282a36',
-    'bg-secondary': '#313443',
-    'bg-tertiary': '#3a3d4e',
-    'bg-card': '#343746',
+    'bg-secondary': '#343746',
+    'bg-tertiary': '#44475a',
+    'bg-card': '#2f3241',
     'text-primary': '#f8f8f2',
     'text-secondary': '#bd93f9',
     'text-tertiary': '#6272a4',

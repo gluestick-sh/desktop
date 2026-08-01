@@ -12,6 +12,8 @@ export function CheckBucketUpdates():Promise<Record<string, main.BucketUpdateSta
 
 export function CheckDesktopUpdate(arg1:boolean):Promise<main.DesktopUpdateInfo>;
 
+export function CleanReinstall(arg1:string,arg2:string):Promise<void>;
+
 export function ClearActivityLog():Promise<void>;
 
 export function ClearActivityLogByTimeRange(arg1:string):Promise<number>;
@@ -135,6 +137,8 @@ export function SetPackageLaunchKind(arg1:string,arg2:string,arg3:string):Promis
 export function SetPackageLaunchKinds(arg1:string,arg2:Record<string, string>):Promise<void>;
 
 export function SetPackageVersionLock(arg1:string,arg2:boolean):Promise<void>;
+
+export function SetWindowChromeColors(arg1:string,arg2:string,arg3:string):Promise<void>;
 
 export function StartBucketUpdateCheck():Promise<void>;
 

@@ -46,6 +46,7 @@
     "phase": {
       "resolve": "解析清单",
       "download": "下载",
+      "prepare_extract": "准备解压",
       "extract": "解压安装",
       "link": "链接文件",
       "shim": "创建快捷方式",
@@ -127,7 +128,7 @@
     },
     "extract": {
       "files": "解压并安装文件…",
-      "decompress": "正在解压压缩包…",
+      "decompress": "正在解压压缩包 ({{percent}}%)…",
       "processing": "正在处理文件 ({{current}}/{{total}})…",
       "indexing": "正在索引已安装文件 ({{current}}/{{total}})…"
     },
@@ -616,6 +617,9 @@
     "uninstalling": "卸载中…",
     "uninstallAria": "卸载 {{name}}",
     "uninstallingAria": "正在卸载 {{name}}",
+    "cleanReinstall": "干净重装",
+    "cleanReinstallBusy": "正在干净重装…",
+    "cleanReinstallAria": "干净重装 {{name}}（清除配置与缓存后重装）",
     "latestInBucket": "仓库中最新版本"
   },
   "pagination": {
@@ -810,6 +814,7 @@
       "editTitle": "编辑主题",
       "createTitle": "自定义主题",
       "previewInstall": "安装",
+      "previewMenu": "文件",
       "previewSuccess": "成功",
       "defaultName": "我的主题",
       "light": "浅色主题",
@@ -831,7 +836,7 @@
     },
     "token": {
       "bg-primary": "主背景",
-      "bg-secondary": "次背景",
+      "bg-secondary": "次背景 / 标题栏",
       "bg-tertiary": "三级背景",
       "bg-card": "卡片背景",
       "text-primary": "主文字",
@@ -954,6 +959,14 @@
       "confirmPackage": "确定要卸载此软件包吗？",
       "confirm": "卸载"
     },
+    "cleanReinstallDialog": {
+      "title": "干净重装",
+      "confirm": "确定对 <strong>{{name}}</strong> 执行干净重装吗？",
+      "note": "将卸载所有版本，删除该软件包的 persist 数据与缓存，再强制重新下载安装。该软件包保存在本地的配置与用户数据会丢失。",
+      "confirmButton": "干净重装"
+    },
+    "cleanReinstallSuccess": "{{name}} 干净重装完成",
+    "cleanReinstallFailed": "干净重装失败: {{error}}",
     "installOutcomeFailed": "安装失败",
     "uninstallOutcomeFailed": "卸载失败",
     "bootstrapInnounpTaskTitle": "准备 innounp",

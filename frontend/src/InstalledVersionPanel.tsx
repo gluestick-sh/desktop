@@ -27,13 +27,24 @@ function packageUninstallRef(name: string, version: string): string {
   return `${name}@${version}`
 }
 
+function uninstallPackageKey(ref: string): string {
+  const trimmed = ref.trim()
+  const slash = trimmed.lastIndexOf('/')
+  let base = slash >= 0 ? trimmed.slice(slash + 1) : trimmed
+  const at = base.indexOf('@')
+  if (at >= 0) base = base.slice(0, at)
+  return base.toLowerCase()
+}
+
 function isVersionUninstalling(
   currentUninstallName: string | null,
   packageName: string,
   version: string,
 ): boolean {
   if (!currentUninstallName) return false
-  return currentUninstallName === packageUninstallRef(packageName, version)
+  if (currentUninstallName === packageUninstallRef(packageName, version)) return true
+  // Whole-package operations (clean reinstall) mark every version row busy.
+  return uninstallPackageKey(currentUninstallName) === packageName.toLowerCase()
 }
 
 export default function InstalledVersionPanel({

@@ -56,14 +56,6 @@ export default function EnvironmentDialog({
         <div className="modal-body">
           <div className="environment-panel environment-panel-diagnosis">
             <p className="environment-panel-intro">{t('environment.diagnosisIntro')}</p>
-            {doctorLoading && doctorOK === null && (
-              <p className="doctor-running-hint">{t('doctor.running')}</p>
-            )}
-            {!doctorLoading && doctorOK !== null && (
-              <p className={`doctor-summary ${doctorOK ? 'is-ok' : 'is-warn'}`}>
-                {doctorOK ? t('doctor.summaryOk') : t('doctor.summaryFail')}
-              </p>
-            )}
             {doctorChecks.length > 0 && (
               <ul className="doctor-check-list">
                 {doctorChecks.map((check) => (
@@ -98,6 +90,14 @@ export default function EnvironmentDialog({
                   </li>
                 ))}
               </ul>
+            )}
+            {doctorLoading && doctorOK === null && (
+              <p className="doctor-running-hint">{t('doctor.running')}</p>
+            )}
+            {!doctorLoading && doctorOK !== null && (
+              <p className={`doctor-summary ${doctorOK ? 'is-ok' : 'is-warn'}`}>
+                {doctorOK ? t('doctor.summaryOk') : t('doctor.summaryFail')}
+              </p>
             )}
           </div>
         </div>

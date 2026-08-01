@@ -46,6 +46,7 @@
     "phase": {
       "resolve": "Resolver",
       "download": "Descargar",
+      "prepare_extract": "Preparando extracción",
       "extract": "Extracto",
       "link": "Vincular archivos",
       "shim": "cuñas",
@@ -127,7 +128,7 @@
     },
     "extract": {
       "files": "Extrayendo e instalando archivos...",
-      "decompress": "Descomprimiendo archivo…",
+      "decompress": "Descomprimiendo archivo ({{percent}}%)…",
       "processing": "Procesando archivos ({{current}}/{{total}})…",
       "indexing": "Indexando archivos instalados ({{current}}/{{total}})…"
     },
@@ -252,6 +253,11 @@
       "github_mirror": "Verifique las URL reflejadas o pruebe con una duplicación diferente"
     }
   },
+  "environment": {
+    "title": "Comprobación del entorno",
+    "diagnosisIntro": "Comprobaciones paso a paso de Git, 7-Zip, el directorio de shims y la conectividad con GitHub.",
+    "rerunDiagnosis": "Ejecutar de nuevo"
+  },
   "activity": {
     "title": "Historial",
     "timeAll": "Todo",
@@ -349,7 +355,7 @@
     "searchPackages": "Buscar paquetes…",
     "checkUpdates": "Busque actualizaciones",
     "checkDesktopUpdate": "Buscar actualizaciones de la app",
-    "doctor": "Control ambiental…",
+    "environment": "Comprobación del entorno",
     "githubProxy": "Configuración del proxy de GitHub",
     "downloadWorkers": "Descarga de archivos",
     "bucketSync": "Bucket sync",
@@ -611,6 +617,9 @@
     "uninstalling": "Desinstalando…",
     "uninstallAria": "Desinstalar {{name}}",
     "uninstallingAria": "Desinstalando {{name}}",
+    "cleanReinstall": "Reinstalación limpia",
+    "cleanReinstallBusy": "Reinstalación limpia en curso…",
+    "cleanReinstallAria": "Reinstalación limpia de {{name}} (borrar persist y caché, luego reinstalar)",
     "latestInBucket": "Última versión en depósito"
   },
   "pagination": {
@@ -805,6 +814,7 @@
       "editTitle": "Editar tema",
       "createTitle": "Tema personalizado",
       "previewInstall": "Instalar",
+      "previewMenu": "Archivo",
       "previewSuccess": "Éxito",
       "defaultName": "mi tema",
       "light": "Tema ligero",
@@ -949,6 +959,14 @@
       "confirmPackage": "¿Desinstalar este paquete?",
       "confirm": "Desinstalar"
     },
+    "cleanReinstallDialog": {
+      "title": "Reinstalación limpia",
+      "confirm": "¿Reinstalar limpiamente <strong>{{name}}</strong>?",
+      "note": "Desinstala todas las versiones, elimina los datos persist y la caché de este paquete, y vuelve a descargarlo e instalarlo. Se perderán la configuración local y los datos de usuario de este paquete.",
+      "confirmButton": "Reinstalación limpia"
+    },
+    "cleanReinstallSuccess": "Reinstalación limpia de {{name}} completada",
+    "cleanReinstallFailed": "Error en la reinstalación limpia: {{error}}",
     "installOutcomeFailed": "La instalación falló",
     "uninstallOutcomeFailed": "Falló la desinstalación",
     "bootstrapInnounpTaskTitle": "Preparando innounp",

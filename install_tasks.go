@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -86,7 +87,11 @@ func (a *App) emitInstallCancelled(name string) {
 
 func (a *App) runInstallTask(key, name string, force bool, architecture string, interactive bool) {
 	defer a.finishInstall(key)
+	a.runInstallTaskOwned(key, name, force, architecture, interactive)
+}
 
+// runInstallTaskOwned performs the install; the caller owns finishInstall(key).
+func (a *App) runInstallTaskOwned(key, name string, force bool, architecture string, interactive bool) {
 	ctx, cancel := context.WithCancel(a.ctx)
 	a.setInstallCancel(key, cancel)
 	defer cancel()
@@ -144,6 +149,15 @@ func (a *App) runInstallTask(key, name string, force bool, architecture string, 
 		}
 		a.emitInstallError(installRef, opErr)
 		return
+	}
+
+	pkgName, _ := engine.ParsePkgRef(installRef)
+	if pkgName == "" {
+		pkgName = installTaskKey(installRef)
+	}
+	if result != nil && strings.TrimSpace(result.Version) != "" {
+		installDir := filepath.Join(a.glueRootDir(), "apps", pkgName, result.Version)
+		a.ensurePersistInstallPaths(pkgName, installDir)
 	}
 
 	completePayload := map[string]interface{}{

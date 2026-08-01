@@ -46,6 +46,7 @@
     "phase": {
       "resolve": "Résoudre",
       "download": "Télécharger",
+      "prepare_extract": "Préparation de l’extraction",
       "extract": "Extrait",
       "link": "Lier des fichiers",
       "shim": "Cales",
@@ -127,7 +128,7 @@
     },
     "extract": {
       "files": "Extraction et installation de fichiers…",
-      "decompress": "Décompression de l’archive…",
+      "decompress": "Décompression de l’archive ({{percent}}%)…",
       "processing": "Traitement des fichiers ({{current}}/{{total}})…",
       "indexing": "Indexation des fichiers installés ({{current}}/{{total}})…"
     },
@@ -252,6 +253,11 @@
       "github_mirror": "Vérifiez les URL miroir ou essayez un autre miroir"
     }
   },
+  "environment": {
+    "title": "Vérification de l’environnement",
+    "diagnosisIntro": "Contrôles pas à pas de Git, 7-Zip, du répertoire des shims et de la connectivité GitHub.",
+    "rerunDiagnosis": "Relancer"
+  },
   "activity": {
     "title": "Historique",
     "timeAll": "Tous",
@@ -349,7 +355,7 @@
     "searchPackages": "Rechercher des forfaits…",
     "checkUpdates": "Vérifiez les mises à jour",
     "checkDesktopUpdate": "Rechercher des mises à jour de l'app",
-    "doctor": "Vérification de l’environnement…",
+    "environment": "Vérification de l’environnement",
     "githubProxy": "Paramètres du proxy GitHub",
     "downloadWorkers": "Téléchargement de fichiers",
     "bucketSync": "Bucket sync",
@@ -611,6 +617,9 @@
     "uninstalling": "Désinstallation…",
     "uninstallAria": "Désinstaller {{name}}",
     "uninstallingAria": "Désinstallation de {{name}}",
+    "cleanReinstall": "Réinstallation propre",
+    "cleanReinstallBusy": "Réinstallation propre en cours…",
+    "cleanReinstallAria": "Réinstallation propre de {{name}} (effacer persist et cache, puis réinstaller)",
     "latestInBucket": "Dernière version dans le bucket"
   },
   "pagination": {
@@ -688,7 +697,10 @@
     "attributionLink": "Icônes de bouteilles de colle créées par andinur - Flaticon",
     "attributionTitle": "icônes de bouteille de colle",
     "ok": "OK",
-    "rootDir": "Répertoire racine"
+    "rootDir": "Répertoire racine",
+    "device": "Appareil",
+    "deviceId": "ID appareil",
+    "platform": "Plateforme"
   },
   "desktopUpdate": {
     "title": "Mise à jour disponible",
@@ -802,6 +814,7 @@
       "editTitle": "Modifier le thème",
       "createTitle": "Thème personnalisé",
       "previewInstall": "Installer",
+      "previewMenu": "Fichier",
       "previewSuccess": "Succès",
       "defaultName": "Mon thème",
       "light": "Thème lumière",
@@ -850,10 +863,7 @@
       "forest": "Vert forêt",
       "dracula": "Dracula",
       "nord": "Nord",
-      "rose": "Rose rose",
-      "solarized": "Solarized",
-      "high-contrast": "Contraste élevé",
-      "retro": "Borne verte"
+      "solarized": "Solarized"
     }
   },
   "footer": {
@@ -949,6 +959,14 @@
       "confirmPackage": "Désinstaller ce package ?",
       "confirm": "Désinstaller"
     },
+    "cleanReinstallDialog": {
+      "title": "Réinstallation propre",
+      "confirm": "Réinstaller proprement <strong>{{name}}</strong> ?",
+      "note": "Désinstalle toutes les versions, supprime les données persist et le cache de ce paquet, puis le retélécharge et le réinstalle. Les réglages locaux et données utilisateur de ce paquet seront perdus.",
+      "confirmButton": "Réinstallation propre"
+    },
+    "cleanReinstallSuccess": "Réinstallation propre de {{name}} terminée",
+    "cleanReinstallFailed": "Échec de la réinstallation propre : {{error}}",
     "installOutcomeFailed": "L'installation a échoué",
     "uninstallOutcomeFailed": "Échec de la désinstallation",
     "bootstrapInnounpTaskTitle": "Préparation de innounp",
@@ -957,6 +975,9 @@
     "bootstrapWixTaskTitle": "Préparation du jeu d'outils WiX",
     "bootstrapTaskTitle": "Préparation de {{tool}}",
     "bootstrapFailed": "Échec de la préparation de {{tool}} : {{error}}",
+    "exportInventoryDialogTitle": "Exporter l’inventaire",
+    "exportInventoryFilterJson": "JSON (*.json)",
+    "exportInventoryFilterCsv": "CSV (*.csv)",
     "exportRecipeDefinitionsDialogTitle": "Exporter les définitions de modèles",
     "importRecipeDefinitionsDialogTitle": "Importer les définitions de modèles",
     "recipeDefinitionsFilterJson": "Définition de modèle JSON (*.json)"

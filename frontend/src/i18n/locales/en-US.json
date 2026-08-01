@@ -46,6 +46,7 @@
     "phase": {
       "resolve": "Resolve",
       "download": "Download",
+      "prepare_extract": "Preparing extract",
       "extract": "Extract",
       "link": "Link files",
       "shim": "Shims",
@@ -127,7 +128,7 @@
     },
     "extract": {
       "files": "Extracting and installing files…",
-      "decompress": "Decompressing archive…",
+      "decompress": "Decompressing archive ({{percent}}%)…",
       "processing": "Processing files ({{current}}/{{total}})…",
       "indexing": "Indexing installed files ({{current}}/{{total}})…"
     },
@@ -616,6 +617,9 @@
     "uninstalling": "Uninstalling…",
     "uninstallAria": "Uninstall {{name}}",
     "uninstallingAria": "Uninstalling {{name}}",
+    "cleanReinstall": "Clean reinstall",
+    "cleanReinstallBusy": "Clean reinstall in progress…",
+    "cleanReinstallAria": "Clean reinstall {{name}} (clear persist and cache, then reinstall)",
     "latestInBucket": "Latest version in bucket"
   },
   "pagination": {
@@ -810,6 +814,7 @@
       "editTitle": "Edit theme",
       "createTitle": "Custom theme",
       "previewInstall": "Install",
+      "previewMenu": "File",
       "previewSuccess": "Success",
       "defaultName": "My theme",
       "light": "Light theme",
@@ -831,7 +836,7 @@
     },
     "token": {
       "bg-primary": "Primary background",
-      "bg-secondary": "Secondary background",
+      "bg-secondary": "Secondary / title bar",
       "bg-tertiary": "Tertiary background",
       "bg-card": "Card background",
       "text-primary": "Primary text",
@@ -954,6 +959,14 @@
       "confirmPackage": "Uninstall this package?",
       "confirm": "Uninstall"
     },
+    "cleanReinstallDialog": {
+      "title": "Clean reinstall",
+      "confirm": "Clean-reinstall <strong>{{name}}</strong>?",
+      "note": "Removes all installed versions, deletes this package's persist data and cache, then force-downloads and reinstalls. Any local settings and user data kept for this package will be lost.",
+      "confirmButton": "Clean reinstall"
+    },
+    "cleanReinstallSuccess": "{{name}} clean reinstall completed",
+    "cleanReinstallFailed": "Clean reinstall failed: {{error}}",
     "installOutcomeFailed": "Install failed",
     "uninstallOutcomeFailed": "Uninstall failed",
     "bootstrapInnounpTaskTitle": "Preparing innounp",

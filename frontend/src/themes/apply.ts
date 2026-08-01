@@ -1,4 +1,9 @@
-import { WindowSetDarkTheme, WindowSetLightTheme } from '../../wailsjs/runtime/runtime'
+import {
+  WindowSetBackgroundColour,
+  WindowSetDarkTheme,
+  WindowSetLightTheme,
+} from '../../wailsjs/runtime/runtime'
+import { SetWindowChromeColors } from '../../wailsjs/go/main/App'
 import type { ThemeDefinition, ThemeTokens } from './types'
 import { THEME_TOKEN_KEYS } from './types'
 
@@ -50,6 +55,7 @@ export function contrastRatio(fg: string, bg: string): number {
   return (lighter + 0.05) / (darker + 0.05)
 }
 
+/** Sync native window chrome (title bar / border / webview fill) with the active theme. */
 export function syncWindowChrome(tokens: ThemeTokens): void {
   try {
     if (isLightTheme(tokens)) {
@@ -60,6 +66,23 @@ export function syncWindowChrome(tokens: ThemeTokens): void {
   } catch {
     // Ignore outside Wails (e.g. vite dev)
   }
+
+  const bg = parseHex(tokens['bg-primary'])
+  if (bg) {
+    try {
+      WindowSetBackgroundColour(bg.r, bg.g, bg.b, 255)
+    } catch {
+      // Ignore outside Wails
+    }
+  }
+
+  // Match title bar to the menubar (bg-secondary) so the chrome doesn't stay system-black.
+  const titleBar = tokens['bg-secondary']
+  const titleText = tokens['text-primary']
+  const border = tokens.border
+  void SetWindowChromeColors(titleBar, titleText, border).catch(() => {
+    // Window may not exist yet during very early boot; theme re-apply will retry.
+  })
 }
 
 function deriveInteractiveTokens(tokens: ThemeTokens): Record<string, string> {

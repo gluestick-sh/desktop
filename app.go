@@ -18,7 +18,7 @@ import (
 // These may be overridden at link time via:
 // -ldflags "-X gluestick.sh/desktop.Version=..." etc.
 var (
-	Version = "0.1.17"
+	Version = "0.1.18"
 	Commit  = "none"
 	Date    = "unknown"
 )
@@ -137,6 +137,16 @@ func (a *App) loadSlowStats(forceRefresh bool) (bucketUpdatesCount int, fromCach
 // startup runs on application launch (returns quickly; engine initializes in a background goroutine).
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+	// Paint native title bar ASAP so it does not stay system-black before React theme apply.
+	go func() {
+		deadline := time.Now().Add(3 * time.Second)
+		for time.Now().Before(deadline) {
+			if err := a.SetWindowChromeColors("#1e2a4a", "#f8fafc", "#3d4f6a"); err == nil {
+				return
+			}
+			time.Sleep(50 * time.Millisecond)
+		}
+	}()
 	go a.initEngineAsync()
 }
 

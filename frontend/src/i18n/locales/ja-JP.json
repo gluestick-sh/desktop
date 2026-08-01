@@ -46,6 +46,7 @@
     "phase": {
       "resolve": "解決する",
       "download": "ダウンロード",
+      "prepare_extract": "展開の準備",
       "extract": "抽出する",
       "link": "ファイルをリンクする",
       "shim": "シム",
@@ -127,7 +128,7 @@
     },
     "extract": {
       "files": "ファイルを抽出してインストールしています…",
-      "decompress": "アーカイブを展開しています…",
+      "decompress": "アーカイブを展開しています ({{percent}}%)…",
       "processing": "ファイルを処理中 ({{current}}/{{total}})…",
       "indexing": "インストール済みファイルを索引中 ({{current}}/{{total}})…"
     },
@@ -252,6 +253,11 @@
       "github_mirror": "ミラー URL を確認するか、別のミラーを試してください"
     }
   },
+  "environment": {
+    "title": "環境チェック",
+    "diagnosisIntro": "Git、7-Zip、シムディレクトリ、GitHub 接続を順に確認します。",
+    "rerunDiagnosis": "再実行"
+  },
   "activity": {
     "title": "履歴",
     "timeAll": "全て",
@@ -349,7 +355,7 @@
     "searchPackages": "パッケージを検索…",
     "checkUpdates": "アップデートを確認してください",
     "checkDesktopUpdate": "アプリの更新を確認",
-    "doctor": "環境チェック…",
+    "environment": "環境チェック",
     "githubProxy": "GitHub プロキシ設定",
     "downloadWorkers": "ファイルダウンロード",
     "bucketSync": "Bucket 同期",
@@ -611,6 +617,9 @@
     "uninstalling": "アンインストール中…",
     "uninstallAria": "{{name}}をアンインストールする",
     "uninstallingAria": "{{name}}をアンインストールしています",
+    "cleanReinstall": "クリーン再インストール",
+    "cleanReinstallBusy": "クリーン再インストール中…",
+    "cleanReinstallAria": "{{name}} をクリーン再インストール（persist とキャッシュを削除してから再インストール）",
     "latestInBucket": "バケット内の最新バージョン"
   },
   "pagination": {
@@ -805,6 +814,7 @@
       "editTitle": "テーマの編集",
       "createTitle": "カスタムテーマ",
       "previewInstall": "インストール",
+      "previewMenu": "ファイル",
       "previewSuccess": "成功",
       "defaultName": "私のテーマ",
       "light": "ライトテーマ",
@@ -949,6 +959,14 @@
       "confirmPackage": "このパッケージをアンインストールしますか?",
       "confirm": "アンインストール"
     },
+    "cleanReinstallDialog": {
+      "title": "クリーン再インストール",
+      "confirm": "<strong>{{name}}</strong> をクリーン再インストールしますか？",
+      "note": "すべてのバージョンをアンインストールし、このパッケージの persist データとキャッシュを削除してから、強制的に再ダウンロードしてインストールします。このパッケージのローカル設定とユーザーデータは失われます。",
+      "confirmButton": "クリーン再インストール"
+    },
+    "cleanReinstallSuccess": "{{name}} のクリーン再インストールが完了しました",
+    "cleanReinstallFailed": "クリーン再インストールに失敗しました: {{error}}",
     "installOutcomeFailed": "インストールに失敗しました",
     "uninstallOutcomeFailed": "アンインストールに失敗しました",
     "bootstrapInnounpTaskTitle": "innounp を準備しています",

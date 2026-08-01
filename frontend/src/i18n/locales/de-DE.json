@@ -46,6 +46,7 @@
     "phase": {
       "resolve": "Lösen",
       "download": "Herunterladen",
+      "prepare_extract": "Entpacken vorbereiten",
       "extract": "Extrakt",
       "link": "Dateien verknüpfen",
       "shim": "Unterlegscheiben",
@@ -127,7 +128,7 @@
     },
     "extract": {
       "files": "Dateien extrahieren und installieren…",
-      "decompress": "Archiv wird entpackt…",
+      "decompress": "Archiv wird entpackt ({{percent}}%)…",
       "processing": "Dateien werden verarbeitet ({{current}}/{{total}})…",
       "indexing": "Installierte Dateien werden indiziert ({{current}}/{{total}})…"
     },
@@ -252,6 +253,11 @@
       "github_mirror": "Überprüfen Sie die Spiegel-URLs oder probieren Sie einen anderen Spiegel aus"
     }
   },
+  "environment": {
+    "title": "Umgebungsprüfung",
+    "diagnosisIntro": "Schrittweise Prüfung von Git, 7-Zip, Shim-Verzeichnis und GitHub-Verbindung.",
+    "rerunDiagnosis": "Erneut ausführen"
+  },
   "activity": {
     "title": "Verlauf",
     "timeAll": "Alle",
@@ -349,7 +355,7 @@
     "searchPackages": "Pakete suchen…",
     "checkUpdates": "Nach Updates suchen",
     "checkDesktopUpdate": "Nach App-Updates suchen",
-    "doctor": "Umweltcheck…",
+    "environment": "Umgebungsprüfung",
     "githubProxy": "GitHub-Proxy-Einstellungen",
     "downloadWorkers": "Datei-Download",
     "bucketSync": "Bucket sync",
@@ -611,6 +617,9 @@
     "uninstalling": "Deinstallation…",
     "uninstallAria": "{{name}} deinstallieren",
     "uninstallingAria": "{{name}} wird deinstalliert",
+    "cleanReinstall": "Saubere Neuinstallation",
+    "cleanReinstallBusy": "Saubere Neuinstallation läuft…",
+    "cleanReinstallAria": "{{name}} sauber neu installieren (Persistenz und Cache löschen, dann neu installieren)",
     "latestInBucket": "Neueste Version im Bucket"
   },
   "pagination": {
@@ -805,6 +814,7 @@
       "editTitle": "Thema bearbeiten",
       "createTitle": "Benutzerdefiniertes Thema",
       "previewInstall": "Installieren",
+      "previewMenu": "Datei",
       "previewSuccess": "Erfolg",
       "defaultName": "Mein Thema",
       "light": "Lichtthema",
@@ -949,6 +959,14 @@
       "confirmPackage": "Dieses Paket deinstallieren?",
       "confirm": "Deinstallieren"
     },
+    "cleanReinstallDialog": {
+      "title": "Saubere Neuinstallation",
+      "confirm": "<strong>{{name}}</strong> sauber neu installieren?",
+      "note": "Deinstalliert alle Versionen, löscht Persistenzdaten und Cache dieses Pakets und lädt es dann erneut herunter. Lokale Einstellungen und Nutzerdaten dieses Pakets gehen verloren.",
+      "confirmButton": "Saubere Neuinstallation"
+    },
+    "cleanReinstallSuccess": "Saubere Neuinstallation von {{name}} abgeschlossen",
+    "cleanReinstallFailed": "Saubere Neuinstallation fehlgeschlagen: {{error}}",
     "installOutcomeFailed": "Die Installation ist fehlgeschlagen",
     "uninstallOutcomeFailed": "Die Deinstallation ist fehlgeschlagen",
     "bootstrapInnounpTaskTitle": "Vorbereitung des Innounp",

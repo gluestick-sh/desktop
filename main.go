@@ -31,7 +31,7 @@ func main() {
 		Debug: options.Debug{
 			OpenInspectorOnStartup: false,
 		},
-		BackgroundColour: &options.RGBA{R: 27, G: 38, B: 54, A: 1},
+		BackgroundColour: &options.RGBA{R: 26, G: 26, B: 46, A: 255},
 		OnStartup:        app.startup,
 		OnShutdown:       app.shutdown,
 		Bind: []any{
@@ -41,6 +41,10 @@ func main() {
 			WebviewIsTransparent: false,
 			WindowIsTranslucent:  false,
 			DisableWindowIcon:    false,
+			// Theme + per-theme caption colors are applied from the frontend via
+			// WindowSetLight/DarkTheme and SetWindowChromeColors. Avoid CustomTheme
+			// here — it would reset caption colors on every window activate.
+			Theme: windows.Dark,
 		},
 	})
 
