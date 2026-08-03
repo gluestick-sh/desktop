@@ -95,7 +95,7 @@ func (a *App) runCacheGCTask() {
 		return
 	}
 
-	if result.RemovedBlobs > 0 {
+	if result.RemovedBlobs > 0 || result.FreedBytes > 0 {
 		a.emitCacheTaskProgress(cacheGCTaskName, "", cache.GCPhaseComplete, message.GCCompleteFreed, map[string]interface{}{
 			"removed": result.RemovedBlobs,
 			"freed":   formatCacheBytes(result.FreedBytes),

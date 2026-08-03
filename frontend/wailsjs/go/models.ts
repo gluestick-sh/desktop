@@ -455,6 +455,7 @@ export namespace main {
 	    downloadUrls: string[];
 	    bucketDownloadUrls: string[];
 	    urlOverrideActive: boolean;
+	    urlOverrideStale: boolean;
 	    jsonOverrideActive: boolean;
 	    jsonOverrideStale: boolean;
 	    hashes: string[];
@@ -476,6 +477,7 @@ export namespace main {
 	        this.downloadUrls = source["downloadUrls"];
 	        this.bucketDownloadUrls = source["bucketDownloadUrls"];
 	        this.urlOverrideActive = source["urlOverrideActive"];
+	        this.urlOverrideStale = source["urlOverrideStale"];
 	        this.jsonOverrideActive = source["jsonOverrideActive"];
 	        this.jsonOverrideStale = source["jsonOverrideStale"];
 	        this.hashes = source["hashes"];
@@ -742,6 +744,36 @@ export namespace main {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.forceRefresh = source["forceRefresh"];
 	        this.hideDeprecated = source["hideDeprecated"];
+	    }
+	}
+	export class TaskCenterTaskDTO {
+	    id: string;
+	    kind: string;
+	    title: string;
+	    detail?: string;
+	    status: string;
+	    progress?: number;
+	    error?: string;
+	    startedAt: number;
+	    finishedAt?: number;
+	    items?: string[];
+	
+	    static createFrom(source: any = {}) {
+	        return new TaskCenterTaskDTO(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.kind = source["kind"];
+	        this.title = source["title"];
+	        this.detail = source["detail"];
+	        this.status = source["status"];
+	        this.progress = source["progress"];
+	        this.error = source["error"];
+	        this.startedAt = source["startedAt"];
+	        this.finishedAt = source["finishedAt"];
+	        this.items = source["items"];
 	    }
 	}
 

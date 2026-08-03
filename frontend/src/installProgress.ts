@@ -10,6 +10,11 @@ export interface InstallProgress {
   bytesTotal: number
 }
 
+export interface DownloadTransferStats {
+  bytesPerSec: number
+  etaSeconds: number | null
+}
+
 const PHASE_RANK: Record<string, number> = {
   Starting: 0,
   resolve: 10,
@@ -46,6 +51,13 @@ export function installDisplayPhase(progress: InstallProgress): string {
     return 'prepare_extract'
   }
   return progress.phase
+}
+
+/** True when status text is still a download message but UI phase has moved on. */
+export function isStaleDownloadStatus(progress: InstallProgress): boolean {
+  const key = progress.messageKey ?? ''
+  if (!key.startsWith('progress.download.')) return false
+  return installDisplayPhase(progress) !== 'download'
 }
 
 /** Drop stale phase regressions and clear download byte counters after leaving download. */
@@ -125,4 +137,81 @@ export function operationProgressDisplay(progress: InstallProgress): {
     }
   }
   return { barPct: 0, indeterminate: true, showPercent: false }
+}
+
+type RateSample = { t: number; bytes: number }
+
+const downloadRateTrackers = new Map<string, RateSample[]>()
+
+/** Reset rate samples (e.g. when an install leaves the download phase). */
+export function clearDownloadRateTracker(id: string): void {
+  downloadRateTrackers.delete(id)
+}
+
+/**
+ * Rolling download speed / ETA from byte progress samples.
+ * Call on each progress update (and on a 1s tick) while actively downloading.
+ */
+export function sampleDownloadTransferStats(
+  id: string,
+  progress: InstallProgress,
+  now = Date.now(),
+): DownloadTransferStats | null {
+  if (!isActivelyDownloading(progress) || progress.bytesTotal <= 0) {
+    downloadRateTrackers.delete(id)
+    return null
+  }
+
+  const samples = downloadRateTrackers.get(id) ?? []
+  const last = samples[samples.length - 1]
+  if (!last || last.bytes !== progress.bytesDown || now - last.t >= 250) {
+    samples.push({ t: now, bytes: progress.bytesDown })
+  }
+  const cutoff = now - 5000
+  const trimmed = samples.filter((s) => s.t >= cutoff)
+  downloadRateTrackers.set(id, trimmed)
+
+  if (trimmed.length < 2) {
+    return { bytesPerSec: 0, etaSeconds: null }
+  }
+  const first = trimmed[0]
+  const end = trimmed[trimmed.length - 1]
+  const dt = (end.t - first.t) / 1000
+  if (dt <= 0.2) {
+    return { bytesPerSec: 0, etaSeconds: null }
+  }
+  const bytesPerSec = Math.max(0, (end.bytes - first.bytes) / dt)
+  const remaining = Math.max(0, progress.bytesTotal - progress.bytesDown)
+  const etaSeconds = bytesPerSec > 256 ? remaining / bytesPerSec : null
+  return { bytesPerSec, etaSeconds }
+}
+
+export function formatTransferSpeed(bytesPerSec: number): string {
+  if (!Number.isFinite(bytesPerSec) || bytesPerSec <= 0) return '—'
+  const units = ['B', 'KB', 'MB', 'GB']
+  let value = bytesPerSec
+  let unit = 0
+  while (value >= 1024 && unit < units.length - 1) {
+    value /= 1024
+    unit += 1
+  }
+  const digits = value >= 10 || unit === 0 ? 0 : 1
+  return `${value.toFixed(digits)} ${units[unit]}/s`
+}
+
+/** Compact remaining time, e.g. 45s / 3m 20s / 1h 05m */
+export function formatEtaDuration(seconds: number | null): string {
+  if (seconds == null || !Number.isFinite(seconds) || seconds < 0) return '—'
+  const total = Math.max(0, Math.round(seconds))
+  if (total < 60) return `${total}s`
+  const h = Math.floor(total / 3600)
+  const m = Math.floor((total % 3600) / 60)
+  const s = total % 60
+  if (h > 0) {
+    return `${h}h ${String(m).padStart(2, '0')}m`
+  }
+  if (m >= 10) {
+    return `${m}m`
+  }
+  return `${m}m ${String(s).padStart(2, '0')}s`
 }

@@ -540,11 +540,25 @@
 .progress-info {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
   gap: 12px;
   margin-top: 8px;
   font-size: 12px;
   color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.progress-info-speed {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.progress-info-pct {
+  margin-left: auto;
+  text-align: right;
+  flex-shrink: 0;
 }
 
 .progress-info .progress-status {
@@ -586,6 +600,22 @@
 .progress-cancel-btn:disabled {
   opacity: 0.6;
   cursor: default;
+}
+
+.install-progress-stack-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.install-progress-stack-title {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.install-dock-dismiss-btn {
+  flex-shrink: 0;
 }
 
 /* Main content (same 24px inset as search/tabs; keep gap above footer) */
@@ -1273,6 +1303,22 @@ tr.package-detail-row:hover {
 .footer-left-busy {
   color: var(--text-secondary);
   animation: stats-pulse 1.2s ease-in-out infinite;
+}
+
+.footer-left-action {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: var(--accent);
+  cursor: pointer;
+  text-align: left;
+}
+
+.footer-left-action:hover {
+  text-decoration: underline;
 }
 
 .footer-center {

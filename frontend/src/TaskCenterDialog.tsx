@@ -1,11 +1,22 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import ModalCloseButton from './ModalCloseButton'
 import ModalOverlay from './ModalOverlay'
-import { taskCenterCounts, type TaskCenterItem, type TaskCenterStatus } from './taskCenter'
+import {
+  TASK_CENTER_INTERRUPTED_ERROR,
+  taskCenterCounts,
+  type TaskCenterItem,
+  type TaskCenterStatus,
+} from './taskCenter'
 import type { InstallProgress } from './installProgress'
-import { formatKeyedMessage } from './i18n/formatMessage'
-import { operationProgressDisplay } from './installProgress'
+import { formatInstallStatusMessage } from './i18n/formatMessage'
+import {
+  formatEtaDuration,
+  formatTransferSpeed,
+  isActivelyDownloading,
+  operationProgressDisplay,
+  sampleDownloadTransferStats,
+} from './installProgress'
 import { parseHashMismatch } from './hashMismatch'
 import './TaskCenterDialog.css'
 
@@ -14,32 +25,17 @@ interface TaskCenterDialogProps {
   /** Live install progress keyed by installTaskId (install:<pkg>). */
   liveInstallProgress?: Record<string, InstallProgress>
   cancellingTaskIds?: Record<string, boolean>
+  /** When true, show "Show on main window" to restore the bottom install dock. */
+  canShowOnMainWindow?: boolean
   onClose: () => void
   onClearFinished: () => void
+  onShowOnMainWindow?: () => void
   onCancelTask?: (task: TaskCenterItem) => void
   onRetryTask?: (task: TaskCenterItem, options?: { force?: boolean; acceptHash?: boolean }) => void
   onRetryFailed?: (options?: { force?: boolean }) => void
 }
 
 type TaskFilter = 'running' | 'completed' | 'failed' | 'all'
-
-function formatTaskTime(ts: number, locale: string) {
-  if (!ts) return ''
-  return new Date(ts).toLocaleString(locale)
-}
-
-function kindLabel(kind: TaskCenterItem['kind'], t: (key: string) => string) {
-  switch (kind) {
-    case 'install':
-      return t('taskCenter.kindInstall')
-    case 'uninstall':
-      return t('taskCenter.kindUninstall')
-    case 'bucket':
-      return t('taskCenter.kindBucket')
-    default:
-      return t('taskCenter.kindOther')
-  }
-}
 
 function statusLabel(status: TaskCenterStatus, t: (key: string) => string) {
   switch (status) {
@@ -54,23 +50,33 @@ function statusLabel(status: TaskCenterStatus, t: (key: string) => string) {
   }
 }
 
-function formatLiveDetail(progress: InstallProgress): string {
-  return formatKeyedMessage(progress.messageKey, progress.messageArgs, progress.message)
-}
-
 export default function TaskCenterDialog({
   tasks,
   liveInstallProgress,
   cancellingTaskIds,
+  canShowOnMainWindow = false,
   onClose,
   onClearFinished,
+  onShowOnMainWindow,
   onCancelTask,
   onRetryTask,
   onRetryFailed,
 }: TaskCenterDialogProps) {
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const [filter, setFilter] = useState<TaskFilter>('running')
+  const [rateTick, setRateTick] = useState(0)
   const counts = useMemo(() => taskCenterCounts(tasks), [tasks])
+
+  const hasActiveDownload = useMemo(() => {
+    if (!liveInstallProgress) return false
+    return Object.values(liveInstallProgress).some((p) => isActivelyDownloading(p))
+  }, [liveInstallProgress])
+
+  useEffect(() => {
+    if (!hasActiveDownload) return
+    const id = window.setInterval(() => setRateTick((n) => n + 1), 1000)
+    return () => window.clearInterval(id)
+  }, [hasActiveDownload])
 
   const filtered = useMemo(() => {
     const list =
@@ -144,125 +150,135 @@ export default function TaskCenterDialog({
           </div>
 
           <div className="task-center-content">
-          {filtered.length === 0 ? (
-            <p className="task-center-muted task-center-empty">
-              {filter === 'running' ? t('taskCenter.emptyRunning') : t('taskCenter.empty')}
-            </p>
-          ) : (
-            <ul className="task-center-list">
-              {filtered.map((item) => {
-                const live = liveInstallProgress?.[item.id]
-                const detail = live ? formatLiveDetail(live) : item.detail
-                const liveDisplay = live ? operationProgressDisplay(live) : null
-                const pct =
-                  liveDisplay && liveDisplay.showPercent
-                    ? Math.round(liveDisplay.barPct)
-                    : typeof item.progress === 'number'
-                      ? Math.round(item.progress)
+            {filtered.length === 0 ? (
+              <p className="task-center-muted task-center-empty">
+                {filter === 'running' ? t('taskCenter.emptyRunning') : t('taskCenter.empty')}
+              </p>
+            ) : (
+              <ul className="task-center-list">
+                {filtered.map((item) => {
+                  const live = liveInstallProgress?.[item.id]
+                  const detail = live ? formatInstallStatusMessage(live) : item.detail
+                  const liveDisplay = live ? operationProgressDisplay(live) : null
+                  const pct =
+                    liveDisplay && liveDisplay.showPercent
+                      ? Math.round(liveDisplay.barPct)
+                      : typeof item.progress === 'number'
+                        ? Math.round(item.progress)
+                        : null
+                  void rateTick
+                  const transfer =
+                    live && item.status === 'running'
+                      ? sampleDownloadTransferStats(item.id, live)
                       : null
-                const canCancel =
-                  !!onCancelTask &&
-                  item.kind === 'install' &&
-                  (item.status === 'running' || item.status === 'queued')
-                const canRetry =
-                  !!onRetryTask && item.kind === 'install' && item.status === 'failed'
-                const hashMismatch = canRetry ? parseHashMismatch(item.error || '') : null
-                const cancelling = !!cancellingTaskIds?.[item.id]
-                return (
-                  <li key={item.id} className={`task-center-item is-${item.status}`}>
-                    <div className="task-center-item-head">
-                      <strong>{item.title}</strong>
-                      <div className="task-center-item-head-actions">
-                        <span className={`task-center-status is-${item.status}`}>
-                          {statusLabel(item.status, t)}
-                        </span>
-                        {canCancel ? (
+                  const canCancel =
+                    !!onCancelTask &&
+                    item.kind === 'install' &&
+                    (item.status === 'running' || item.status === 'queued')
+                  const canRetry =
+                    !!onRetryTask && item.kind === 'install' && item.status === 'failed'
+                  const hashMismatch = canRetry ? parseHashMismatch(item.error || '') : null
+                  const cancelling = !!cancellingTaskIds?.[item.id]
+                  return (
+                    <li key={item.id} className={`task-center-item is-${item.status}`}>
+                      <div className="task-center-item-head">
+                        <strong>{item.title}</strong>
+                        <div className="task-center-item-head-actions">
+                          <span className={`task-center-status is-${item.status}`}>
+                            {statusLabel(item.status, t)}
+                          </span>
+                          {canCancel ? (
+                            <button
+                              type="button"
+                              className="secondary task-center-cancel-btn"
+                              disabled={cancelling}
+                              onClick={() => onCancelTask(item)}
+                            >
+                              {cancelling ? t('appExt.cancellingInstall') : t('app.cancel')}
+                            </button>
+                          ) : null}
+                        </div>
+                      </div>
+                      {detail ? <p className="task-center-item-detail">{detail}</p> : null}
+                      {item.status === 'running' && (pct != null || transfer) ? (
+                        <p className="task-center-item-current">
+                          <span className="task-center-item-speed">
+                            {transfer ? (
+                              <>
+                                {t('taskCenter.downloadSpeed', {
+                                  speed: formatTransferSpeed(transfer.bytesPerSec),
+                                })}
+                                <span aria-hidden="true"> · </span>
+                                {t('taskCenter.etaRemaining', {
+                                  time: formatEtaDuration(transfer.etaSeconds),
+                                })}
+                              </>
+                            ) : null}
+                          </span>
+                          {pct != null ? (
+                            <span className="task-center-item-pct">{pct}%</span>
+                          ) : null}
+                        </p>
+                      ) : null}
+                      {item.status === 'running' && (liveDisplay || pct != null) ? (
+                        <div className="task-center-progress" aria-hidden="true">
+                          <div
+                            className={`task-center-progress-fill${liveDisplay?.indeterminate ? ' is-indeterminate' : ''}`}
+                            style={
+                              liveDisplay?.indeterminate
+                                ? undefined
+                                : { width: `${Math.max(pct ?? 0, 1)}%` }
+                            }
+                          />
+                        </div>
+                      ) : null}
+                      {item.error ? (
+                        <p className="task-center-item-error">
+                          {item.error === TASK_CENTER_INTERRUPTED_ERROR
+                            ? t('taskCenter.interruptedByRestart')
+                            : item.error}
+                        </p>
+                      ) : null}
+                      {canRetry ? (
+                        <div className="task-center-item-actions">
                           <button
                             type="button"
                             className="secondary task-center-cancel-btn"
-                            disabled={cancelling}
-                            onClick={() => onCancelTask(item)}
+                            onClick={() => onRetryTask(item)}
                           >
-                            {cancelling ? t('appExt.cancellingInstall') : t('app.cancel')}
+                            {t('taskCenter.retry')}
                           </button>
-                        ) : null}
-                      </div>
-                    </div>
-                    <div className="task-center-item-meta">
-                      <span>{kindLabel(item.kind, t)}</span>
-                      <span>
-                        {item.status === 'running' || item.status === 'queued'
-                          ? t('taskCenter.startedAt', {
-                              time: formatTaskTime(item.startedAt, i18n.language),
-                            })
-                          : t('taskCenter.finishedAt', {
-                              time: formatTaskTime(item.finishedAt || item.startedAt, i18n.language),
-                            })}
-                      </span>
-                    </div>
-                    {detail ? <p className="task-center-item-detail">{detail}</p> : null}
-                    {item.status === 'running' && pct != null ? (
-                      <p className="task-center-item-current">
-                        {t('taskCenter.progressOnly', { percent: pct })}
-                      </p>
-                    ) : null}
-                    {item.status === 'running' && (liveDisplay || pct != null) ? (
-                      <div className="task-center-progress" aria-hidden="true">
-                        <div
-                          className={`task-center-progress-fill${liveDisplay?.indeterminate ? ' is-indeterminate' : ''}`}
-                          style={
-                            liveDisplay?.indeterminate
-                              ? undefined
-                              : { width: `${Math.max(pct ?? 0, 1)}%` }
-                          }
-                        />
-                      </div>
-                    ) : null}
-                    {item.error ? <p className="task-center-item-error">{item.error}</p> : null}
-                    {canRetry ? (
-                      <div className="task-center-item-actions">
-                        <button
-                          type="button"
-                          className="secondary task-center-cancel-btn"
-                          onClick={() => onRetryTask(item)}
-                        >
-                          {t('taskCenter.retry')}
-                        </button>
-                        <button
-                          type="button"
-                          className="secondary task-center-cancel-btn"
-                          onClick={() => onRetryTask(item, { force: true })}
-                        >
-                          {t('taskCenter.forceRetry')}
-                        </button>
-                        {hashMismatch ? (
                           <button
                             type="button"
-                            className="primary task-center-cancel-btn"
-                            title={t('taskCenter.acceptHashHint')}
-                            onClick={() => onRetryTask(item, { acceptHash: true })}
+                            className="secondary task-center-cancel-btn"
+                            onClick={() => onRetryTask(item, { force: true })}
                           >
-                            {t('taskCenter.acceptHashRetry')}
+                            {t('taskCenter.forceRetry')}
                           </button>
-                        ) : null}
-                      </div>
-                    ) : null}
-                  </li>
-                )
-              })}
-            </ul>
-          )}
+                          {hashMismatch ? (
+                            <button
+                              type="button"
+                              className="primary task-center-cancel-btn"
+                              title={t('taskCenter.acceptHashHint')}
+                              onClick={() => onRetryTask(item, { acceptHash: true })}
+                            >
+                              {t('taskCenter.acceptHashRetry')}
+                            </button>
+                          ) : null}
+                        </div>
+                      ) : null}
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
           </div>
         </div>
 
         <div className="modal-footer task-center-footer">
           {failedInstallCount > 0 && onRetryFailed ? (
             <>
-              <button
-                type="button"
-                className="secondary"
-                onClick={() => onRetryFailed()}
-              >
+              <button type="button" className="secondary" onClick={() => onRetryFailed()}>
                 {t('taskCenter.retryAllFailed', { count: failedInstallCount })}
               </button>
               <button
@@ -274,14 +290,26 @@ export default function TaskCenterDialog({
               </button>
             </>
           ) : null}
-          <button
-            type="button"
-            className="secondary"
-            disabled={!hasFinished}
-            onClick={onClearFinished}
-          >
-            {t('taskCenter.clearFinished')}
-          </button>
+          {onShowOnMainWindow ? (
+            <button
+              type="button"
+              className="secondary"
+              disabled={!canShowOnMainWindow}
+              onClick={onShowOnMainWindow}
+            >
+              {t('taskCenter.showOnMainWindow')}
+            </button>
+          ) : null}
+          {filter === 'all' || filter === 'completed' ? (
+            <button
+              type="button"
+              className="secondary"
+              disabled={!hasFinished}
+              onClick={onClearFinished}
+            >
+              {t('taskCenter.clearFinished')}
+            </button>
+          ) : null}
           <button type="button" className="secondary" onClick={onClose}>
             {t('app.close')}
           </button>

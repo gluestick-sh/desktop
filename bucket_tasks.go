@@ -219,6 +219,7 @@ func (a *App) afterSingleBucketSynced(registry *bucket.Registry, name string) {
 	a.reloadEngineBuckets(true)
 	a.invalidateSlowStatsCache()
 	a.mu.Unlock()
+	a.pruneStaleDownloadOverridesAfterBucketSync()
 	a.emitBucketPartialSynced(name)
 }
 
@@ -282,6 +283,20 @@ func (a *App) runUpdateBucketsTask(names []string) {
 
 	a.recordBucketActivity("bucket_update", taskName, "success", "")
 	a.emitBucketTaskComplete("update", taskName, synced)
+}
+
+func (a *App) pruneStaleDownloadOverridesAfterBucketSync() {
+	if a.engine == nil {
+		return
+	}
+	removed, err := a.engine.PruneStaleManifestDownloadOverrides()
+	if err != nil {
+		runtime.LogWarning(a.ctx, fmt.Sprintf("prune stale download overrides: %v", err))
+		return
+	}
+	if len(removed) > 0 {
+		runtime.LogInfo(a.ctx, fmt.Sprintf("pruned %d stale download override(s) after bucket sync: %v", len(removed), removed))
+	}
 }
 
 func updateBucketTaskName(names []string) string {

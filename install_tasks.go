@@ -85,13 +85,14 @@ func (a *App) emitInstallCancelled(name string) {
 	})
 }
 
-func (a *App) runInstallTask(key, name string, force bool, architecture string, interactive bool) {
+func (a *App) runInstallTask(key, name string, force bool, architecture string, interactive bool, downloadURL, downloadHash string) {
 	defer a.finishInstall(key)
-	a.runInstallTaskOwned(key, name, force, architecture, interactive)
+	a.runInstallTaskOwned(key, name, force, architecture, interactive, downloadURL, downloadHash)
 }
 
 // runInstallTaskOwned performs the install; the caller owns finishInstall(key).
-func (a *App) runInstallTaskOwned(key, name string, force bool, architecture string, interactive bool) {
+// downloadURL/downloadHash are one-shot InstallRequest overrides (not written to config).
+func (a *App) runInstallTaskOwned(key, name string, force bool, architecture string, interactive bool, downloadURL, downloadHash string) {
 	ctx, cancel := context.WithCancel(a.ctx)
 	a.setInstallCancel(key, cancel)
 	defer cancel()
@@ -130,6 +131,12 @@ func (a *App) runInstallTaskOwned(key, name string, force bool, architecture str
 	installStart := time.Now()
 	req := &engine.InstallRequest{
 		Request: engine.Request{Name: installRef, Force: force, Options: options},
+	}
+	if u := strings.TrimSpace(downloadURL); u != "" {
+		req.DownloadURLOverrides = []string{u}
+		if h := strings.TrimSpace(downloadHash); h != "" {
+			req.DownloadHashOverrides = []string{h}
+		}
 	}
 	result, err := a.engine.Install(ctx, req, reporter)
 	logPostOpDuration(a.ctx, fmt.Sprintf("engine.Install(%s) completed", installRef), installStart)

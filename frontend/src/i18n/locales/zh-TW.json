@@ -141,6 +141,8 @@
         "complete": "完成"
       },
       "prepare_store": "準備清理快取…",
+      "clearing_partials": "正在清理未完成的下載…",
+      "clearing_sidecars": "正在清理失效的下載索引…",
       "reading_index_refs": "正在讀取緩存索引中的文件引用…",
       "index_ref_count": "緩存索引共 {{count}} 個文件引用",
       "scan_apps_start": "開始掃描已安裝軟件…",
@@ -161,7 +163,7 @@
       "orphans_found": "發現 {{count}} 個無用緩存塊，開始刪除…",
       "deleting_orphan": "正在刪除無用緩存塊 {{label}} ({{current}}/{{total}}，{{size}})",
       "deleting_orphans_batch": "正在刪除無用緩存塊 ({{current}}/{{total}})",
-      "complete_freed": "已刪除 {{removed}} 個無用緩存塊，釋放 {{freed}}",
+      "complete_freed": "已清理 {{removed}} 項垃圾，釋放 {{freed}}",
       "complete_nothing": "沒有可釋放的空間"
     },
     "purge": {
@@ -599,7 +601,9 @@
       "editUrl": "修改",
       "editUrlAria": "修改下載地址",
       "saveUrl": "保存",
-      "urlOverrideHint": "當前使用已保存的本地下載地址，與 bucket 定義不同。",
+      "urlOverrideHint": "目前使用已儲存的本機下載網址（綁定目前 bucket 清單版本）；bucket 更新後會自動失效。",
+      "urlOverrideStale": "bucket 清單已更新，本機儲存的下載網址已失效。可清除後重新編輯，或直接使用官方網址。",
+      "clearUrlOverride": "清除本機下載網址",
       "editJson": "修改",
       "editJsonAria": "修改清單 JSON 定義",
       "saveJson": "保存",
@@ -876,7 +880,8 @@
     "checkingUpdates": "正在檢查可更新包…",
     "checkingDesktopUpdate": "正在檢測程式更新…",
     "checkingBuckets": "檢查 Bucket 更新中 ({{count}})…",
-    "checkingBucketsGeneric": "正在檢查 Bucket 更新…"
+    "checkingBucketsGeneric": "正在檢查 Bucket 更新…",
+    "installsRunning": "{{count}} 個任務運行中"
   },
   "appExt": {
     "installing": "正在安裝: {{name}}",
@@ -980,7 +985,9 @@
     "exportInventoryFilterCsv": "CSV 表格 (*.csv)",
     "exportRecipeDefinitionsDialogTitle": "導出模板定義",
     "importRecipeDefinitionsDialogTitle": "導入模板定義",
-    "recipeDefinitionsFilterJson": "配方定義 JSON (*.json)"
+    "recipeDefinitionsFilterJson": "配方定義 JSON (*.json)",
+    "installDockTitle": "正在安裝（{{count}}）",
+    "dismissInstallDockAria": "關閉進度條並開啟任務視窗"
   },
   "installedExt": {
     "favoriteAdd": "加入收藏",
@@ -1022,7 +1029,7 @@
     }
   },
   "storageExt": {
-    "subtitle": "查看包緩存，清理垃圾可移除無引用文件。",
+    "subtitle": "查看包快取；清理垃圾可移除無引用檔案和未完成下載。",
     "summary": "共 {{packageCount}} 個包，{{totalFiles}} 個文件，合計 {{totalSize}}",
     "empty": "緩存索引為空",
     "emptyHint": "安裝後在此查看各包緩存；有遺留文件可「清理垃圾」。",
@@ -1039,12 +1046,12 @@
     "purged": "已移除 {{name}} 的緩存索引；{{result}}",
     "purgeTaskTitle": "正在刪除 {{name}} 的快取",
     "gcDialogTitle": "清理垃圾",
-    "gcDialogBody": "將掃描緩存目錄，刪除未被緩存索引或已安裝軟件引用的無效條目。",
+    "gcDialogBody": "將掃描快取目錄，刪除無引用快取塊、取消/失敗殘留的未完成下載，以及失效的 .zip-index / .manifest-hash 索引。",
     "gcDialogNote": "等價於命令行 <code>glue cache gc</code>。正在使用的文件不會被刪除。確認後任務在後臺執行。",
     "gcStart": "開始清理",
     "gcTaskTitle": "清理垃圾",
     "noSpace": "沒有可釋放的空間",
-    "freed": "已刪除 {{removed}} 個無用緩存塊，釋放 {{freed}}",
+    "freed": "已清理 {{removed}} 項垃圾，釋放 {{freed}}",
     "batchPurge": "刪除所選（{{count}}）",
     "batchPurgeDialogTitle": "刪除所選快取",
     "batchPurgeDialogBody": "將從快取索引移除 {{count}} 個套件，並刪除不再被引用的快取檔案。",
@@ -1224,7 +1231,7 @@
   },
   "taskCenter": {
     "title": "任務",
-    "intro": "查看安裝與卸載任務。同時最多 {{max}} 個安裝在執行，其餘在佇列中等待。",
+    "intro": "查看安裝任務。同時最多 {{max}} 個安裝在跑，其餘在佇列中等待。",
     "tabsAria": "任務分類",
     "tabRunning": "執行中",
     "tabCompleted": "已完成",
@@ -1233,6 +1240,7 @@
     "empty": "暫無任務記錄",
     "emptyRunning": "目前沒有執行中的任務",
     "clearFinished": "清除已結束",
+    "showOnMainWindow": "在主視窗顯示",
     "open": "查看任務",
     "kindInstall": "安裝",
     "kindUninstall": "解除安裝",
@@ -1243,12 +1251,13 @@
     "statusRunning": "執行中",
     "statusCompleted": "已完成",
     "statusFailed": "失敗",
+    "interruptedByRestart": "應用程式重新啟動後中斷",
     "startedAt": "開始於 {{time}}",
     "finishedAt": "結束於 {{time}}",
     "current": "目前：{{name}}",
     "currentNamed": "目前：{{name}}（{{percent}}%）",
     "moreItems": "…另有 {{count}} 項",
-    "installTitle": "安裝 {{name}}",
+    "installTitle": "{{name}}",
     "uninstallTitle": "解除安裝 {{name}}",
     "snapshotApplyTitle": "從快照還原環境",
     "snapshotApplyDetail": "計劃安裝 {{packages}} 個軟體包、新增 {{buckets}} 個倉庫",
@@ -1261,6 +1270,8 @@
     "queuedDetail": "等待空閒安裝名額",
     "batchQueued": "已將 {{count}} 個安裝加入佇列（同時最多 {{max}} 個）。",
     "progressOnly": "進度：{{percent}}%",
+    "downloadSpeed": "{{speed}}",
+    "etaRemaining": "剩餘 {{time}}",
     "forceDetail": "強制安裝（--force）：重新下載並覆蓋",
     "forceQueuedDetail": "已排隊，將強制安裝",
     "batchForceQueued": "已將 {{count}} 個強制安裝加入佇列（同時最多 {{max}} 個）。",
@@ -1268,7 +1279,7 @@
     "retry": "重試",
     "forceRetry": "強制重試",
     "acceptHashRetry": "接受 hash 並重試",
-    "acceptHashHint": "將實際下載檔案的 hash 儲存為本機覆寫，清理快取後強制重裝。",
+    "acceptHashHint": "僅本次安裝接受實際下載 hash（不寫入 config）；若已與 bucket 一致則直接強制重裝。",
     "retryAllFailed": "重試失敗項（{{count}}）",
     "forceRetryAllFailed": "強制重試失敗項（{{count}}）",
     "acceptHashUnavailable": "此失敗不是 hash 不符",

@@ -141,6 +141,8 @@
         "complete": "Complete"
       },
       "prepare_store": "Preparing cache cleanup…",
+      "clearing_partials": "Clearing incomplete downloads…",
+      "clearing_sidecars": "Clearing stale download indexes…",
       "reading_index_refs": "Reading file references from cache index…",
       "index_ref_count": "Cache index has {{count}} file references",
       "scan_apps_start": "Scanning installed apps…",
@@ -161,7 +163,7 @@
       "orphans_found": "Found {{count}} orphan blobs; deleting…",
       "deleting_orphan": "Deleting orphan {{label}} ({{current}}/{{total}}, {{size}})",
       "deleting_orphans_batch": "Deleting orphan blobs ({{current}}/{{total}})",
-      "complete_freed": "Removed {{removed}} orphan blobs, freed {{freed}}",
+      "complete_freed": "Removed {{removed}} junk items, freed {{freed}}",
       "complete_nothing": "No space to reclaim"
     },
     "purge": {
@@ -599,7 +601,9 @@
       "editUrl": "Edit",
       "editUrlAria": "Edit download URL",
       "saveUrl": "Save",
-      "urlOverrideHint": "Using a saved local download URL that differs from the bucket manifest.",
+      "urlOverrideHint": "Using a saved local download URL for this bucket revision; it stops applying when the bucket manifest updates.",
+      "urlOverrideStale": "The bucket manifest has changed and your saved download URL no longer applies. Clear it to re-edit or use the official URL.",
+      "clearUrlOverride": "Clear saved download URL",
       "editJson": "Edit",
       "editJsonAria": "Edit manifest JSON definition",
       "saveJson": "Save",
@@ -876,7 +880,8 @@
     "checkingUpdates": "Checking for updates…",
     "checkingDesktopUpdate": "Checking for app updates…",
     "checkingBuckets": "Checking bucket updates ({{count}})…",
-    "checkingBucketsGeneric": "Checking bucket updates…"
+    "checkingBucketsGeneric": "Checking bucket updates…",
+    "installsRunning": "{{count}} tasks running"
   },
   "appExt": {
     "installing": "Installing: {{name}}",
@@ -980,7 +985,9 @@
     "exportInventoryFilterCsv": "CSV table (*.csv)",
     "exportRecipeDefinitionsDialogTitle": "Export template definitions",
     "importRecipeDefinitionsDialogTitle": "Import template definitions",
-    "recipeDefinitionsFilterJson": "Recipe definition JSON (*.json)"
+    "recipeDefinitionsFilterJson": "Recipe definition JSON (*.json)",
+    "installDockTitle": "Installing ({{count}})",
+    "dismissInstallDockAria": "Hide install progress and open Tasks"
   },
   "installedExt": {
     "favoriteAdd": "Add to favorites",
@@ -1022,7 +1029,7 @@
     }
   },
   "storageExt": {
-    "subtitle": "View package cache; Clean orphans removes unreferenced files.",
+    "subtitle": "View package cache; Clean orphans removes unreferenced files and incomplete downloads.",
     "summary": "{{packageCount}} packages, {{totalFiles}} files, total {{totalSize}}",
     "empty": "Cache index is empty",
     "emptyHint": "Packages appear after install. Use “Clean orphans” for leftover files.",
@@ -1039,12 +1046,12 @@
     "purged": "Removed {{name}} from cache index; {{result}}",
     "purgeTaskTitle": "Removing {{name}} from cache",
     "gcDialogTitle": "Clean orphans",
-    "gcDialogBody": "Scan the cache directory and delete entries not referenced by the cache index or installed software.",
+    "gcDialogBody": "Scan the cache directory and delete unreferenced cache blobs, abandoned incomplete downloads, and stale download indexes.",
     "gcDialogNote": "Same as CLI <code>glue cache gc</code>. Files in use are not deleted. The task runs in the background after confirmation.",
     "gcStart": "Start cleanup",
     "gcTaskTitle": "Clean orphans",
     "noSpace": "No space to reclaim",
-    "freed": "Removed {{removed}} orphan blobs, freed {{freed}}",
+    "freed": "Removed {{removed}} junk items, freed {{freed}}",
     "batchPurge": "Delete selected ({{count}})",
     "batchPurgeDialogTitle": "Delete selected cache",
     "batchPurgeDialogBody": "Remove {{count}} package(s) from the cache index and delete unreferenced blobs.",
@@ -1224,7 +1231,7 @@
   },
   "taskCenter": {
     "title": "Tasks",
-    "intro": "Track install and uninstall work. Up to {{max}} installs run at once; the rest wait in the queue.",
+    "intro": "Track install tasks. Up to {{max}} installs run at once; the rest wait in the queue.",
     "tabsAria": "Task categories",
     "tabRunning": "Running",
     "tabCompleted": "Completed",
@@ -1233,6 +1240,7 @@
     "empty": "No tasks yet",
     "emptyRunning": "No running tasks",
     "clearFinished": "Clear finished",
+    "showOnMainWindow": "Show on main window",
     "open": "Open tasks",
     "kindInstall": "Install",
     "kindUninstall": "Uninstall",
@@ -1243,12 +1251,13 @@
     "statusRunning": "Running",
     "statusCompleted": "Completed",
     "statusFailed": "Failed",
+    "interruptedByRestart": "Interrupted by app restart",
     "startedAt": "Started {{time}}",
     "finishedAt": "Finished {{time}}",
     "current": "Current: {{name}}",
     "currentNamed": "Current: {{name}} ({{percent}}%)",
     "moreItems": "…and {{count}} more",
-    "installTitle": "Install {{name}}",
+    "installTitle": "{{name}}",
     "uninstallTitle": "Uninstall {{name}}",
     "snapshotApplyTitle": "Restore environment from snapshot",
     "snapshotApplyDetail": "Plan: install {{packages}} package(s), add {{buckets}} bucket(s)",
@@ -1261,6 +1270,8 @@
     "queuedDetail": "Waiting for a free install slot",
     "batchQueued": "Queued {{count}} installs (up to {{max}} run at once).",
     "progressOnly": "Progress: {{percent}}%",
+    "downloadSpeed": "{{speed}}",
+    "etaRemaining": "{{time}} left",
     "forceDetail": "Force install (--force): re-download and overwrite",
     "forceQueuedDetail": "Queued for force install",
     "batchForceQueued": "Queued {{count}} force installs (up to {{max}} run at once).",
@@ -1268,7 +1279,7 @@
     "retry": "Retry",
     "forceRetry": "Force retry",
     "acceptHashRetry": "Accept hash & retry",
-    "acceptHashHint": "Save the downloaded file hash as a local override, purge cache, then force reinstall.",
+    "acceptHashHint": "Accept the downloaded hash for this install only (not saved to config). If it already matches the bucket, force-reinstalls without pinning.",
     "retryAllFailed": "Retry failed ({{count}})",
     "forceRetryAllFailed": "Force retry failed ({{count}})",
     "acceptHashUnavailable": "This failure is not a hash mismatch",

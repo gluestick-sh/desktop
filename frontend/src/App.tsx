@@ -26,9 +26,12 @@ import {
   SetBucketSyncMode,
   RecordCheckUpdatesResult,
   PurgeCachePackage,
-  SetManifestDownloadOverrideWithHash,
+  ClearManifestDownloadOverride,
+  InstallWithDownloadOverride,
   RunDoctor,
   IsProActive,
+  GetTaskCenterHistory,
+  SaveTaskCenterHistory,
 } from '../wailsjs/go/main/App'
 import InstalledPackageSection, { type SelectedPackage } from './InstalledPackageSection'
 import ActivityLogPanel from './ActivityLogPanel'
@@ -44,11 +47,12 @@ import DesktopUpdateDialog from './DesktopUpdateDialog'
 import TaskCenterDialog from './TaskCenterDialog'
 import {
   installTaskId,
-  uninstallTaskId,
+  taskCenterItemFromDTO,
+  taskCenterItemToDTO,
   upsertTaskCenterItem,
   type TaskCenterItem,
 } from './taskCenter'
-import { formatOverrideHash, parseHashMismatch } from './hashMismatch'
+import { formatOverrideHash, normalizeHashDigest, parseHashMismatch } from './hashMismatch'
 import HelpDialog from './HelpDialog'
 import GitHubProxyDialog from './GitHubProxyDialog'
 import DownloadWorkersDialog from './DownloadWorkersDialog'
@@ -82,14 +86,16 @@ import { useListPageSize } from './listPageSize'
 import type { main } from '../wailsjs/go/models'
 import { GLUESTICK_HOME_URL, openExternalUrl } from './openExternalUrl'
 import { Trans, useTranslation } from 'react-i18next'
-import { formatKeyedMessage, formatPhaseLabel, localeDateString } from './i18n/formatMessage'
+import { formatInstallStatusMessage, formatPhaseLabel, localeDateString } from './i18n/formatMessage'
 import i18n, { setAppLocale, getAppLocale, isAppLocale } from './i18n'
 import {
   type InstallProgress,
-  installDisplayPhase,
+  formatEtaDuration,
+  formatTransferSpeed,
   isActivelyDownloading,
   mergeInstallProgress,
   operationProgressDisplay,
+  sampleDownloadTransferStats,
 } from './installProgress'
 import './App.css'
 
@@ -123,6 +129,18 @@ function isRefInstalling(ref: string, active: Record<string, InstallProgress>): 
   return Object.keys(active).some((name) => installPackageKey(name) === key)
 }
 
+/** Slots used by queue pump + any direct Install (search / dialog / clean reinstall). */
+function countOccupiedInstallSlots(
+  inFlight: Set<string>,
+  active: Record<string, InstallProgress>,
+): number {
+  const keys = new Set(inFlight)
+  for (const name of Object.keys(active)) {
+    keys.add(installPackageKey(name))
+  }
+  return keys.size
+}
+
 const DOCTOR_STEP_IDS = ['glue_root', 'git', 'seven_zip', 'dark', 'innounp', 'shim_dir', 'github'] as const
 
 interface DoctorCheckResult {
@@ -146,7 +164,7 @@ function makeInitialDoctorChecks(checkingLabel: string): DoctorCheckItemLocal[] 
 }
 
 function formatProgressMessage(progress: InstallProgress): string {
-  return formatKeyedMessage(progress.messageKey, progress.messageArgs, progress.message)
+  return formatInstallStatusMessage(progress)
 }
 
 function packageUninstallRef(name: string, version?: string): string {
@@ -376,10 +394,13 @@ function App() {
   const installRefreshPendingRef = useRef(false)
   const activeInstallsRef = useRef(activeInstalls)
   activeInstallsRef.current = activeInstalls
-  const installQueueRef = useRef<{ ref: string; force: boolean }[]>([])
+  const installQueueRef = useRef<
+    { ref: string; force: boolean; downloadURL?: string; downloadHash?: string }[]
+  >([])
   const installInFlightKeysRef = useRef(new Set<string>())
   const [installQueueVersion, setInstallQueueVersion] = useState(0)
   const installPumpRunningRef = useRef(false)
+  const installPumpScheduledRef = useRef(false)
   const pendingInstallProgressRef = useRef<Record<string, InstallProgress>>({})
   const installProgressRafRef = useRef<number | null>(null)
   const [currentUninstall, setCurrentUninstall] = useState<{name: string, progress: InstallProgress} | null>(null)
@@ -393,6 +414,50 @@ function App() {
   const [showProModal, setShowProModal] = useState(false)
   const [showTaskCenterModal, setShowTaskCenterModal] = useState(false)
   const [backgroundTasks, setBackgroundTasks] = useState<TaskCenterItem[]>([])
+  /** Once dismissed, bottom install cards stay hidden for this session; use Tasks dialog. */
+  const [installDockHidden, setInstallDockHidden] = useState(false)
+  const taskCenterPersistTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const persistTaskCenterHistory = useCallback((tasks: TaskCenterItem[], immediate = false) => {
+    const payload = tasks
+      .filter((item) => item.kind === 'install')
+      .map(taskCenterItemToDTO)
+    const save = () => {
+      void SaveTaskCenterHistory(payload).catch((err) =>
+        console.error('SaveTaskCenterHistory failed:', err),
+      )
+    }
+    if (taskCenterPersistTimerRef.current) {
+      clearTimeout(taskCenterPersistTimerRef.current)
+      taskCenterPersistTimerRef.current = null
+    }
+    if (immediate) {
+      save()
+      return
+    }
+    taskCenterPersistTimerRef.current = setTimeout(save, 400)
+  }, [])
+
+  useEffect(() => {
+    void GetTaskCenterHistory()
+      .then((rows) => {
+        const loaded: TaskCenterItem[] = []
+        for (const row of rows || []) {
+          const item = taskCenterItemFromDTO(row)
+          if (item) loaded.push(item)
+        }
+        if (loaded.length > 0) {
+          setBackgroundTasks(loaded)
+        }
+      })
+      .catch((err) => console.error('GetTaskCenterHistory failed:', err))
+    return () => {
+      if (taskCenterPersistTimerRef.current) {
+        clearTimeout(taskCenterPersistTimerRef.current)
+      }
+    }
+  }, [])
+
   const [showAboutModal, setShowAboutModal] = useState(false)
   const [showHelpModal, setShowHelpModal] = useState(false)
   const [showEnvironmentModal, setShowEnvironmentModal] = useState(false)
@@ -1071,36 +1136,45 @@ function App() {
     const key = installPackageKey(name)
     installInFlightKeysRef.current.delete(key)
     cancelPendingInstallProgress(name)
-    setActiveInstalls((prev) => {
-      const next = { ...prev }
-      for (const n of Object.keys(next)) {
-        if (installPackageKey(n) === key) {
-          delete next[n]
-          cancelPendingInstallProgress(n)
-        }
+    // Update the ref synchronously so pumpInstallQueue sees the freed slot
+    // immediately (React setState updaters may run later for Wails events).
+    const next: Record<string, InstallProgress> = {}
+    for (const [n, prog] of Object.entries(activeInstallsRef.current)) {
+      if (installPackageKey(n) !== key) {
+        next[n] = prog
+      } else {
+        cancelPendingInstallProgress(n)
       }
-      if (Object.keys(next).length === 0) {
-        scheduleInstallListRefresh()
-      }
-      activeInstallsRef.current = next
-      return next
-    })
+    }
+    activeInstallsRef.current = next
+    setActiveInstalls(next)
     setInstallCancelling((prev) => {
       let changed = false
-      const next = { ...prev }
-      for (const n of Object.keys(next)) {
+      const nextCancel = { ...prev }
+      for (const n of Object.keys(nextCancel)) {
         if (installPackageKey(n) === key) {
-          delete next[n]
+          delete nextCancel[n]
           changed = true
         }
       }
-      return changed ? next : prev
+      return changed ? nextCancel : prev
     })
+    if (Object.keys(next).length === 0) {
+      scheduleInstallListRefresh()
+    }
   }, [cancelPendingInstallProgress, scheduleInstallListRefresh])
 
-  const upsertBackgroundTask = useCallback((task: TaskCenterItem) => {
-    setBackgroundTasks((prev) => upsertTaskCenterItem(prev, task))
-  }, [])
+  const upsertBackgroundTask = useCallback(
+    (task: TaskCenterItem) => {
+      if (task.kind !== 'install') return
+      setBackgroundTasks((prev) => {
+        const next = upsertTaskCenterItem(prev, task)
+        persistTaskCenterHistory(next)
+        return next
+      })
+    },
+    [persistTaskCenterHistory],
+  )
 
   const bumpInstallQueue = useCallback(() => {
     setInstallQueueVersion((v) => v + 1)
@@ -1109,18 +1183,32 @@ function App() {
   const pumpInstallQueueRef = useRef<() => void>(() => {})
 
   const pumpInstallQueue = useCallback(() => {
-    if (installPumpRunningRef.current) return
+    if (installPumpRunningRef.current) {
+      // A slot may have freed while this pump is mid-flight; run again when done.
+      installPumpScheduledRef.current = true
+      return
+    }
     installPumpRunningRef.current = true
+    installPumpScheduledRef.current = false
     void (async () => {
       try {
         while (true) {
-          if (installInFlightKeysRef.current.size >= MAX_PARALLEL_INSTALLS) break
+          if (
+            countOccupiedInstallSlots(
+              installInFlightKeysRef.current,
+              activeInstallsRef.current,
+            ) >= MAX_PARALLEL_INSTALLS
+          ) {
+            break
+          }
           const queued = installQueueRef.current.shift()
           if (!queued) break
           bumpInstallQueue()
 
           const name = queued.ref
           const force = queued.force
+          const downloadURL = queued.downloadURL || ''
+          const downloadHash = queued.downloadHash || ''
           const key = installPackageKey(name)
           if (
             installInFlightKeysRef.current.has(key) ||
@@ -1142,7 +1230,18 @@ function App() {
           })
 
           try {
-            await Install(name, isPro, force, '', false)
+            if (downloadURL) {
+              await InstallWithDownloadOverride(
+                name,
+                force,
+                '',
+                false,
+                downloadURL,
+                downloadHash,
+              )
+            } else {
+              await Install(name, isPro, force, '', false)
+            }
           } catch (err) {
             console.error('Install failed:', err)
             installInFlightKeysRef.current.delete(key)
@@ -1150,7 +1249,12 @@ function App() {
             // Backend concurrency race: put back in queue and wait for a free slot.
             if (/too many installs|already being installed/i.test(errText)) {
               if (!installQueueRef.current.some((q) => installPackageKey(q.ref) === key)) {
-                installQueueRef.current.unshift({ ref: name, force })
+                installQueueRef.current.unshift({
+                  ref: name,
+                  force,
+                  downloadURL: downloadURL || undefined,
+                  downloadHash: downloadHash || undefined,
+                })
                 bumpInstallQueue()
               }
               upsertBackgroundTask({
@@ -1182,10 +1286,15 @@ function App() {
         }
       } finally {
         installPumpRunningRef.current = false
-        if (
-          installQueueRef.current.length > 0 &&
-          installInFlightKeysRef.current.size < MAX_PARALLEL_INSTALLS
-        ) {
+        const shouldRepump =
+          installPumpScheduledRef.current ||
+          (installQueueRef.current.length > 0 &&
+            countOccupiedInstallSlots(
+              installInFlightKeysRef.current,
+              activeInstallsRef.current,
+            ) < MAX_PARALLEL_INSTALLS)
+        installPumpScheduledRef.current = false
+        if (shouldRepump) {
           pumpInstallQueueRef.current()
         }
       }
@@ -1237,23 +1346,21 @@ function App() {
         next[key] = false
         return next
       })
-      setActiveInstalls((prev) => {
-        const next: Record<string, InstallProgress> = {}
-        for (const [n, prog] of Object.entries(prev)) {
-          if (installPackageKey(n) !== key) next[n] = prog
-        }
-        next[key] = {
-          name,
-          phase: 'Starting',
-          status: '',
-          percentage: 0,
-          message: '',
-          bytesDown: 0,
-          bytesTotal: 0,
-        }
-        activeInstallsRef.current = next
-        return next
-      })
+      const nextActive: Record<string, InstallProgress> = {}
+      for (const [n, prog] of Object.entries(activeInstallsRef.current)) {
+        if (installPackageKey(n) !== key) nextActive[n] = prog
+      }
+      nextActive[key] = {
+        name,
+        phase: 'Starting',
+        status: '',
+        percentage: 0,
+        message: '',
+        bytesDown: 0,
+        bytesTotal: 0,
+      }
+      activeInstallsRef.current = nextActive
+      setActiveInstalls(nextActive)
       h().upsertBackgroundTask({
         id: installTaskId(key),
         kind: 'install',
@@ -1375,50 +1482,12 @@ function App() {
         name,
         progress: { phase: 'Starting', status: '', percentage: 0, message: '', bytesDown: 0, bytesTotal: 0 },
       })
-      h().upsertBackgroundTask({
-        id: uninstallTaskId(name),
-        kind: 'uninstall',
-        title: h().t('taskCenter.uninstallTitle', { name }),
-        status: 'running',
-        progress: 0,
-        startedAt: Date.now(),
-        items: [name],
-      })
     })
     const cancelUninstallProgress = EventsOn('uninstall:progress', (data: InstallProgress) => {
       setCurrentUninstall((prev) => (prev ? { ...prev, progress: data } : null))
-      if (data?.name) {
-        h().upsertBackgroundTask({
-          id: uninstallTaskId(data.name),
-          kind: 'uninstall',
-          title: h().t('taskCenter.uninstallTitle', { name: data.name }),
-          status: 'running',
-          progress: data.percentage,
-          currentItem: data.name,
-          detail: data.message,
-          startedAt: Date.now(),
-          items: [data.name],
-        })
-      }
     })
-    const cancelUninstallComplete = EventsOn('uninstall:complete', (data?: { name?: string }) => {
-      const name = typeof data?.name === 'string' ? data.name : ''
-      setCurrentUninstall((prev) => {
-        const resolved = name || prev?.name || ''
-        if (resolved) {
-          h().upsertBackgroundTask({
-            id: uninstallTaskId(resolved),
-            kind: 'uninstall',
-            title: h().t('taskCenter.uninstallTitle', { name: resolved }),
-            status: 'completed',
-            progress: 100,
-            startedAt: Date.now(),
-            finishedAt: Date.now(),
-            items: [resolved],
-          })
-        }
-        return null
-      })
+    const cancelUninstallComplete = EventsOn('uninstall:complete', (_data?: { name?: string }) => {
+      setCurrentUninstall(null)
       h().bumpActivityLog()
     })
     const cancelUninstallError = EventsOn('uninstall:error', (data: unknown) => {
@@ -1428,18 +1497,6 @@ function App() {
         data && typeof data === 'object' && typeof (data as { name?: string }).name === 'string'
           ? (data as { name: string }).name
           : ''
-      if (name) {
-        handlers.upsertBackgroundTask({
-          id: uninstallTaskId(name),
-          kind: 'uninstall',
-          title: handlers.t('taskCenter.uninstallTitle', { name }),
-          status: 'failed',
-          error: errText,
-          startedAt: Date.now(),
-          finishedAt: Date.now(),
-          items: [name],
-        })
-      }
       const label = name
         ? handlers.t('progress.uninstall.failedNamed', { name, error: errText })
         : `${handlers.t('progress.uninstall.failed')}: ${errText}`
@@ -1900,6 +1957,17 @@ function App() {
   const cacheTasks = useCacheTasks()
   const gcRunning = useMemo(() => cacheTasks.some((task) => task.kind === 'gc'), [cacheTasks])
   const hasActiveInstalls = Object.keys(activeInstalls).length > 0
+  const installTaskActiveCount = useMemo(
+    () =>
+      backgroundTasks.filter(
+        (item) =>
+          item.kind === 'install' &&
+          (item.status === 'running' || item.status === 'queued'),
+      ).length,
+    [backgroundTasks],
+  )
+  const showInstallRunningHint =
+    installDockHidden && !showTaskCenterModal && installTaskActiveCount > 0
   const isPackageInstalling = useCallback(
     (ref: string) => {
       if (isRefInstalling(ref, activeInstalls)) return true
@@ -1912,21 +1980,38 @@ function App() {
   const operationBusy = gcRunning || !!currentUninstall
 
   const enqueueInstalls = useCallback(
-    (refs: string[], options?: { force?: boolean }) => {
+    (
+      refs: string[],
+      options?: {
+        force?: boolean
+        downloadOverrides?: Record<string, { url: string; hash: string }>
+      },
+    ) => {
       if (gcRunning || currentUninstall) return
       const force = !!options?.force
+      const downloadOverrides = options?.downloadOverrides || {}
       let added = 0
       for (const ref of refs) {
         const trimmed = ref.trim()
         if (!trimmed) continue
         if (isRefInstalling(trimmed, activeInstallsRef.current)) continue
         const key = installPackageKey(trimmed)
+        const override = downloadOverrides[trimmed] || downloadOverrides[key]
         const existing = installQueueRef.current.find((q) => installPackageKey(q.ref) === key)
         if (existing) {
           if (force && !existing.force) existing.force = true
+          if (override?.url) {
+            existing.downloadURL = override.url
+            existing.downloadHash = override.hash
+          }
           continue
         }
-        installQueueRef.current.push({ ref: trimmed, force })
+        installQueueRef.current.push({
+          ref: trimmed,
+          force,
+          downloadURL: override?.url,
+          downloadHash: override?.hash,
+        })
         added += 1
         upsertBackgroundTask({
           id: installTaskId(key),
@@ -1975,13 +2060,41 @@ function App() {
   ) => {
     const awaitOutcome = options?.awaitOutcome !== false
     const postOp0 = performance.now()
+    const key = installPackageKey(name)
+    if (
+      installInFlightKeysRef.current.has(key) ||
+      isRefInstalling(name, activeInstallsRef.current)
+    ) {
+      return
+    }
+    if (
+      countOccupiedInstallSlots(installInFlightKeysRef.current, activeInstallsRef.current) >=
+      MAX_PARALLEL_INSTALLS
+    ) {
+      return
+    }
+    // Reserve a parallel slot before Install() so recipe queue pump sees this job.
+    installInFlightKeysRef.current.add(key)
+    upsertBackgroundTask({
+      id: installTaskId(key),
+      kind: 'install',
+      title: t('taskCenter.installTitle', { name }),
+      status: 'running',
+      progress: 0,
+      detail: force ? t('taskCenter.forceDetail') : undefined,
+      startedAt: Date.now(),
+      items: [name],
+    })
     const outcome = awaitOutcome ? waitForInstallOutcome(name) : null
     try {
       await Install(name, isPro, force, architecture, interactive)
       if (outcome) await outcome
     } catch (err) {
       console.error('Install failed:', err)
+      installInFlightKeysRef.current.delete(key)
+      removeActiveInstall(name)
       showTaskDockNotice(t('appExt.installFailed', { error: String(err) }), 'error', { persistent: true })
+      pumpInstallQueue()
     } finally {
       if (awaitOutcome) {
         await refreshAfterPackageOp('install')
@@ -1997,7 +2110,12 @@ function App() {
     if (gcRunning) return
     if (currentUninstall) return
     if (isPackageInstalling(name)) return
-    if (Object.keys(activeInstalls).length >= MAX_PARALLEL_INSTALLS) return
+    if (
+      countOccupiedInstallSlots(installInFlightKeysRef.current, activeInstallsRef.current) >=
+      MAX_PARALLEL_INSTALLS
+    ) {
+      return
+    }
     try {
       const plan = await PlanInstall(name)
       if (intent === 'upgrade' && plan.localActivateVersion) {
@@ -2107,11 +2225,19 @@ function App() {
     ) => {
       const force = !!options?.force || !!options?.acceptHash
       const refs: string[] = []
+      const downloadOverrides: Record<string, { url: string; hash: string }> = {}
       for (const task of tasks) {
         if (task.kind !== 'install' || task.status !== 'failed') continue
         const ref = (task.items?.[0] || task.currentItem || '').trim()
         if (!ref) continue
         const key = installPackageKey(ref)
+
+        // Always drop sticky config overrides before retry so bucket hashes win next time.
+        try {
+          await ClearManifestDownloadOverride(ref)
+        } catch (err) {
+          console.warn('ClearManifestDownloadOverride before retry:', err)
+        }
 
         if (options?.acceptHash) {
           const mismatch = parseHashMismatch(task.error || '')
@@ -2128,13 +2254,18 @@ function App() {
               })
               continue
             }
-            await SetManifestDownloadOverrideWithHash(
-              ref,
-              url,
-              formatOverrideHash(mismatch.algo, mismatch.got),
-            )
+            const bucketDigest = normalizeHashDigest(plan?.manifest?.hashes?.[0] || '')
+            // Only one-shot override when downloaded bytes still differ from the bucket.
+            if (bucketDigest && bucketDigest === mismatch.got) {
+              // File already matches bucket; plain force reinstall is enough.
+            } else {
+              downloadOverrides[ref] = {
+                url,
+                hash: formatOverrideHash(mismatch.algo, mismatch.got),
+              }
+            }
           } catch (err) {
-            console.error('accept hash override failed:', err)
+            console.error('accept hash prepare failed:', err)
             showTaskDockNotice(
               t('taskCenter.acceptHashFailed', { error: String(err) }),
               'error',
@@ -2156,7 +2287,11 @@ function App() {
         refs.push(ref)
       }
       if (refs.length === 0) return
-      enqueueInstalls(refs, { force })
+      enqueueInstalls(refs, {
+        force,
+        downloadOverrides:
+          Object.keys(downloadOverrides).length > 0 ? downloadOverrides : undefined,
+      })
     },
     [enqueueInstalls, showTaskDockNotice, t],
   )
@@ -2176,7 +2311,12 @@ function App() {
   const handleConfirmInstall = async () => {
     if (!pendingInstallPlan) return
     if (gcRunning) return
-    if (Object.keys(activeInstalls).length >= MAX_PARALLEL_INSTALLS) return
+    if (
+      countOccupiedInstallSlots(installInFlightKeysRef.current, activeInstallsRef.current) >=
+      MAX_PARALLEL_INSTALLS
+    ) {
+      return
+    }
     const { name, force, selectedArchitecture, installMode } = pendingInstallPlan
     setPendingInstallPlan(null)
     await runInstall(name, force, selectedArchitecture, installMode === 'interactive')
@@ -2656,20 +2796,39 @@ function App() {
       </main>
 
       <div className="task-progress-dock" aria-live="polite">
-        {hasActiveInstalls && (
+        {hasActiveInstalls && !installDockHidden && (
           <div className="install-progress-stack">
+            <div className="install-progress-stack-toolbar">
+              <span className="install-progress-stack-title">
+                {t('appExt.installDockTitle', { count: Object.keys(activeInstalls).length })}
+              </span>
+              <button
+                type="button"
+                className="ghost progress-cancel-btn install-dock-dismiss-btn"
+                aria-label={t('appExt.dismissInstallDockAria')}
+                title={t('appExt.dismissInstallDockAria')}
+                onClick={() => {
+                  setInstallDockHidden(true)
+                  setShowTaskCenterModal(true)
+                }}
+              >
+                {t('app.close')}
+              </button>
+            </div>
             {Object.entries(activeInstalls).map(([key, progress]) => {
               const displayName = progress.name?.trim() || key
               const isDownloading = isActivelyDownloading(progress)
               const { barPct, indeterminate, showPercent } = operationProgressDisplay(progress)
               const showBytes = isDownloading && (progress.bytesDown > 0 || progress.bytesTotal > 0)
               const cancelling = !!installCancelling[key]
+              const transfer = isDownloading
+                ? sampleDownloadTransferStats(installTaskId(key), progress)
+                : null
               return (
                 <div key={key} className="card install-progress">
                   <div className="card-header">
-                    <span>{t('appExt.installing', { name: displayName })}</span>
+                    <span>{displayName}</span>
                     <div className="install-progress-header-actions">
-                      <span className="pill info">{formatPhaseLabel(installDisplayPhase(progress))}</span>
                       <button
                         type="button"
                         className="ghost progress-cancel-btn"
@@ -2689,8 +2848,24 @@ function App() {
                       />
                     </div>
                     <div className="progress-info">
-                      {showPercent && <span>{barPct.toFixed(0)}%</span>}
-                      {progress.message && <span className="progress-status">{formatProgressMessage(progress)}</span>}
+                      <span className="progress-info-speed">
+                        {transfer ? (
+                          <>
+                            {t('taskCenter.downloadSpeed', {
+                              speed: formatTransferSpeed(transfer.bytesPerSec),
+                            })}
+                            <span aria-hidden="true"> · </span>
+                            {t('taskCenter.etaRemaining', {
+                              time: formatEtaDuration(transfer.etaSeconds),
+                            })}
+                          </>
+                        ) : (
+                          formatProgressMessage(progress) || null
+                        )}
+                      </span>
+                      {showPercent ? (
+                        <span className="progress-info-pct">{barPct.toFixed(0)}%</span>
+                      ) : null}
                     </div>
                     {showBytes && (
                       <div className="progress-bytes" aria-label={t('appExt.downloadProgressAria')}>
@@ -2989,12 +3164,23 @@ function App() {
       )}
 
       <footer className="footer">
-        <span
-          className={`footer-left ${footerLeftDisplay ? 'footer-left-busy' : ''}`}
-          aria-live="polite"
-        >
-          {footerLeftDisplay}
-        </span>
+        {showInstallRunningHint ? (
+          <button
+            type="button"
+            className="footer-left footer-left-action"
+            aria-live="polite"
+            onClick={() => setShowTaskCenterModal(true)}
+          >
+            {t('footer.installsRunning', { count: installTaskActiveCount })}
+          </button>
+        ) : (
+          <span
+            className={`footer-left ${footerLeftDisplay ? 'footer-left-busy' : ''}`}
+            aria-live="polite"
+          >
+            {footerLeftDisplay}
+          </span>
+        )}
         <span className="footer-center">
           <button
             type="button"
@@ -3113,7 +3299,7 @@ function App() {
 
       {showTaskCenterModal && (
         <TaskCenterDialog
-          tasks={backgroundTasks}
+          tasks={backgroundTasks.filter((item) => item.kind === 'install')}
           liveInstallProgress={Object.fromEntries(
             Object.entries(activeInstalls).map(([key, progress]) => [
               installTaskId(key),
@@ -3134,11 +3320,23 @@ function App() {
             )
           }
           onClose={() => setShowTaskCenterModal(false)}
-          onClearFinished={() =>
-            setBackgroundTasks((prev) =>
-              prev.filter((item) => item.status === 'running' || item.status === 'queued'),
-            )
-          }
+          canShowOnMainWindow={installDockHidden && hasActiveInstalls}
+          onShowOnMainWindow={() => {
+            setInstallDockHidden(false)
+            setShowTaskCenterModal(false)
+          }}
+          onClearFinished={() => {
+            setBackgroundTasks((prev) => {
+              const next = prev.filter(
+                (item) =>
+                  item.kind !== 'install' ||
+                  item.status === 'running' ||
+                  item.status === 'queued',
+              )
+              persistTaskCenterHistory(next, true)
+              return next
+            })
+          }}
         />
       )}
 

@@ -110,6 +110,10 @@ export function applyTheme(theme: ThemeDefinition): void {
     root.style.setProperty(`--${key}`, derived[key])
   }
 
+  // Native <select> popups follow color-scheme; without this the first open is
+  // often system-white even on dark themes (WebView2 / Chromium).
+  root.style.colorScheme = isLightTheme(theme.tokens) ? 'light' : 'dark'
+
   syncWindowChrome(theme.tokens)
 }
 

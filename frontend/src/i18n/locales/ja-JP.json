@@ -141,6 +141,8 @@
         "complete": "完了"
       },
       "prepare_store": "{{path}} の店舗を清掃する準備をしています…",
+      "clearing_partials": "未完了のダウンロードを削除しています…",
+      "clearing_sidecars": "古いダウンロード索引を削除しています…",
       "reading_index_refs": "キャッシュ インデックスからファイル参照を読み取り中…",
       "index_ref_count": "キャッシュ インデックスには {{count}} 個のファイル参照があります",
       "scan_apps_start": "{{path}} にインストールされているアプリをスキャンしています",
@@ -161,7 +163,7 @@
       "orphans_found": "{{count}} 個の孤立した BLOB が見つかりました。削除中…",
       "deleting_orphan": "孤立した {{label}} ({{current}}/{{total}}、{{size}}) を削除しています",
       "deleting_orphans_batch": "孤立した BLOB の削除 ({{current}}/{{total}})",
-      "complete_freed": "{{removed}} 個の孤立 BLOB を削除し、{{freed}} を解放しました",
+      "complete_freed": "{{removed}} 件の不要データを削除し、{{freed}} を解放しました",
       "complete_nothing": "再利用できるスペースがない"
     },
     "purge": {
@@ -599,7 +601,9 @@
       "editUrl": "編集",
       "editUrlAria": "ダウンロード URL を編集する",
       "saveUrl": "保存",
-      "urlOverrideHint": "バケット マニフェストとは異なる、保存されたローカル ダウンロード URL を使用する。",
+      "urlOverrideHint": "Using a saved local download URL for this bucket revision; it stops applying when the bucket manifest updates.",
+      "urlOverrideStale": "The bucket manifest has changed and your saved download URL no longer applies. Clear it to re-edit or use the official URL.",
+      "clearUrlOverride": "Clear saved download URL",
       "editJson": "編集",
       "editJsonAria": "マニフェストの JSON 定義を編集する",
       "saveJson": "保存",
@@ -876,7 +880,8 @@
     "checkingUpdates": "アップデートをチェック中…",
     "checkingDesktopUpdate": "アプリの更新を確認中…",
     "checkingBuckets": "Bucket 更新を確認中 ({{count}})…",
-    "checkingBucketsGeneric": "Bucket 更新を確認中…"
+    "checkingBucketsGeneric": "Bucket 更新を確認中…",
+    "installsRunning": "{{count}} 件のタスク実行中"
   },
   "appExt": {
     "installing": "インストール中: {{name}}",
@@ -980,7 +985,9 @@
     "exportInventoryFilterCsv": "CSV テーブル (*.csv)",
     "exportRecipeDefinitionsDialogTitle": "テンプレート定義をエクスポート",
     "importRecipeDefinitionsDialogTitle": "テンプレート定義をインポート",
-    "recipeDefinitionsFilterJson": "テンプレート定義 JSON (*.json)"
+    "recipeDefinitionsFilterJson": "テンプレート定義 JSON (*.json)",
+    "installDockTitle": "インストール中（{{count}}）",
+    "dismissInstallDockAria": "進捗バーを閉じてタスクを開く"
   },
   "installedExt": {
     "favoriteAdd": "お気に入りに追加",
@@ -1022,7 +1029,7 @@
     }
   },
   "storageExt": {
-    "subtitle": "パッケージキャッシュを表示。「孤立ファイルをクリーンアップ」で未参照ファイルを削除できます。",
+    "subtitle": "パッケージキャッシュを表示。クリーンアップで未参照ファイルと未完了ダウンロードを削除します。",
     "summary": "{{packageCount}} 個のパッケージ、{{totalFiles}} 個のファイル、合計 {{totalSize}}",
     "empty": "キャッシュインデックスが空です",
     "emptyHint": "インストール後にパッケージが表示されます。残ったファイルには「孤立ファイルのクリーンアップ」を使用します。",
@@ -1039,12 +1046,12 @@
     "purged": "キャッシュ インデックスから {{name}} を削除しました。 {{result}}",
     "purgeTaskTitle": "{{name}} のキャッシュを削除中…",
     "gcDialogTitle": "きれいな孤児たち",
-    "gcDialogBody": "キャッシュ ディレクトリをスキャンし、キャッシュ インデックスまたはインストールされているソフトウェアによって参照されていないエントリを削除します。",
+    "gcDialogBody": "キャッシュをスキャンし、未参照のキャッシュ、中断されたダウンロード、古いダウンロード索引を削除します。",
     "gcDialogNote": "CLI の <code>glue キャッシュ gc</code> と同じです。使用中のファイルは削除されません。タスクは確認後にバックグラウンドで実行されます。",
     "gcStart": "クリーンアップの開始",
     "gcTaskTitle": "きれいな孤児たち",
     "noSpace": "再利用できるスペースがない",
-    "freed": "{{removed}} 個の孤立 BLOB を削除し、{{freed}} を解放しました",
+    "freed": "{{removed}} 件の不要データを削除し、{{freed}} を解放しました",
     "batchPurge": "Delete selected ({{count}})",
     "batchPurgeDialogTitle": "Delete selected cache",
     "batchPurgeDialogBody": "Remove {{count}} package(s) from the cache index and delete unreferenced blobs.",
@@ -1224,7 +1231,7 @@
   },
   "taskCenter": {
     "title": "タスク",
-    "intro": "Track install and uninstall work. Up to {{max}} installs run at once; the rest wait in the queue.",
+    "intro": "インストールタスクを確認します。同時に最大 {{max}} 件まで実行し、残りはキューで待機します。",
     "tabsAria": "タスク分類",
     "tabRunning": "実行中",
     "tabCompleted": "完了",
@@ -1233,6 +1240,7 @@
     "empty": "タスクはまだありません",
     "emptyRunning": "実行中のタスクはありません",
     "clearFinished": "終了済みをクリア",
+    "showOnMainWindow": "メインウィンドウに表示",
     "open": "タスクを開く",
     "kindInstall": "インストール",
     "kindUninstall": "アンインストール",
@@ -1243,12 +1251,13 @@
     "statusRunning": "実行中",
     "statusCompleted": "完了",
     "statusFailed": "失敗",
+    "interruptedByRestart": "アプリ再起動により中断",
     "startedAt": "開始 {{time}}",
     "finishedAt": "終了 {{time}}",
     "current": "現在：{{name}}",
     "currentNamed": "現在：{{name}}（{{percent}}%）",
     "moreItems": "…ほか {{count}} 件",
-    "installTitle": "{{name}} をインストール",
+    "installTitle": "{{name}}",
     "uninstallTitle": "{{name}} をアンインストール",
     "snapshotApplyTitle": "スナップショットから環境を復元",
     "snapshotApplyDetail": "計画：パッケージ {{packages}}、バケット {{buckets}} を追加",
@@ -1261,6 +1270,8 @@
     "queuedDetail": "Waiting for a free install slot",
     "batchQueued": "Queued {{count}} installs (up to {{max}} run at once).",
     "progressOnly": "進捗：{{percent}}%",
+    "downloadSpeed": "{{speed}}",
+    "etaRemaining": "残り {{time}}",
     "forceDetail": "Force install (--force): re-download and overwrite",
     "forceQueuedDetail": "Queued for force install",
     "batchForceQueued": "Queued {{count}} force installs (up to {{max}} run at once).",
@@ -1268,7 +1279,7 @@
     "retry": "Retry",
     "forceRetry": "Force retry",
     "acceptHashRetry": "Accept hash & retry",
-    "acceptHashHint": "Save the downloaded file hash as a local override, purge cache, then force reinstall.",
+    "acceptHashHint": "Accept the downloaded hash for this install only (not saved to config). If it already matches the bucket, force-reinstalls without pinning.",
     "retryAllFailed": "Retry failed ({{count}})",
     "forceRetryAllFailed": "Force retry failed ({{count}})",
     "acceptHashUnavailable": "This failure is not a hash mismatch",

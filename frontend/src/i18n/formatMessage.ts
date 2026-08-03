@@ -1,5 +1,10 @@
 import i18n from 'i18next'
 import { getAppLocale } from './index'
+import {
+  installDisplayPhase,
+  isStaleDownloadStatus,
+  type InstallProgress,
+} from '../installProgress'
 
 export type MessageArgs = Record<string, unknown> | undefined
 
@@ -32,6 +37,19 @@ export function formatPhaseLabel(phase: string): string {
     }
   }
   return phase
+}
+
+/**
+ * Live install status line for dock / task center.
+ * Avoids leaving "Downloading…" on screen after the UI phase has moved to
+ * prepare-extract or extract.
+ */
+export function formatInstallStatusMessage(progress: InstallProgress): string {
+  const displayPhase = installDisplayPhase(progress)
+  if (isStaleDownloadStatus(progress)) {
+    return formatPhaseLabel(displayPhase)
+  }
+  return formatKeyedMessage(progress.messageKey, progress.messageArgs, progress.message)
 }
 
 export function formatGCPhaseLabel(phase: string): string {

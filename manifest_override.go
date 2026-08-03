@@ -3,12 +3,15 @@ package main
 import "strings"
 
 // SetManifestDownloadOverride saves a user-edited download URL for a package ref.
+// The override is tied to the current bucket manifest hash; when the bucket updates,
+// the saved URL is ignored so versioned download links do not stick.
+// Hash is not stored: URL-only overrides keep using the current bucket hash while active.
 func (a *App) SetManifestDownloadOverride(pkgRef, downloadURL string) error {
 	return a.SetManifestDownloadOverrideWithHash(pkgRef, downloadURL, "")
 }
 
-// SetManifestDownloadOverrideWithHash saves a download URL and/or hash override for a package ref.
-// hash may be empty (URL-only), or a value like "sha256:…" / bare hex when accepting a mismatched download.
+// SetManifestDownloadOverrideWithHash saves a download URL and optional hash override
+// tied to the bucket manifest hash (same freshness rule as URL-only).
 func (a *App) SetManifestDownloadOverrideWithHash(pkgRef, downloadURL, hash string) error {
 	if err := a.requireEngine(); err != nil {
 		return err
@@ -21,7 +24,7 @@ func (a *App) SetManifestDownloadOverrideWithHash(pkgRef, downloadURL, hash stri
 	if strings.TrimSpace(hash) != "" {
 		hashes = []string{strings.TrimSpace(hash)}
 	}
-	return a.engine.SetManifestDownloadOverride(pkgRef, urls, hashes)
+	return a.engine.SetManifestDownloadOverrideForRef(a.ctx, pkgRef, urls, hashes)
 }
 
 // ClearManifestDownloadOverride removes a saved download URL override.

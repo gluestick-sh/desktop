@@ -141,6 +141,8 @@
         "complete": "Vollständig"
       },
       "prepare_store": "Die Reinigung des Ladens unter {{path}} wird vorbereitet…",
+      "clearing_partials": "Unvollständige Downloads werden bereinigt…",
+      "clearing_sidecars": "Veraltete Download-Indizes werden bereinigt…",
       "reading_index_refs": "Dateiverweise aus dem Cache-Index lesen…",
       "index_ref_count": "Der Cache-Index hat {{count}} Dateiverweise",
       "scan_apps_start": "Installierte Apps unter {{path}} scannen",
@@ -161,7 +163,7 @@
       "orphans_found": "{{count}} verwaiste Blobs gefunden; löschen…",
       "deleting_orphan": "Verwaistes {{label}} wird gelöscht ({{current}}/{{total}}, {{size}})",
       "deleting_orphans_batch": "Verwaiste Blobs löschen ({{current}}/{{total}})",
-      "complete_freed": "{{removed}} verwaiste Blobs entfernt, freigegeben {{freed}}",
+      "complete_freed": "{{removed}} überflüssige Einträge entfernt, {{freed}} freigegeben",
       "complete_nothing": "Kein Platz zum Zurückgewinnen"
     },
     "purge": {
@@ -599,7 +601,9 @@
       "editUrl": "Bearbeiten",
       "editUrlAria": "Download-URL bearbeiten",
       "saveUrl": "Speichern",
-      "urlOverrideHint": "Verwenden einer gespeicherten lokalen Download-URL, die sich vom Bucket-Manifest unterscheidet.",
+      "urlOverrideHint": "Using a saved local download URL for this bucket revision; it stops applying when the bucket manifest updates.",
+      "urlOverrideStale": "The bucket manifest has changed and your saved download URL no longer applies. Clear it to re-edit or use the official URL.",
+      "clearUrlOverride": "Clear saved download URL",
       "editJson": "Bearbeiten",
       "editJsonAria": "Manifest-JSON-Definition bearbeiten",
       "saveJson": "Speichern",
@@ -876,7 +880,8 @@
     "checkingUpdates": "Suche nach Updates…",
     "checkingDesktopUpdate": "App-Updates werden geprüft…",
     "checkingBuckets": "Bucket-Updates werden geprüft ({{count}})…",
-    "checkingBucketsGeneric": "Bucket-Updates werden geprüft…"
+    "checkingBucketsGeneric": "Bucket-Updates werden geprüft…",
+    "installsRunning": "{{count}} Aufgaben laufen"
   },
   "appExt": {
     "installing": "Installiert: {{name}}",
@@ -980,7 +985,9 @@
     "exportInventoryFilterCsv": "CSV-Tabelle (*.csv)",
     "exportRecipeDefinitionsDialogTitle": "Vorlagendefinitionen exportieren",
     "importRecipeDefinitionsDialogTitle": "Vorlagendefinitionen importieren",
-    "recipeDefinitionsFilterJson": "Vorlagendefinition JSON (*.json)"
+    "recipeDefinitionsFilterJson": "Vorlagendefinition JSON (*.json)",
+    "installDockTitle": "Installation ({{count}})",
+    "dismissInstallDockAria": "Fortschrittsleiste ausblenden und Aufgaben öffnen"
   },
   "installedExt": {
     "favoriteAdd": "Zu Favoriten hinzufügen",
@@ -1022,7 +1029,7 @@
     }
   },
   "storageExt": {
-    "subtitle": "Paket-Cache anzeigen; „Waisen bereinigen“ entfernt nicht referenzierte Dateien.",
+    "subtitle": "Paketcache anzeigen; Bereinigen entfernt nicht referenzierte Dateien und unvollständige Downloads.",
     "summary": "{{packageCount}} Pakete, {{totalFiles}} Dateien, insgesamt {{totalSize}}",
     "empty": "Der Cache-Index ist leer",
     "emptyHint": "Pakete werden nach der Installation angezeigt. Verwenden Sie „Orphans bereinigen“ für übrig gebliebene Dateien.",
@@ -1039,12 +1046,12 @@
     "purged": "{{name}} aus dem Cache-Index entfernt; {{result}}",
     "purgeTaskTitle": "Cache von {{name}} wird entfernt…",
     "gcDialogTitle": "Saubere Waisenkinder",
-    "gcDialogBody": "Scannen Sie das Cache-Verzeichnis und löschen Sie Einträge, auf die nicht vom Cache-Index oder der installierten Software verwiesen wird.",
+    "gcDialogBody": "Cache scannen und nicht referenzierte Blobs, unvollständige Downloads sowie veraltete Download-Indizes löschen.",
     "gcDialogNote": "Identisch mit CLI <code>Glue Cache gc</code>. Verwendete Dateien werden nicht gelöscht. Die Aufgabe läuft nach Bestätigung im Hintergrund.",
     "gcStart": "Beginnen Sie mit der Bereinigung",
     "gcTaskTitle": "Saubere Waisenkinder",
     "noSpace": "Kein Platz zum Zurückgewinnen",
-    "freed": "{{removed}} verwaiste Blobs entfernt, {{freed}} freigegeben",
+    "freed": "{{removed}} überflüssige Einträge entfernt, {{freed}} freigegeben",
     "batchPurge": "Delete selected ({{count}})",
     "batchPurgeDialogTitle": "Delete selected cache",
     "batchPurgeDialogBody": "Remove {{count}} package(s) from the cache index and delete unreferenced blobs.",
@@ -1224,7 +1231,7 @@
   },
   "taskCenter": {
     "title": "Aufgaben",
-    "intro": "Track install and uninstall work. Up to {{max}} installs run at once; the rest wait in the queue.",
+    "intro": "Installationsaufgaben verfolgen. Bis zu {{max}} Installationen laufen gleichzeitig; der Rest wartet in der Warteschlange.",
     "tabsAria": "Aufgabenkategorien",
     "tabRunning": "Laufend",
     "tabCompleted": "Abgeschlossen",
@@ -1233,6 +1240,7 @@
     "empty": "Noch keine Aufgaben",
     "emptyRunning": "Keine laufenden Aufgaben",
     "clearFinished": "Beendete löschen",
+    "showOnMainWindow": "Im Hauptfenster anzeigen",
     "open": "Aufgaben öffnen",
     "kindInstall": "Installation",
     "kindUninstall": "Deinstallation",
@@ -1243,12 +1251,13 @@
     "statusRunning": "Laufend",
     "statusCompleted": "Abgeschlossen",
     "statusFailed": "Fehlgeschlagen",
+    "interruptedByRestart": "Durch Neustart der App unterbrochen",
     "startedAt": "Gestartet {{time}}",
     "finishedAt": "Beendet {{time}}",
     "current": "Aktuell: {{name}}",
     "currentNamed": "Aktuell: {{name}} ({{percent}}%)",
     "moreItems": "…und {{count}} weitere",
-    "installTitle": "{{name}} installieren",
+    "installTitle": "{{name}}",
     "uninstallTitle": "{{name}} deinstallieren",
     "snapshotApplyTitle": "Umgebung aus Snapshot wiederherstellen",
     "snapshotApplyDetail": "Plan: {{packages}} Paket(e) installieren, {{buckets}} Bucket(s) hinzufügen",
@@ -1268,12 +1277,14 @@
     "retry": "Retry",
     "forceRetry": "Force retry",
     "acceptHashRetry": "Accept hash & retry",
-    "acceptHashHint": "Save the downloaded file hash as a local override, purge cache, then force reinstall.",
+    "acceptHashHint": "Accept the downloaded hash for this install only (not saved to config). If it already matches the bucket, force-reinstalls without pinning.",
     "retryAllFailed": "Retry failed ({{count}})",
     "forceRetryAllFailed": "Force retry failed ({{count}})",
     "acceptHashUnavailable": "This failure is not a hash mismatch",
     "acceptHashNoUrl": "No download URL for {{name}}",
     "acceptHashFailed": "Could not save hash override: {{error}}",
-    "hashMismatchHint": "Hash mismatch for {{name}}. Accept the downloaded file hash and retry, or update the extras bucket."
+    "hashMismatchHint": "Hash mismatch for {{name}}. Accept the downloaded file hash and retry, or update the extras bucket.",
+    "downloadSpeed": "{{speed}}",
+    "etaRemaining": "noch {{time}}"
   }
 }

@@ -1,5 +1,6 @@
 :root,
 [data-theme="dark"] {
+  color-scheme: dark;
   --bg-primary: #1a1a2e;
   --bg-secondary: #1e2a4a;
   --bg-tertiary: #0f3460;
@@ -25,6 +26,7 @@
 }
 
 [data-theme="light"] {
+  color-scheme: light;
   --bg-primary: #f1f5f9;
   --bg-secondary: #ffffff;
   --bg-tertiary: #e2e8f0;
@@ -58,6 +60,13 @@ html, body, #root {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   font-size: 14px;
   line-height: 1.5;
+}
+
+select,
+select option {
+  color-scheme: inherit;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
 }
 
 button {

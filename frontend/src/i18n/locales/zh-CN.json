@@ -141,6 +141,8 @@
         "complete": "完成"
       },
       "prepare_store": "准备清理缓存…",
+      "clearing_partials": "正在清理未完成的下载…",
+      "clearing_sidecars": "正在清理失效的下载索引…",
       "reading_index_refs": "正在读取缓存索引中的文件引用…",
       "index_ref_count": "缓存索引共 {{count}} 个文件引用",
       "scan_apps_start": "开始扫描已安装软件…",
@@ -161,7 +163,7 @@
       "orphans_found": "发现 {{count}} 个无用缓存块，开始删除…",
       "deleting_orphan": "正在删除无用缓存块 {{label}} ({{current}}/{{total}}，{{size}})",
       "deleting_orphans_batch": "正在删除无用缓存块 ({{current}}/{{total}})",
-      "complete_freed": "已删除 {{removed}} 个无用缓存块，释放 {{freed}}",
+      "complete_freed": "已清理 {{removed}} 项垃圾，释放 {{freed}}",
       "complete_nothing": "没有可释放的空间"
     },
     "purge": {
@@ -599,7 +601,9 @@
       "editUrl": "修改",
       "editUrlAria": "修改下载地址",
       "saveUrl": "保存",
-      "urlOverrideHint": "当前使用已保存的本地下载地址，与 bucket 定义不同。",
+      "urlOverrideHint": "当前使用已保存的本地下载地址（绑定当前 bucket 清单版本）；bucket 更新后会自动失效。",
+      "urlOverrideStale": "bucket 清单已更新，本地保存的下载地址已失效。可清除后重新编辑，或直接使用官方地址。",
+      "clearUrlOverride": "清除本地下载地址",
       "editJson": "修改",
       "editJsonAria": "修改清单 JSON 定义",
       "saveJson": "保存",
@@ -876,7 +880,8 @@
     "checkingUpdates": "正在检查可更新包…",
     "checkingDesktopUpdate": "正在检测程序更新…",
     "checkingBuckets": "检查仓库更新中 ({{count}})…",
-    "checkingBucketsGeneric": "正在检查仓库更新…"
+    "checkingBucketsGeneric": "正在检查仓库更新…",
+    "installsRunning": "{{count}} 个任务运行中"
   },
   "appExt": {
     "installing": "正在安装: {{name}}",
@@ -980,7 +985,9 @@
     "exportInventoryFilterCsv": "CSV 表格 (*.csv)",
     "exportRecipeDefinitionsDialogTitle": "导出配方定义",
     "importRecipeDefinitionsDialogTitle": "导入配方定义",
-    "recipeDefinitionsFilterJson": "配方定义 JSON (*.json)"
+    "recipeDefinitionsFilterJson": "配方定义 JSON (*.json)",
+    "installDockTitle": "正在安装（{{count}}）",
+    "dismissInstallDockAria": "关闭进度条并打开任务窗口"
   },
   "installedExt": {
     "favoriteAdd": "加入收藏",
@@ -1022,7 +1029,7 @@
     }
   },
   "storageExt": {
-    "subtitle": "查看包缓存，清理垃圾可移除无引用文件。",
+    "subtitle": "查看包缓存；清理垃圾可移除无引用文件和未完成下载。",
     "summary": "共 {{packageCount}} 个包，{{totalFiles}} 个文件，合计 {{totalSize}}",
     "empty": "缓存索引为空",
     "emptyHint": "安装后在此查看各包缓存；有遗留文件可「清理垃圾」。",
@@ -1039,12 +1046,12 @@
     "purged": "已移除 {{name}} 的缓存索引；{{result}}",
     "purgeTaskTitle": "正在删除 {{name}} 的缓存",
     "gcDialogTitle": "清理垃圾",
-    "gcDialogBody": "将扫描缓存目录，删除未被缓存索引或已安装软件引用的无效条目。",
+    "gcDialogBody": "将扫描缓存目录，删除无引用缓存块、取消/失败残留的未完成下载，以及失效的 .zip-index / .manifest-hash 索引。",
     "gcDialogNote": "等价于命令行 <code>glue cache gc</code>。正在使用的文件不会被删除。确认后任务在后台执行。",
     "gcStart": "开始清理",
     "gcTaskTitle": "清理垃圾",
     "noSpace": "没有可释放的空间",
-    "freed": "已删除 {{removed}} 个无用缓存块，释放 {{freed}}",
+    "freed": "已清理 {{removed}} 项垃圾，释放 {{freed}}",
     "batchPurge": "删除所选（{{count}}）",
     "batchPurgeDialogTitle": "删除所选缓存",
     "batchPurgeDialogBody": "将从缓存索引移除 {{count}} 个软件包，并删除不再被引用的缓存文件。",
@@ -1224,7 +1231,7 @@
   },
   "taskCenter": {
     "title": "任务",
-    "intro": "查看安装与卸载任务。同时最多 {{max}} 个安装在跑，其余在队列中等待。",
+    "intro": "查看安装任务。同时最多 {{max}} 个安装在跑，其余在队列中等待。",
     "tabsAria": "任务分类",
     "tabRunning": "运行中",
     "tabCompleted": "已完成",
@@ -1233,6 +1240,7 @@
     "empty": "暂无任务记录",
     "emptyRunning": "当前没有运行中的任务",
     "clearFinished": "清除已结束",
+    "showOnMainWindow": "在主窗口显示",
     "open": "查看任务",
     "kindInstall": "安装",
     "kindUninstall": "卸载",
@@ -1243,12 +1251,13 @@
     "statusRunning": "运行中",
     "statusCompleted": "已完成",
     "statusFailed": "失败",
+    "interruptedByRestart": "应用重启后中断",
     "startedAt": "开始于 {{time}}",
     "finishedAt": "结束于 {{time}}",
     "current": "当前：{{name}}",
     "currentNamed": "当前：{{name}}（{{percent}}%）",
     "moreItems": "…另有 {{count}} 项",
-    "installTitle": "安装 {{name}}",
+    "installTitle": "{{name}}",
     "uninstallTitle": "卸载 {{name}}",
     "snapshotApplyTitle": "从快照恢复环境",
     "snapshotApplyDetail": "计划安装 {{packages}} 个软件包、添加 {{buckets}} 个仓库",
@@ -1261,6 +1270,8 @@
     "queuedDetail": "等待空闲安装名额",
     "batchQueued": "已将 {{count}} 个安装加入队列（同时最多 {{max}} 个）。",
     "progressOnly": "进度：{{percent}}%",
+    "downloadSpeed": "{{speed}}",
+    "etaRemaining": "剩余 {{time}}",
     "forceDetail": "强制安装（--force）：重新下载并覆盖",
     "forceQueuedDetail": "已排队，将强制安装",
     "batchForceQueued": "已将 {{count}} 个强制安装加入队列（同时最多 {{max}} 个）。",
@@ -1268,7 +1279,7 @@
     "retry": "重试",
     "forceRetry": "强制重试",
     "acceptHashRetry": "接受 hash 并重试",
-    "acceptHashHint": "将实际下载文件的 hash 保存为本地覆盖，清理缓存后强制重装。",
+    "acceptHashHint": "仅本次安装接受实际下载 hash（不写入 config）；若已与 bucket 一致则直接强制重装。",
     "retryAllFailed": "重试失败项（{{count}}）",
     "forceRetryAllFailed": "强制重试失败项（{{count}}）",
     "acceptHashUnavailable": "该失败不是 hash 不匹配",

@@ -114,6 +114,10 @@ export function GetStats(arg1) {
   return window['go']['main']['App']['GetStats'](arg1);
 }
 
+export function GetTaskCenterHistory() {
+  return window['go']['main']['App']['GetTaskCenterHistory']();
+}
+
 export function HideCatalogPackage(arg1) {
   return window['go']['main']['App']['HideCatalogPackage'](arg1);
 }
@@ -124,6 +128,10 @@ export function ImportTemplateDefinitions(arg1, arg2) {
 
 export function Install(arg1, arg2, arg3, arg4, arg5) {
   return window['go']['main']['App']['Install'](arg1, arg2, arg3, arg4, arg5);
+}
+
+export function InstallWithDownloadOverride(arg1, arg2, arg3, arg4, arg5, arg6) {
+  return window['go']['main']['App']['InstallWithDownloadOverride'](arg1, arg2, arg3, arg4, arg5, arg6);
 }
 
 export function IsEngineReady() {
@@ -220,6 +228,10 @@ export function RunCacheGC() {
 
 export function RunDoctor() {
   return window['go']['main']['App']['RunDoctor']();
+}
+
+export function SaveTaskCenterHistory(arg1) {
+  return window['go']['main']['App']['SaveTaskCenterHistory'](arg1);
 }
 
 export function Search(arg1) {

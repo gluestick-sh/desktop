@@ -120,7 +120,7 @@ func (a *App) runCleanReinstallTask(key, name, architecture string) {
 	}
 
 	// Install slot already reserved; runInstallTask also finishes the slot — avoid double finish.
-	a.runInstallTaskOwned(key, name, true, architecture, false)
+	a.runInstallTaskOwned(key, name, true, architecture, false, "", "")
 }
 
 func isNotInstalledErr(err error) bool {

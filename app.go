@@ -18,7 +18,7 @@ import (
 // These may be overridden at link time via:
 // -ldflags "-X gluestick.sh/desktop.Version=..." etc.
 var (
-	Version = "0.1.18"
+	Version = "0.1.19"
 	Commit  = "none"
 	Date    = "unknown"
 )
@@ -425,6 +425,12 @@ func (a *App) ListInstalledQuick() ([]InstalledPackage, error) {
 // The second bool is kept for frontend/Wails API compatibility and is ignored.
 // Parallel installs are limited by MaxParallelInstalls for all editions.
 func (a *App) Install(name string, _ bool, force bool, architecture string, interactive bool) error {
+	return a.InstallWithDownloadOverride(name, force, architecture, interactive, "", "")
+}
+
+// InstallWithDownloadOverride is like Install but applies downloadURL/hash for this run only.
+// Overrides are not written to config.json (avoids sticky stale hashes after bucket updates).
+func (a *App) InstallWithDownloadOverride(name string, force bool, architecture string, interactive bool, downloadURL, downloadHash string) error {
 	if err := a.requireEngine(); err != nil {
 		return err
 	}
@@ -434,7 +440,7 @@ func (a *App) Install(name string, _ bool, force bool, architecture string, inte
 		return err
 	}
 
-	go a.runInstallTask(key, name, force, architecture, interactive)
+	go a.runInstallTask(key, name, force, architecture, interactive, downloadURL, downloadHash)
 	return nil
 }
 

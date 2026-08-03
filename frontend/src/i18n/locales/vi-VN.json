@@ -141,6 +141,8 @@
         "complete": "Hoàn thành"
       },
       "prepare_store": "Đang chuẩn bị dọn dẹp cửa hàng tại {{path}}…",
+      "clearing_partials": "Đang xóa các bản tải xuống chưa hoàn tất…",
+      "clearing_sidecars": "Đang xóa chỉ mục tải xuống cũ…",
       "reading_index_refs": "Đọc tham chiếu tệp từ chỉ mục bộ đệm…",
       "index_ref_count": "Chỉ mục bộ nhớ đệm có tham chiếu tệp {{count}}",
       "scan_apps_start": "Đang quét các ứng dụng đã cài đặt trong {{path}}",
@@ -161,7 +163,7 @@
       "orphans_found": "Đã tìm thấy {{count}} đốm màu mồ côi; đang xóa…",
       "deleting_orphan": "Đang xóa {{label}} mồ côi ({{current}}/{{total}}, {{size}})",
       "deleting_orphans_batch": "Xóa các đốm màu mồ côi ({{current}}/{{total}})",
-      "complete_freed": "Đã xóa {{removed}} đốm màu mồ côi, giải phóng {{freed}}",
+      "complete_freed": "Đã xóa {{removed}} mục rác, giải phóng {{freed}}",
       "complete_nothing": "Không còn chỗ để đòi lại"
     },
     "purge": {
@@ -599,7 +601,9 @@
       "editUrl": "Biên tập",
       "editUrlAria": "Chỉnh sửa URL tải xuống",
       "saveUrl": "Cứu",
-      "urlOverrideHint": "Sử dụng URL tải xuống cục bộ đã lưu khác với tệp kê khai nhóm.",
+      "urlOverrideHint": "Using a saved local download URL for this bucket revision; it stops applying when the bucket manifest updates.",
+      "urlOverrideStale": "The bucket manifest has changed and your saved download URL no longer applies. Clear it to re-edit or use the official URL.",
+      "clearUrlOverride": "Clear saved download URL",
       "editJson": "Biên tập",
       "editJsonAria": "Chỉnh sửa định nghĩa JSON của tệp kê khai",
       "saveJson": "Cứu",
@@ -876,7 +880,8 @@
     "checkingUpdates": "Đang kiểm tra cập nhật…",
     "checkingDesktopUpdate": "Đang kiểm tra cập nhật ứng dụng…",
     "checkingBuckets": "Đang kiểm tra cập nhật Bucket ({{count}})…",
-    "checkingBucketsGeneric": "Đang kiểm tra cập nhật Bucket…"
+    "checkingBucketsGeneric": "Đang kiểm tra cập nhật Bucket…",
+    "installsRunning": "{{count}} tác vụ đang chạy"
   },
   "appExt": {
     "installing": "Đang cài đặt: {{name}}",
@@ -980,7 +985,9 @@
     "exportInventoryFilterCsv": "Bảng CSV (*.csv)",
     "exportRecipeDefinitionsDialogTitle": "Xuất định nghĩa mẫu",
     "importRecipeDefinitionsDialogTitle": "Nhập định nghĩa mẫu",
-    "recipeDefinitionsFilterJson": "Định nghĩa mẫu JSON (*.json)"
+    "recipeDefinitionsFilterJson": "Định nghĩa mẫu JSON (*.json)",
+    "installDockTitle": "Đang cài ({{count}})",
+    "dismissInstallDockAria": "Ẩn thanh tiến trình và mở cửa sổ tác vụ"
   },
   "installedExt": {
     "favoriteAdd": "Thêm vào mục yêu thích",
@@ -1022,7 +1029,7 @@
     }
   },
   "storageExt": {
-    "subtitle": "Xem bộ đệm gói; Dọn dẹp trẻ mồ côi có thể xóa tệp không được tham chiếu.",
+    "subtitle": "Xem bộ nhớ đệm gói; dọn rác sẽ xóa tệp không tham chiếu và tải xuống chưa hoàn tất.",
     "summary": "Gói {{packageCount}}, tệp {{totalFiles}}, tổng số {{totalSize}}",
     "empty": "Chỉ mục bộ đệm trống",
     "emptyHint": "Các gói xuất hiện sau khi cài đặt. Sử dụng “Clean mồ côi” cho các tập tin còn sót lại.",
@@ -1039,12 +1046,12 @@
     "purged": "Đã xóa {{name}} khỏi chỉ mục bộ đệm; {{result}}",
     "purgeTaskTitle": "Đang xóa bộ nhớ đệm của {{name}}…",
     "gcDialogTitle": "Sạch trẻ mồ côi",
-    "gcDialogBody": "Quét thư mục bộ đệm và xóa các mục không được tham chiếu bởi chỉ mục bộ đệm hoặc phần mềm đã cài đặt.",
+    "gcDialogBody": "Quét bộ nhớ đệm và xóa các khối không tham chiếu, bản tải chưa hoàn tất, cùng chỉ mục tải xuống cũ.",
     "gcDialogNote": "Tương tự như CLI <code>keo cache gc</code>. Các tập tin đang sử dụng sẽ không bị xóa. Tác vụ chạy ở chế độ nền sau khi xác nhận.",
     "gcStart": "Bắt đầu dọn dẹp",
     "gcTaskTitle": "Sạch trẻ mồ côi",
     "noSpace": "Không còn chỗ để đòi lại",
-    "freed": "Đã xóa {{removed}} đốm màu mồ côi, giải phóng {{freed}}",
+    "freed": "Đã xóa {{removed}} mục rác, giải phóng {{freed}}",
     "batchPurge": "Delete selected ({{count}})",
     "batchPurgeDialogTitle": "Delete selected cache",
     "batchPurgeDialogBody": "Remove {{count}} package(s) from the cache index and delete unreferenced blobs.",
@@ -1224,7 +1231,7 @@
   },
   "taskCenter": {
     "title": "Tác vụ",
-    "intro": "Track install and uninstall work. Up to {{max}} installs run at once; the rest wait in the queue.",
+    "intro": "Theo dõi các tác vụ cài đặt. Tối đa {{max}} cài đặt chạy cùng lúc; phần còn lại chờ trong hàng đợi.",
     "tabsAria": "Phân loại tác vụ",
     "tabRunning": "Đang chạy",
     "tabCompleted": "Hoàn thành",
@@ -1233,6 +1240,7 @@
     "empty": "Chưa có tác vụ",
     "emptyRunning": "Không có tác vụ đang chạy",
     "clearFinished": "Xóa đã kết thúc",
+    "showOnMainWindow": "Hiện trên cửa sổ chính",
     "open": "Mở tác vụ",
     "kindInstall": "Cài đặt",
     "kindUninstall": "Gỡ cài đặt",
@@ -1243,12 +1251,13 @@
     "statusRunning": "Đang chạy",
     "statusCompleted": "Hoàn thành",
     "statusFailed": "Thất bại",
+    "interruptedByRestart": "Bị gián đoạn do khởi động lại ứng dụng",
     "startedAt": "Bắt đầu {{time}}",
     "finishedAt": "Kết thúc {{time}}",
     "current": "Hiện tại: {{name}}",
     "currentNamed": "Hiện tại: {{name}} ({{percent}}%)",
     "moreItems": "…và {{count}} nữa",
-    "installTitle": "Cài {{name}}",
+    "installTitle": "{{name}}",
     "uninstallTitle": "Gỡ {{name}}",
     "snapshotApplyTitle": "Khôi phục môi trường từ ảnh chụp",
     "snapshotApplyDetail": "Kế hoạch: cài {{packages}} gói, thêm {{buckets}} kho",
@@ -1268,12 +1277,14 @@
     "retry": "Retry",
     "forceRetry": "Force retry",
     "acceptHashRetry": "Accept hash & retry",
-    "acceptHashHint": "Save the downloaded file hash as a local override, purge cache, then force reinstall.",
+    "acceptHashHint": "Accept the downloaded hash for this install only (not saved to config). If it already matches the bucket, force-reinstalls without pinning.",
     "retryAllFailed": "Retry failed ({{count}})",
     "forceRetryAllFailed": "Force retry failed ({{count}})",
     "acceptHashUnavailable": "This failure is not a hash mismatch",
     "acceptHashNoUrl": "No download URL for {{name}}",
     "acceptHashFailed": "Could not save hash override: {{error}}",
-    "hashMismatchHint": "Hash mismatch for {{name}}. Accept the downloaded file hash and retry, or update the extras bucket."
+    "hashMismatchHint": "Hash mismatch for {{name}}. Accept the downloaded file hash and retry, or update the extras bucket.",
+    "downloadSpeed": "{{speed}}",
+    "etaRemaining": "còn {{time}}"
   }
 }

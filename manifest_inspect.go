@@ -11,6 +11,7 @@ type InstallManifestInfo struct {
 	DownloadURLs           []string `json:"downloadUrls"`
 	BucketDownloadURLs     []string `json:"bucketDownloadUrls"`
 	URLOverrideActive      bool     `json:"urlOverrideActive"`
+	URLOverrideStale       bool     `json:"urlOverrideStale"`
 	JSONOverrideActive     bool     `json:"jsonOverrideActive"`
 	JSONOverrideStale      bool     `json:"jsonOverrideStale"`
 	Hashes                 []string `json:"hashes"`
@@ -56,6 +57,7 @@ func convertInstallManifestInfo(info *engine.InstallManifestInfo) *InstallManife
 		DownloadURLs:           append([]string(nil), info.DownloadURLs...),
 		BucketDownloadURLs:     append([]string(nil), info.BucketDownloadURLs...),
 		URLOverrideActive:      info.URLOverrideActive,
+		URLOverrideStale:       info.URLOverrideStale,
 		JSONOverrideActive:     info.JSONOverrideActive,
 		JSONOverrideStale:      info.JSONOverrideStale,
 		Hashes:                 append([]string(nil), info.Hashes...),

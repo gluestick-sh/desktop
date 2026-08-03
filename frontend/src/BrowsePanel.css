@@ -104,6 +104,11 @@
   cursor: not-allowed;
 }
 
+.browse-bucket-select option {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
 .catalog-search-bar {
   display: flex;
   flex-wrap: wrap;

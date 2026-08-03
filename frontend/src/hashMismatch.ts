@@ -25,3 +25,11 @@ export function formatOverrideHash(algo: string, hex: string): string {
   if (h.includes(':')) return h
   return `${a}:${h}`
 }
+
+/** Strip optional algo prefix and lowercase for digest comparison. */
+export function normalizeHashDigest(hash: string): string {
+  const s = String(hash || '').trim().toLowerCase()
+  if (!s) return ''
+  const i = s.lastIndexOf(':')
+  return i >= 0 ? s.slice(i + 1) : s
+}

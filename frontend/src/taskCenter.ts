@@ -20,6 +20,9 @@ export interface TaskCenterItem {
   items?: string[]
 }
 
+/** Must match backend sanitizeTaskCenterTasksForLoad interrupted marker. */
+export const TASK_CENTER_INTERRUPTED_ERROR = 'interrupted by app restart'
+
 export const TASK_CENTER_HISTORY_LIMIT = 80
 
 export function upsertTaskCenterItem(
@@ -63,4 +66,51 @@ export function installTaskId(name: string) {
 
 export function uninstallTaskId(name: string) {
   return `uninstall:${name.trim().toLowerCase()}`
+}
+
+export function taskCenterItemToDTO(item: TaskCenterItem) {
+  return {
+    id: item.id,
+    kind: item.kind,
+    title: item.title,
+    detail: item.detail ?? '',
+    status: item.status,
+    progress: item.progress ?? 0,
+    error: item.error ?? '',
+    startedAt: item.startedAt,
+    finishedAt: item.finishedAt ?? 0,
+    items: item.items ?? [],
+  }
+}
+
+export function taskCenterItemFromDTO(dto: {
+  id?: string
+  kind?: string
+  title?: string
+  detail?: string
+  status?: string
+  progress?: number
+  error?: string
+  startedAt?: number
+  finishedAt?: number
+  items?: string[]
+}): TaskCenterItem | null {
+  const id = (dto.id || '').trim()
+  const status = dto.status
+  if (!id) return null
+  if (status !== 'queued' && status !== 'running' && status !== 'completed' && status !== 'failed') {
+    return null
+  }
+  return {
+    id,
+    kind: dto.kind === 'install' || !dto.kind ? 'install' : (dto.kind as TaskCenterKind),
+    title: dto.title || id,
+    detail: dto.detail || undefined,
+    status,
+    progress: dto.progress || undefined,
+    error: dto.error || undefined,
+    startedAt: dto.startedAt || Date.now(),
+    finishedAt: dto.finishedAt || undefined,
+    items: dto.items?.length ? dto.items : undefined,
+  }
 }

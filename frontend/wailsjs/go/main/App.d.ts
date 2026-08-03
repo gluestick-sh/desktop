@@ -58,11 +58,15 @@ export function GetPackageVersions(arg1:string):Promise<main.PackageVersionsInfo
 
 export function GetStats(arg1:main.StatsQuery):Promise<Record<string, any>>;
 
+export function GetTaskCenterHistory():Promise<Array<main.TaskCenterTaskDTO>>;
+
 export function HideCatalogPackage(arg1:string):Promise<void>;
 
 export function ImportTemplateDefinitions(arg1:string,arg2:string):Promise<string>;
 
 export function Install(arg1:string,arg2:boolean,arg3:boolean,arg4:string,arg5:boolean):Promise<void>;
+
+export function InstallWithDownloadOverride(arg1:string,arg2:boolean,arg3:string,arg4:boolean,arg5:string,arg6:string):Promise<void>;
 
 export function IsEngineReady():Promise<boolean>;
 
@@ -111,6 +115,8 @@ export function ResolveCatalogPackages(arg1:Array<main.CatalogResolveRequest>):P
 export function RunCacheGC():Promise<void>;
 
 export function RunDoctor():Promise<void>;
+
+export function SaveTaskCenterHistory(arg1:Array<main.TaskCenterTaskDTO>):Promise<void>;
 
 export function Search(arg1:string):Promise<main.SearchResult>;
 

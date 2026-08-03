@@ -179,6 +179,21 @@ export default function PackageManifestPanel({
     }
   }, [packageRef, savingJson, onManifestUpdated, t])
 
+  const clearStaleUrlOverride = useCallback(async () => {
+    if (!packageRef || savingURL) return
+    setSavingURL(true)
+    try {
+      await ClearManifestDownloadOverride(packageRef)
+      setEditingIndex(null)
+      setDraftURL('')
+      await onManifestUpdated?.()
+    } catch (err) {
+      console.error('ClearManifestDownloadOverride failed:', err)
+    } finally {
+      setSavingURL(false)
+    }
+  }, [packageRef, savingURL, onManifestUpdated])
+
   const renderUrlActions = (index: number, url: string) => (
     <span className="package-manifest-url-actions">
       {canEditURL ? (
@@ -241,6 +256,7 @@ export default function PackageManifestPanel({
   const showBody = alwaysExpanded || expanded
   const title = packageRef || displayManifest.version
   const urlOverrideActive = displayManifest.urlOverrideActive
+  const urlOverrideStale = displayManifest.urlOverrideStale
   const jsonOverrideActive = displayManifest.jsonOverrideActive
   const jsonOverrideStale = displayManifest.jsonOverrideStale
 
@@ -297,6 +313,19 @@ export default function PackageManifestPanel({
               </div>
               {urlOverrideActive ? (
                 <p className="package-manifest-url-hint">{t('package.manifest.urlOverrideHint')}</p>
+              ) : null}
+              {urlOverrideStale ? (
+                <div className="package-manifest-stale">
+                  <p className="package-manifest-url-hint">{t('package.manifest.urlOverrideStale')}</p>
+                  <button
+                    type="button"
+                    className="secondary"
+                    onClick={() => void clearStaleUrlOverride()}
+                    disabled={savingURL}
+                  >
+                    {t('package.manifest.clearUrlOverride')}
+                  </button>
+                </div>
               ) : null}
               {singleDownloadUrl ? (
                 <div className="package-manifest-url-single">

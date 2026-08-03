@@ -160,6 +160,28 @@
   color: var(--text-secondary);
 }
 
+.task-center-item-current {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.task-center-item-speed {
+  min-width: 0;
+}
+
+.task-center-item-pct {
+  margin-left: auto;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.task-center-phase {
+  color: var(--accent);
+}
+
 .task-center-item-error {
   color: var(--danger, #c44);
 }
