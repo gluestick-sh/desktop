@@ -10,7 +10,7 @@ interface BrowsePanelProps {
   hideDeprecated: boolean
   indexReady: boolean
   pageSize: number
-  listScrollRef?: RefObject<HTMLDivElement>
+  listScrollRef?: RefObject<HTMLDivElement | null>
   isPackageInstalled: (name: string) => boolean
   operationBusy: boolean
   isPackageInstalling: (ref: string) => boolean

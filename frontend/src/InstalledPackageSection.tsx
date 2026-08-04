@@ -83,7 +83,7 @@ interface InstalledPackageSectionProps {
   onPageChange: (page: number | ((prev: number) => number)) => void
   pageSize: number
   loading: boolean
-  listScrollRef?: RefObject<HTMLDivElement>
+  listScrollRef?: RefObject<HTMLDivElement | null>
   onRefresh: () => void
   selectedPackage: SelectedPackage | null
   onTogglePackage: (pkg: main.InstalledPackage) => void

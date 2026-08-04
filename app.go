@@ -18,7 +18,7 @@ import (
 // These may be overridden at link time via:
 // -ldflags "-X gluestick.sh/desktop.Version=..." etc.
 var (
-	Version = "0.1.19"
+	Version = "0.1.20"
 	Commit  = "none"
 	Date    = "unknown"
 )

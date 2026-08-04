@@ -60,6 +60,7 @@
 }
 
 .about-dialog-attribution .text-link {
+  margin-inline-start: 0.35em;
   font-size: 12px;
 }
 

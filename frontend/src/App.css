@@ -385,6 +385,7 @@
 }
 
 .list-total {
+  margin-inline-start: 0.35em;
   color: var(--text-tertiary);
 }
 

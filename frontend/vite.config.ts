@@ -14,8 +14,7 @@ export default defineConfig({
       // Prefer JS rollup build to avoid native module issues
     },
   },
-  // Use esbuild for dev-mode transforms
-  esbuild: {
+  oxc: {
     target: 'es2020',
   },
 })

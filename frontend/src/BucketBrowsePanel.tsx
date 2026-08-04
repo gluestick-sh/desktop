@@ -33,7 +33,7 @@ interface BucketBrowsePanelProps {
   hideDeprecated: boolean
   indexReady: boolean
   pageSize: number
-  listScrollRef?: RefObject<HTMLDivElement>
+  listScrollRef?: RefObject<HTMLDivElement | null>
   isPackageInstalled: (name: string) => boolean
   operationBusy: boolean
   isPackageInstalling: (ref: string) => boolean
@@ -76,7 +76,7 @@ export default function BucketBrowsePanel({
   const [recentSearches, setRecentSearches] = useState(() => loadRecentSearches())
   const searchInputRef = useRef<HTMLInputElement>(null)
   const activeTemplateWrapRef = useRef<HTMLSpanElement>(null)
-  const debounceTimerRef = useRef<ReturnType<typeof setTimeout>>()
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   const isAllBuckets = selectedBucket === ALL_BUCKETS
 
