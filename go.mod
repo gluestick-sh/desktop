@@ -3,12 +3,10 @@ module gluestick.sh/desktop
 go 1.26.3
 
 require (
-	github.com/gluestick-sh/core v0.1.11
+	github.com/gluestick-sh/core v0.1.10
 	github.com/wailsapp/wails/v2 v2.13.0
 	golang.org/x/sys v0.46.0
 )
-
-replace github.com/gluestick-sh/core => ../core
 
 require (
 	git.sr.ht/~jackmordaunt/go-toast/v2 v2.0.3 // indirect
