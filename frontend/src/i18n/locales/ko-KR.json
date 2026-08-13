@@ -313,7 +313,10 @@
     "latest": "최신",
     "updatable": "업데이트 가능",
     "locked": "버전이 잠겼습니다.",
-    "lockedHint": "버전이 잠겼습니다. 업데이트 확인에서 제외됨"
+    "lockedHint": "버전이 잠겼습니다. 업데이트 확인에서 제외됨",
+    "externallyUpdated": "Self-updated",
+    "externallyUpdatedHint": "Managed {{managed}}, actual {{detected}} (updated by the app)",
+    "managedVersion": "managed {{version}}"
   },
   "updates": {
     "title": "업데이트 센터",

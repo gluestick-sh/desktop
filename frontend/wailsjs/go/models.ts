@@ -546,7 +546,9 @@ export namespace main {
 	    name: string;
 	    version: string;
 	    latestVersion?: string;
+	    detectedVersion?: string;
 	    updateAvailable: boolean;
+	    externallyUpdated: boolean;
 	    installedAt: string;
 	    bucket: string;
 	    description: string;
@@ -563,7 +565,9 @@ export namespace main {
 	        this.name = source["name"];
 	        this.version = source["version"];
 	        this.latestVersion = source["latestVersion"];
+	        this.detectedVersion = source["detectedVersion"];
 	        this.updateAvailable = source["updateAvailable"];
+	        this.externallyUpdated = source["externallyUpdated"];
 	        this.installedAt = source["installedAt"];
 	        this.bucket = source["bucket"];
 	        this.description = source["description"];

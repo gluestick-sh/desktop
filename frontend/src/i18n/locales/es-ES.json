@@ -313,7 +313,10 @@
     "latest": "A hoy",
     "updatable": "Actualización disponible",
     "locked": "Versión bloqueada",
-    "lockedHint": "Versión bloqueada; excluido de las comprobaciones de actualización"
+    "lockedHint": "Versión bloqueada; excluido de las comprobaciones de actualización",
+    "externallyUpdated": "Self-updated",
+    "externallyUpdatedHint": "Managed {{managed}}, actual {{detected}} (updated by the app)",
+    "managedVersion": "managed {{version}}"
   },
   "updates": {
     "title": "Centro de actualización",

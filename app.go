@@ -18,7 +18,7 @@ import (
 // These may be overridden at link time via:
 // -ldflags "-X gluestick.sh/desktop.Version=..." etc.
 var (
-	Version = "0.1.20"
+	Version = "0.1.21"
 	Commit  = "none"
 	Date    = "unknown"
 )
@@ -270,14 +270,16 @@ type PackageInfo struct {
 
 // InstalledPackage is an installed package record exposed to the frontend.
 type InstalledPackage struct {
-	Name            string `json:"name"`
-	Version         string `json:"version"`
-	LatestVersion   string `json:"latestVersion,omitempty"`
-	UpdateAvailable bool   `json:"updateAvailable"`
-	InstalledAt     string `json:"installedAt"`
-	Bucket          string `json:"bucket"`
-	Description     string `json:"description"`
-	Homepage        string `json:"homepage"`
+	Name              string `json:"name"`
+	Version           string `json:"version"`
+	LatestVersion     string `json:"latestVersion,omitempty"`
+	DetectedVersion   string `json:"detectedVersion,omitempty"`
+	UpdateAvailable   bool   `json:"updateAvailable"`
+	ExternallyUpdated bool   `json:"externallyUpdated"`
+	InstalledAt       string `json:"installedAt"`
+	Bucket            string `json:"bucket"`
+	Description       string `json:"description"`
+	Homepage          string `json:"homepage"`
 	// InstallSize is deduplicated cache store object size for installed files (matches hardlinked install dir).
 	InstallSize int64 `json:"installSize"`
 	// VersionLocked skips update checks when true.
@@ -381,13 +383,15 @@ func (a *App) listInstalledFromEngine(checkUpdates bool) ([]InstalledPackage, er
 			installedAt = time.Now().Format(time.RFC3339)
 		}
 		item := InstalledPackage{
-			Name:        pkg.Name,
-			Version:     pkg.Version,
-			InstalledAt: installedAt,
-			Bucket:      pkg.Bucket,
-			Description: pkg.Description,
-			Homepage:    pkg.Homepage,
-			InstallSize: pkg.InstalledSize,
+			Name:              pkg.Name,
+			Version:           pkg.Version,
+			DetectedVersion:   pkg.DetectedVersion,
+			ExternallyUpdated: pkg.ExternallyUpdated,
+			InstalledAt:       installedAt,
+			Bucket:            pkg.Bucket,
+			Description:       pkg.Description,
+			Homepage:          pkg.Homepage,
+			InstallSize:       pkg.InstalledSize,
 		}
 		if a.engine.IsPackageVersionLocked(pkg.Name) {
 			item.VersionLocked = true

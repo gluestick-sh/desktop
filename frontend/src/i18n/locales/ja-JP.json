@@ -313,7 +313,10 @@
     "latest": "最新の",
     "updatable": "利用可能なアップデート",
     "locked": "バージョンがロックされています",
-    "lockedHint": "バージョンはロックされています。アップデートチェックから除外される"
+    "lockedHint": "バージョンはロックされています。アップデートチェックから除外される",
+    "externallyUpdated": "Self-updated",
+    "externallyUpdatedHint": "Managed {{managed}}, actual {{detected}} (updated by the app)",
+    "managedVersion": "managed {{version}}"
   },
   "updates": {
     "title": "アップデートセンター",

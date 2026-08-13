@@ -313,7 +313,10 @@
     "latest": "Cập nhật",
     "updatable": "Đã có bản cập nhật",
     "locked": "Phiên bản bị khóa",
-    "lockedHint": "Phiên bản bị khóa; bị loại khỏi kiểm tra cập nhật"
+    "lockedHint": "Phiên bản bị khóa; bị loại khỏi kiểm tra cập nhật",
+    "externallyUpdated": "Self-updated",
+    "externallyUpdatedHint": "Managed {{managed}}, actual {{detected}} (updated by the app)",
+    "managedVersion": "managed {{version}}"
   },
   "updates": {
     "title": "Trung tâm cập nhật",

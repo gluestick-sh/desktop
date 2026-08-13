@@ -195,10 +195,33 @@ export default function InstalledPackageSection({
       cellClassName: 'col-badge',
       sortable: true,
       defaultWidth: 140,
-      sortValue: (pkg) => pkg.version,
+      sortValue: (pkg) => pkg.detectedVersion || pkg.version,
       renderCell: (pkg) => (
         <span className="cell-badge">
-          <span className="pill">{pkg.version}</span>
+          <span
+            className="pill"
+            title={
+              pkg.externallyUpdated && pkg.detectedVersion
+                ? t('installed.externallyUpdatedHint', {
+                    managed: pkg.version,
+                    detected: pkg.detectedVersion,
+                  })
+                : undefined
+            }
+          >
+            {pkg.externallyUpdated && pkg.detectedVersion ? pkg.detectedVersion : pkg.version}
+          </span>
+          {pkg.externallyUpdated && pkg.detectedVersion && pkg.detectedVersion !== pkg.version ? (
+            <span
+              className="pill warning"
+              title={t('installed.externallyUpdatedHint', {
+                managed: pkg.version,
+                detected: pkg.detectedVersion,
+              })}
+            >
+              {t('installed.managedVersion', { version: pkg.version })}
+            </span>
+          ) : null}
           {pkg.updateAvailable && pkg.latestVersion && pkg.latestVersion !== pkg.version && (
             <span className="pill version-arrow" title={t('package.latestInBucket')}>
               → {pkg.latestVersion}
@@ -211,11 +234,22 @@ export default function InstalledPackageSection({
       id: 'status',
       header: t('common.status'),
       sortable: true,
-      defaultWidth: 100,
-      sortValue: (pkg) => (pkg.versionLocked ? 0 : pkg.updateAvailable ? 1 : 2),
+      defaultWidth: 120,
+      sortValue: (pkg) =>
+        pkg.versionLocked ? 0 : pkg.externallyUpdated ? 1 : pkg.updateAvailable ? 2 : 3,
       renderCell: (pkg) =>
         pkg.versionLocked ? (
           <span className="pill info" title={t('installed.lockedHint')}>{t('installed.locked')}</span>
+        ) : pkg.externallyUpdated ? (
+          <span
+            className="pill warning"
+            title={t('installed.externallyUpdatedHint', {
+              managed: pkg.version,
+              detected: pkg.detectedVersion || pkg.version,
+            })}
+          >
+            {t('installed.externallyUpdated')}
+          </span>
         ) : pkg.updateAvailable && pkg.latestVersion !== pkg.version ? (
           <span className="pill warning">{t('installed.updatable')}</span>
         ) : (

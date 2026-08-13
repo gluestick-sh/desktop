@@ -313,7 +313,10 @@
     "latest": "À jour",
     "updatable": "Mise à jour disponible",
     "locked": "Version verrouillée",
-    "lockedHint": "Version verrouillée ; exclu des contrôles de mise à jour"
+    "lockedHint": "Version verrouillée ; exclu des contrôles de mise à jour",
+    "externallyUpdated": "Self-updated",
+    "externallyUpdatedHint": "Managed {{managed}}, actual {{detected}} (updated by the app)",
+    "managedVersion": "managed {{version}}"
   },
   "updates": {
     "title": "Centre de mise à jour",

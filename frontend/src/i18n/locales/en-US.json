@@ -313,7 +313,10 @@
     "latest": "Up to date",
     "updatable": "Update available",
     "locked": "Version locked",
-    "lockedHint": "Version locked; excluded from update checks"
+    "lockedHint": "Version locked; excluded from update checks",
+    "externallyUpdated": "Self-updated",
+    "externallyUpdatedHint": "Managed {{managed}}, actual {{detected}} (updated by the app)",
+    "managedVersion": "managed {{version}}"
   },
   "updates": {
     "title": "Update center",

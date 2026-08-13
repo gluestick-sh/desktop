@@ -313,7 +313,10 @@
     "latest": "最新",
     "updatable": "可更新",
     "locked": "已鎖定",
-    "lockedHint": "已鎖定版本，不參與升級檢查"
+    "lockedHint": "已鎖定版本，不參與升級檢查",
+    "externallyUpdated": "應用已自行更新",
+    "externallyUpdatedHint": "管理版本 {{managed}}，實際版本 {{detected}}（應用內更新）",
+    "managedVersion": "管理 {{version}}"
   },
   "updates": {
     "title": "更新中心",
