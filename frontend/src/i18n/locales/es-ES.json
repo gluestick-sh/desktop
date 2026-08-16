@@ -373,6 +373,9 @@
     "docs": "Documentación",
     "upgradePro": "Actualízate a Pro",
     "about": "Acerca de",
+    "minimize": "Minimizar",
+    "maximize": "Maximizar",
+    "restore": "Restaurar",
     "ariaLabel": "Menú de aplicaciones",
     "openRootDir": "Abrir directorio raíz",
     "taskCenter": "Tareas"

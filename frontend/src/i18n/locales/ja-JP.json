@@ -373,6 +373,9 @@
     "docs": "ドキュメント",
     "upgradePro": "プロにアップグレード",
     "about": "について",
+    "minimize": "最小化",
+    "maximize": "最大化",
+    "restore": "元に戻す",
     "ariaLabel": "アプリケーションメニュー",
     "openRootDir": "ルートディレクトリを開く",
     "taskCenter": "タスク"

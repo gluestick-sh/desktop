@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"runtime"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -25,6 +26,8 @@ func main() {
 		Height:    800,
 		MinWidth:  900,
 		MinHeight: 600,
+		// Windows 10 cannot color the native caption; hide it and draw chrome in the menubar.
+		Frameless: runtime.GOOS == "windows",
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
@@ -41,6 +44,8 @@ func main() {
 			WebviewIsTransparent: false,
 			WindowIsTranslucent:  false,
 			DisableWindowIcon:    false,
+			// Keep aero shadow / Win11 rounded corners without the native caption.
+			DisableFramelessWindowDecorations: false,
 			// Theme + per-theme caption colors are applied from the frontend via
 			// WindowSetLight/DarkTheme and SetWindowChromeColors. Avoid CustomTheme
 			// here — it would reset caption colors on every window activate.

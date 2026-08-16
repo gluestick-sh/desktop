@@ -1326,6 +1326,11 @@ tr.package-detail-row:hover {
   text-align: center;
 }
 
+.footer-app-name {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
 .footer-right {
   text-align: right;
 }

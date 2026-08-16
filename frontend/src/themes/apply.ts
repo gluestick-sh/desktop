@@ -57,8 +57,8 @@ export function contrastRatio(fg: string, bg: string): number {
 
 /** Sync native window chrome (title bar / border / webview fill) with the active theme. */
 export function syncWindowChrome(tokens: ThemeTokens): void {
-  // Match Wails immersive caption mode to the menubar, not the page background.
-  // Windows 10 can only flip light/dark chrome (no custom caption color).
+  // Windows is frameless: the menubar is the title bar. Immersive mode still
+  // tints the remaining 1px DWM frame / border (and caption colors on Win11).
   const chromeIsLight = relativeLuminance(tokens['bg-secondary']) > 0.5
   try {
     if (chromeIsLight) {
@@ -70,10 +70,10 @@ export function syncWindowChrome(tokens: ThemeTokens): void {
     // Ignore outside Wails (e.g. vite dev)
   }
 
-  const bg = parseHex(tokens['bg-primary'])
-  if (bg) {
+  const chrome = parseHex(tokens['bg-secondary'])
+  if (chrome) {
     try {
-      WindowSetBackgroundColour(bg.r, bg.g, bg.b, 255)
+      WindowSetBackgroundColour(chrome.r, chrome.g, chrome.b, 255)
     } catch {
       // Ignore outside Wails
     }

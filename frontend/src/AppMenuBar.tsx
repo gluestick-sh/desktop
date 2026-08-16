@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { useState, useEffect, useRef, useMemo, type MouseEvent as ReactMouseEvent } from 'react'
 import type { TFunction } from 'i18next'
 import { useTranslation } from 'react-i18next'
 import NavIcon, { type NavIconName } from './NavIcon'
@@ -9,6 +9,12 @@ import {
   type ThemeId,
 } from './themes'
 import { APP_LOCALES, LOCALE_NATIVE_NAMES, type AppLocale } from './i18n/locales'
+import {
+  Environment,
+  WindowIsMaximised,
+  WindowMinimise,
+  WindowToggleMaximise,
+} from '../wailsjs/runtime/runtime'
 import './AppMenuBar.css'
 
 export type ThemeMenuAction = `theme:${string}`
@@ -489,6 +495,82 @@ function DropdownItems({
   )
 }
 
+function WindowControlIcon({ kind }: { kind: 'minimize' | 'maximize' | 'restore' | 'close' }) {
+  if (kind === 'minimize') {
+    return (
+      <svg viewBox="0 0 10 10" aria-hidden="true">
+        <path d="M1.5 5h7" />
+      </svg>
+    )
+  }
+  if (kind === 'maximize') {
+    return (
+      <svg viewBox="0 0 10 10" aria-hidden="true">
+        <rect x="1.75" y="1.75" width="6.5" height="6.5" />
+      </svg>
+    )
+  }
+  if (kind === 'restore') {
+    return (
+      <svg viewBox="0 0 10 10" aria-hidden="true">
+        <path d="M3 2h5v5" />
+        <rect x="1.75" y="3.25" width="5" height="5" />
+      </svg>
+    )
+  }
+  return (
+    <svg viewBox="0 0 10 10" aria-hidden="true">
+      <path d="M2.2 2.2l5.6 5.6M7.8 2.2l-5.6 5.6" />
+    </svg>
+  )
+}
+
+function WindowControls({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation()
+  const [maximised, setMaximised] = useState(false)
+
+  useEffect(() => {
+    const sync = () => {
+      void WindowIsMaximised().then(setMaximised).catch(() => {})
+    }
+    sync()
+    window.addEventListener('resize', sync)
+    return () => window.removeEventListener('resize', sync)
+  }, [])
+
+  return (
+    <div className="window-controls">
+      <button
+        type="button"
+        className="window-control-btn"
+        aria-label={t('menu.minimize')}
+        onClick={() => WindowMinimise()}
+      >
+        <WindowControlIcon kind="minimize" />
+      </button>
+      <button
+        type="button"
+        className="window-control-btn"
+        aria-label={maximised ? t('menu.restore') : t('menu.maximize')}
+        onClick={() => {
+          WindowToggleMaximise()
+          void WindowIsMaximised().then(setMaximised).catch(() => {})
+        }}
+      >
+        <WindowControlIcon kind={maximised ? 'restore' : 'maximize'} />
+      </button>
+      <button
+        type="button"
+        className="window-control-btn window-control-close"
+        aria-label={t('app.close')}
+        onClick={onClose}
+      >
+        <WindowControlIcon kind="close" />
+      </button>
+    </div>
+  )
+}
+
 interface AppMenuBarProps {
   onAction: (action: MenuAction) => void
   themeId: ThemeId
@@ -516,11 +598,26 @@ export default function AppMenuBar({
 }: AppMenuBarProps) {
   const { t } = useTranslation()
   const [openMenu, setOpenMenu] = useState<MenuGroupId | null>(null)
+  const [showWindowControls, setShowWindowControls] = useState(
+    () => typeof navigator !== 'undefined' && /windows/i.test(navigator.userAgent),
+  )
   const barRef = useRef<HTMLElement>(null)
   const menuGroups = useMemo(
     () => buildMenuGroups(t, customThemes),
     [t, customThemes],
   )
+
+  useEffect(() => {
+    let cancelled = false
+    void Environment()
+      .then((info) => {
+        if (!cancelled) setShowWindowControls(info.platform === 'windows')
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const closeMenu = () => {
     setOpenMenu(null)
@@ -567,8 +664,20 @@ export default function AppMenuBar({
     onAction(action)
   }
 
+  const handleBarDoubleClick = (e: ReactMouseEvent<HTMLElement>) => {
+    if (!showWindowControls) return
+    const target = e.target as HTMLElement
+    if (target.closest('button, .menubar-dropdown, .window-controls')) return
+    WindowToggleMaximise()
+  }
+
   return (
-    <nav className="app-menubar" ref={barRef} aria-label={t('menu.ariaLabel')}>
+    <nav
+      className={`app-menubar${showWindowControls ? ' has-window-controls' : ''}`}
+      ref={barRef}
+      aria-label={t('menu.ariaLabel')}
+      onDoubleClick={handleBarDoubleClick}
+    >
       {menuGroups.map((group) => (
         <div key={group.id} className="menubar-group">
           <button
@@ -605,6 +714,8 @@ export default function AppMenuBar({
           )}
         </div>
       ))}
+      <div className="menubar-drag-spacer" aria-hidden="true" />
+      {showWindowControls && <WindowControls onClose={() => onAction('quit')} />}
     </nav>
   )
 }

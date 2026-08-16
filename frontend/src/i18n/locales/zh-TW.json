@@ -373,6 +373,9 @@
     "docs": "使用文檔",
     "upgradePro": "進階功能",
     "about": "關於",
+    "minimize": "最小化",
+    "maximize": "最大化",
+    "restore": "還原",
     "ariaLabel": "應用菜單",
     "openRootDir": "打開根目錄",
     "taskCenter": "任務"

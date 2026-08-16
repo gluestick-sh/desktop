@@ -373,6 +373,9 @@
     "docs": "Dokumentation",
     "upgradePro": "Upgrade auf Pro",
     "about": "Um",
+    "minimize": "Minimieren",
+    "maximize": "Maximieren",
+    "restore": "Wiederherstellen",
     "ariaLabel": "Anwendungsmenü",
     "openRootDir": "Stammverzeichnis öffnen",
     "taskCenter": "Aufgaben"

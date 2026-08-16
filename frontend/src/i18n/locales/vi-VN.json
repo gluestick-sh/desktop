@@ -373,6 +373,9 @@
     "docs": "Tài liệu",
     "upgradePro": "Nâng cấp lên Pro",
     "about": "Về",
+    "minimize": "Thu nhỏ",
+    "maximize": "Phóng to",
+    "restore": "Khôi phục",
     "ariaLabel": "Trình đơn ứng dụng",
     "openRootDir": "Mở thư mục gốc",
     "taskCenter": "Tác vụ"

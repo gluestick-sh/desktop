@@ -3184,11 +3184,11 @@ function App() {
         <span className="footer-center">
           <button
             type="button"
-            className="text-link"
+            className="text-link footer-app-name"
             title={t('footer.siteTitle')}
             onClick={(e) => openExternalUrl(GLUESTICK_HOME_URL, e)}
           >
-           {t('footer.tagline')}
+            {t('app.title')}
           </button>
         </span>
         <span

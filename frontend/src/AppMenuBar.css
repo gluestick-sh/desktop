@@ -1,12 +1,13 @@
 /* In-app menubar: shared top/dropdown height and horizontal padding */
 .app-menubar {
-  --menubar-height: 32px;
+  --menubar-height: 40px;
   --menubar-font: 14px;
   --menubar-item-height: 32px;
   --menubar-item-pad-x: 16px;
   --menubar-check-width: 20px;
   --menubar-icon-width: 22px;
   --menubar-trailing-min-width: 88px;
+  --wails-draggable: drag;
 
   display: flex;
   align-items: stretch;
@@ -22,12 +23,69 @@
   line-height: 1.2;
 }
 
+.app-menubar.has-window-controls {
+  padding-right: 0;
+}
+
+.app-menubar button,
+.app-menubar .menubar-dropdown {
+  --wails-draggable: no-drag;
+}
+
 .app-menubar button {
   padding: 0;
   font-size: inherit;
   line-height: inherit;
   border-radius: 6px;
   min-height: unset;
+}
+
+.menubar-drag-spacer {
+  flex: 1;
+  min-width: 16px;
+  align-self: stretch;
+}
+
+.window-controls {
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+  margin-left: 4px;
+  --wails-draggable: no-drag;
+}
+
+.app-menubar .window-control-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 100%;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-primary);
+  cursor: default;
+}
+
+.app-menubar .window-control-btn:hover {
+  background: var(--ghost-hover-bg);
+}
+
+.app-menubar .window-control-btn.window-control-close:hover,
+.app-menubar .window-control-btn.window-control-close:focus-visible {
+  background: #e81123;
+  color: #fff;
+}
+
+.window-control-btn svg {
+  width: 10px;
+  height: 10px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.15;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .menubar-group {
