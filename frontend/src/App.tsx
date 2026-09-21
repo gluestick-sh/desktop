@@ -3403,15 +3403,15 @@ function App() {
                   className="pro-feature pro-feature-action is-teams-locked"
                   onClick={() => setShowProModal(false)}
                   aria-disabled="true"
-                  title={t('teams.lockedHint')}
+                  title={t('team.lockedHint')}
                 >
                   <div className="pro-feature-icon" aria-hidden="true">🛡️</div>
                   <div className="pro-feature-content">
                     <h4>
-                      {t('teams.feature.complianceAudit.title')}
-                      <span className="teams-inline-badge">{t('teams.badge')}</span>
+                      {t('team.feature.complianceAudit.title')}
+                      <span className="teams-inline-badge">{t('team.badge')}</span>
                     </h4>
-                    <p>{t('teams.feature.complianceAudit.desc')}</p>
+                    <p>{t('team.feature.complianceAudit.desc')}</p>
                   </div>
                 </button>
                 <button
@@ -3419,15 +3419,15 @@ function App() {
                   className="pro-feature pro-feature-action is-teams-locked"
                   onClick={() => setShowProModal(false)}
                   aria-disabled="true"
-                  title={t('teams.lockedHint')}
+                  title={t('team.lockedHint')}
                 >
                   <div className="pro-feature-icon" aria-hidden="true">🧰</div>
                   <div className="pro-feature-content">
                     <h4>
-                      {t('teams.feature.customConfig.title')}
-                      <span className="teams-inline-badge">{t('teams.badge')}</span>
+                      {t('team.feature.customConfig.title')}
+                      <span className="teams-inline-badge">{t('team.badge')}</span>
                     </h4>
-                    <p>{t('teams.feature.customConfig.desc')}</p>
+                    <p>{t('team.feature.customConfig.desc')}</p>
                   </div>
                 </button>
                 <button
@@ -3435,15 +3435,15 @@ function App() {
                   className="pro-feature pro-feature-action is-teams-locked"
                   onClick={() => setShowProModal(false)}
                   aria-disabled="true"
-                  title={t('teams.lockedHint')}
+                  title={t('team.lockedHint')}
                 >
                   <div className="pro-feature-icon" aria-hidden="true">👥</div>
                   <div className="pro-feature-content">
                     <h4>
-                      {t('teams.feature.orgBaseline.title')}
-                      <span className="teams-inline-badge">{t('teams.badge')}</span>
+                      {t('team.feature.orgBaseline.title')}
+                      <span className="teams-inline-badge">{t('team.badge')}</span>
                     </h4>
-                    <p>{t('teams.feature.orgBaseline.desc')}</p>
+                    <p>{t('team.feature.orgBaseline.desc')}</p>
                   </div>
                 </button>
               </div>

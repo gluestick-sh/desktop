@@ -766,7 +766,7 @@
   },
   "pro": {
     "title": "Gluestick Desktop Pro",
-    "intro": "Pro 提供環境健康、快照回滾與多裝置同步；帶 Teams 標記的能力需單獨溝通開通。",
+    "intro": "Pro 提供環境健康、快照回滾與多裝置同步；帶 Team 標記的能力需單獨溝通開通。",
     "badge": "Pro",
     "feature": {
       "deviceSync": {
@@ -1209,13 +1209,13 @@
     "forceInstallPending": "強制安裝（{{count}}）",
     "forceInstallHint": "以 --force 排隊安裝待裝項（重新下載）。不會跳過 hash 檢查。"
   },
-  "teams": {
-    "title": "Gluestick Desktop Teams",
-    "intro": "功能細節不便展示。Teams 為企業私有能力，需與我們直接溝通後按需開通。",
-    "comingSoon": "如需開通 Teams，請聯繫我們，郵箱：support@gluestick.sh。",
-    "lockedHint": "此處為 Teams 私有能力，目前不可操作。",
+  "team": {
+    "title": "Gluestick Desktop Team",
+    "intro": "功能細節不便展示。Team 為企業私有能力，需與我們直接溝通後按需開通。",
+    "comingSoon": "如需開通 Team，請聯繫我們，郵箱：support@gluestick.sh。",
+    "lockedHint": "此處為 Team 私有能力，目前不可操作。",
     "upgrade": "聯繫開通",
-    "badge": "Teams",
+    "badge": "Team",
     "feature": {
       "customConfig": {
         "title": "自訂配方",

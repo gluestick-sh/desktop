@@ -766,7 +766,7 @@
   },
   "pro": {
     "title": "Gluestick Desktop Pro",
-    "intro": "Pro covers environment health, snapshots, and device sync. Items marked Teams require a private discussion to enable.",
+    "intro": "Pro covers environment health, snapshots, and device sync. Items marked Team require a private discussion to enable.",
     "badge": "Pro",
     "feature": {
       "deviceSync": {
@@ -1209,13 +1209,13 @@
     "forceInstallPending": "Force install ({{count}})",
     "forceInstallHint": "Queue pending packages with --force (re-download). Does not skip hash checks."
   },
-  "teams": {
-    "title": "Gluestick Desktop Teams",
-    "intro": "Feature details are not listed here. Teams is a private enterprise offering enabled after direct discussion with us.",
-    "comingSoon": "To enable Teams, contact us at support@gluestick.sh.",
-    "lockedHint": "This is a private Teams capability and is not available here.",
+  "team": {
+    "title": "Gluestick Desktop Team",
+    "intro": "Feature details are not listed here. Team is a private enterprise offering enabled after direct discussion with us.",
+    "comingSoon": "To enable Team, contact us at support@gluestick.sh.",
+    "lockedHint": "This is a private Team capability and is not available here.",
     "upgrade": "Contact to enable",
-    "badge": "Teams",
+    "badge": "Team",
     "feature": {
       "customConfig": {
         "title": "Custom recipes",
