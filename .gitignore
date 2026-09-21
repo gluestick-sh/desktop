@@ -1,6 +1,8 @@
 # Editor / local AI
 .claude/
 
+__pycache__/
+
 # Go build outputs
 *.exe
 *.exe~
