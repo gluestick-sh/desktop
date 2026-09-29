@@ -1,6 +1,6 @@
 # Editor / local AI
 .claude/
-
+backup/
 __pycache__/
 
 # Go build outputs
